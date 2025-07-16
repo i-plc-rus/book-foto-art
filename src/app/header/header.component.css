@@ -1,0 +1,156 @@
+@import url('https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap');
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 2rem;
+  font-family: 'Proxima Nova', 'Lato', 'Lucida Sans Unicode', 'Lucida Grande', sans-serif;
+  background: #fff;
+  position: relative;
+  z-index: 10;
+}
+
+/* Логотип */
+.header__logo {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.header__logo .highlight {
+  color: #3b82f6;
+}
+
+/* Бургер */
+.burger {
+  display: none;
+  font-size: 1.8rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  z-index: 1100;
+}
+
+/* Навигация */
+.nav {
+  display: flex;
+  align-items: center;
+  margin-left: auto;
+  gap: 1.5rem;
+}
+
+/* Контейнер с основными ссылками */
+.nav__links {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.nav__link {
+  font-size: 0.95rem;
+  color: #333;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.nav__link:hover {
+  color: #3b82f6;
+}
+
+/* Контейнер с кнопками */
+.nav__auth {
+  display: flex;
+  margin-left: 1.5rem;
+}
+
+/* Кнопки (desktop стиль) */
+.btn-outline {
+  padding: 0.45rem 1rem;
+  border: 1px solid #ccc;
+  font-size: 0.9rem;
+  text-decoration: none;
+  color: #333;
+  transition: 0.2s;
+  border-radius: 0;
+  cursor: pointer;
+}
+
+.btn-outline:hover {
+  border-color: #3b82f6;
+  color: #3b82f6;
+}
+
+.btn-left {
+  border-right: none;
+  border-radius: 4px 0 0 4px;
+}
+
+.btn-right {
+  border-radius: 0 4px 4px 0;
+}
+
+/* Горизонтальный разделитель для мобильного меню */
+.nav__divider {
+  width: 100%;
+  border: none;
+  border-top: 1px solid #eee;
+  margin: 1rem 0;
+}
+
+/* ————— MOBILE (<700px) ————— */
+@media (max-width: 700px) {
+  .burger {
+    display: block;
+    margin-left: auto;
+  }
+
+  .nav {
+    position: fixed;
+    top: 0;
+    right: -100%;
+    width: 60%;
+    height: 100%;
+    background: #fff;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 2rem 1.5rem;
+    gap: 1.5rem;
+    transition: right 0.3s ease;
+    box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+  }
+
+  .nav.mobile-open {
+    right: 0;
+  }
+
+  .nav__links {
+    flex-direction: column;
+    gap: 1.25rem;
+    width: 100%;
+  }
+
+  .nav__auth {
+    flex-direction: column;
+    width: 100%;
+    margin-left: 0;
+    gap: 1rem;
+  }
+
+  .nav__auth-link {
+    padding: 0;
+    border: none;
+    font-size: 1.05rem;
+    color: #333;
+    text-decoration: none;
+    cursor: pointer;
+  }
+
+  .nav__auth-link:hover {
+    color: #3b82f6;
+  }
+
+  /* Сбрасываем стили только в мобильном режиме */
+  .btn-outline {
+    all: unset;
+  }
+}

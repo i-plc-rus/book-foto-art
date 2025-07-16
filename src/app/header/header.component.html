@@ -1,0 +1,21 @@
+<header class="header">
+  <div class="header__logo">bookfoto.<span class="highlight">art</span></div>
+
+  <!-- Бургер -->
+  <button class="burger" (click)="toggleMenu()">☰</button>
+
+  <nav class="nav" [class.mobile-open]="menuOpen">
+    <div class="nav__links">
+      <a href="#services" class="nav__link">Услуги</a>
+      <a href="#gallery" class="nav__link">Галерея</a>
+      <a href="#pricing" class="nav__link">Цены</a>
+    </div>
+
+    <hr class="nav__divider" />
+
+    <div class="nav__auth">
+      <a href="/login" class="nav__link nav__auth-link btn-outline btn-left">Войти</a>
+      <a href="/register" class="nav__link nav__auth-link btn-outline btn-right">Присоединиться</a>
+    </div>
+  </nav>
+</header>

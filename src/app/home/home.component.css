@@ -1,0 +1,105 @@
+.hero {
+  position: relative;
+  background: linear-gradient(to bottom, rgba(255,255,255,0.9), rgba(255,255,255,0)); /* плавный светлый фон сверху вниз */
+  padding-top: 80px; /* если меню фиксированное, чтобы не перекрывало */
+  text-align: center;
+}
+.hero__photo-container {
+  margin-top: 2rem;
+  overflow: hidden;
+  max-width: 100%;
+}
+
+.hero__photo {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: cover;
+}
+
+
+
+/* Если меню фиксированное сверху, задайте ему прозрачный фон,
+   тогда фон hero будет плавно «заходить» под меню */
+header.header {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: saturate(180%) blur(10px);
+  z-index: 1000;
+  transition: background 0.3s ease;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+}
+
+
+.hero__title {
+  font-family: 'Montserrat', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-size: 1.8rem; /* Увеличил размер для большей выразительности */
+  font-weight: 500; /* Жирное начертание для акцента */
+  margin-bottom: 1.5rem; /* Увеличил отступ снизу для баланса */
+  color: #111; /* Тёмный цвет для контраста */
+  line-height: 1.2; /* Улучшает читаемость при большом размере шрифта */
+  letter-spacing: 0.02em; /* Лёгкий керning для элегантности */
+  /*text-transform: uppercase;*/ /* Верхний регистр для акцента, как на Pixieset */
+}
+
+.hero__subtitle {
+  font-family: 'Montserrat', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-size: 0.8rem;
+  color: #666;
+  line-height: 1.6;
+}
+
+
+.hero__photo-text {
+  margin-top: 2rem; /* отступ сверху */
+  /*max-width: 50%;*/
+  /*padding-left: 2rem;*/
+  color: #666666; /* серый цвет для подзаголовка */
+  font-family: 'Montserrat', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+
+.hero__photo-subtitle {
+  font-family: 'Montserrat', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-size: 0.8rem;
+  font-weight: 100;
+  /*margin: 0 0 0.5rem 0;*/
+  color: #999999; /* чуть светлее для приглушенности */
+  text-transform: uppercase; /* Верхний регистр для акцента, как на Pixieset */
+}
+
+.hero__photo-title {
+    font-family: 'Montserrat', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 1.8rem; /* Увеличил размер для большей выразительности */
+    font-weight: 500; /* Жирное начертание для акцента */
+    margin-bottom: 1.5rem; /* Увеличил отступ снизу для баланса */
+    color: #111; /* Тёмный цвет для контраста */
+    line-height: 1.2; /* Улучшает читаемость при большом размере шрифта */
+    letter-spacing: 0.02em; /* Лёгкий керning для элегантности */
+}
+
+
+
+.btn-try {
+  margin-top: 1.5rem; /* отступ сверху */
+  background-color: #1abc9c;
+  color: white;
+  border: none;
+  padding: 0.6rem 0.6rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 2px;
+  cursor: pointer;
+  width: 250px;
+  height: 50px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s ease;
+}
+
+.btn-try:hover {
+  background-color: #159c85;
+}
+

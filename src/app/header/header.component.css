@@ -5,23 +5,21 @@
   align-items: center;
   justify-content: space-between;
   padding: 1rem 2rem;
-  font-family: 'Proxima Nova', 'Lato', 'Lucida Sans Unicode', 'Lucida Grande', sans-serif;
+  font-family: 'Lato', sans-serif;
   background: #fff;
   position: relative;
   z-index: 10;
 }
 
-/* Логотип */
 .header__logo {
   font-size: 1.5rem;
   font-weight: bold;
 }
 
-.header__logo .highlight {
+.highlight {
   color: #3b82f6;
 }
 
-/* Бургер */
 .burger {
   display: none;
   font-size: 1.8rem;
@@ -31,7 +29,6 @@
   z-index: 1100;
 }
 
-/* Навигация */
 .nav {
   display: flex;
   align-items: center;
@@ -39,7 +36,6 @@
   gap: 1.5rem;
 }
 
-/* Контейнер с основными ссылками */
 .nav__links {
   display: flex;
   gap: 1.5rem;
@@ -49,51 +45,35 @@
   font-size: 0.95rem;
   color: #333;
   text-decoration: none;
-  cursor: pointer;
 }
 
 .nav__link:hover {
   color: #3b82f6;
 }
 
-/* Контейнер с кнопками */
 .nav__auth {
   display: flex;
   margin-left: 1.5rem;
+  /*gap: 1rem;*/
 }
 
-/* Кнопки (desktop стиль) */
-.btn-outline {
-  padding: 0.45rem 1rem;
-  border: 1px solid #ccc;
+.nav__auth-link {
   font-size: 0.9rem;
   text-decoration: none;
   color: #333;
+  padding: 0.45rem 1rem;
+  border: 1px solid #ccc;
+  /*border-radius: 4px;*/
   transition: 0.2s;
-  border-radius: 0;
-  cursor: pointer;
 }
 
-.btn-outline:hover {
-  border-color: #3b82f6;
+.nav__auth-link:hover {
   color: #3b82f6;
+  border-color: #3b82f6;
 }
 
-.btn-left {
-  border-right: none;
-  border-radius: 4px 0 0 4px;
-}
-
-.btn-right {
-  border-radius: 0 4px 4px 0;
-}
-
-/* Горизонтальный разделитель для мобильного меню */
 .nav__divider {
-  width: 100%;
-  border: none;
-  border-top: 1px solid #eee;
-  margin: 1rem 0;
+  display: none;
 }
 
 /* ————— MOBILE (<700px) ————— */
@@ -123,36 +103,23 @@
     right: 0;
   }
 
-  .nav__links {
-    flex-direction: column;
-    gap: 1.25rem;
-    width: 100%;
-  }
-
+  .nav__links,
   .nav__auth {
     flex-direction: column;
     width: 100%;
-    margin-left: 0;
-    gap: 1rem;
   }
 
   .nav__auth-link {
-    padding: 0;
+    padding: 0.5rem 0;
     border: none;
-    font-size: 1.05rem;
-    color: #333;
-    text-decoration: none;
-    cursor: pointer;
+    font-size: 1rem;
   }
 
-  .nav__auth-link:hover {
-    color: #3b82f6;
-  }
-
-  /* Сбрасываем стили только в мобильном режиме */
-  .btn-outline {
-    all: unset;
+  .nav__divider {
+    display: block;
+    width: 100%;
+    border: none;
+    border-top: 1px solid #eee;
+    margin: 1rem 0;
   }
 }
-
-

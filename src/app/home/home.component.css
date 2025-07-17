@@ -1,48 +1,19 @@
 .hero {
   font-family: 'Proxima Nova', 'Lato', 'Lucida Sans Unicode', 'Lucida Grande', sans-serif;
   position: relative;
-  background: linear-gradient(to bottom, rgba(255,255,255,0.9), rgba(255,255,255,0)); /* плавный светлый фон сверху вниз */
-  padding-top: 80px; /* если меню фиксированное, чтобы не перекрывало */
+  background: linear-gradient(to bottom, rgba(255,255,255,0.9), rgba(255,255,255,0));
+  padding-top: 80px;
   text-align: center;
 }
-.hero__photo-container {
-  margin-top: 2rem;
-  overflow: hidden;
-  max-width: 100%;
-}
-
-.hero__photo {
-  width: 100%;
-  height: auto;
-  display: block;
-  object-fit: cover;
-}
-
-
-
-/* Если меню фиксированное сверху, задайте ему прозрачный фон,
-   тогда фон hero будет плавно «заходить» под меню */
-header.header {
-  position: fixed;
-  top: 0;
-  width: 100%;
-  background: rgba(255, 255, 255, 0.85);
-  backdrop-filter: saturate(180%) blur(10px);
-  z-index: 1000;
-  transition: background 0.3s ease;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
-}
-
 
 .hero__title {
   font-family: 'Montserrat', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-  font-size: 1.8rem; /* Увеличил размер для большей выразительности */
-  font-weight: 500; /* Жирное начертание для акцента */
-  margin-bottom: 1.5rem; /* Увеличил отступ снизу для баланса */
-  color: #111; /* Тёмный цвет для контраста */
-  line-height: 1.2; /* Улучшает читаемость при большом размере шрифта */
-  letter-spacing: 0.02em; /* Лёгкий керning для элегантности */
-  /*text-transform: uppercase;*/ /* Верхний регистр для акцента, как на Pixieset */
+  font-size: 1.8rem;
+  font-weight: 500;
+  margin-bottom: 1.5rem;
+  color: #111;
+  line-height: 1.2;
+  letter-spacing: 0.02em;
 }
 
 .hero__subtitle {
@@ -52,38 +23,8 @@ header.header {
   line-height: 1.6;
 }
 
-
-.hero__photo-text {
-  margin-top: 2rem; /* отступ сверху */
-  /*max-width: 50%;*/
-  /*padding-left: 2rem;*/
-  color: #666666; /* серый цвет для подзаголовка */
-  font-family: 'Montserrat', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-}
-
-.hero__photo-subtitle {
-  font-family: 'Montserrat', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-  font-size: 0.8rem;
-  font-weight: 100;
-  /*margin: 0 0 0.5rem 0;*/
-  color: #999999; /* чуть светлее для приглушенности */
-  text-transform: uppercase; /* Верхний регистр для акцента, как на Pixieset */
-}
-
-.hero__photo-title {
-    font-family: 'Montserrat', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    font-size: 1.8rem; /* Увеличил размер для большей выразительности */
-    font-weight: 500; /* Жирное начертание для акцента */
-    margin-bottom: 1.5rem; /* Увеличил отступ снизу для баланса */
-    color: #111; /* Тёмный цвет для контраста */
-    line-height: 1.2; /* Улучшает читаемость при большом размере шрифта */
-    letter-spacing: 0.02em; /* Лёгкий керning для элегантности */
-}
-
-
-
 .btn-try {
-  margin-top: 1.5rem; /* отступ сверху */
+  margin-top: 1.5rem;
   background-color: #1abc9c;
   color: white;
   border: none;
@@ -104,216 +45,37 @@ header.header {
   background-color: #159c85;
 }
 
-.btn-primary-alt {
-  background-color: #1abc9c;
-  color: #fff;
-  border: 1px solid transparent;
-  padding: 0.5rem 1.2rem;
-  font-size: 0.95rem;
-  font-weight: 600;
-  border-radius: 4px;
-  text-decoration: none;
-  display: inline-block;
-  transition: background-color 0.3s ease, border-color 0.3s ease;
-}
-
-.btn-primary-alt:hover {
-  background-color: #159c85;
-}
-
-/**/
-.btn-group {
-  display: flex;
-  gap: 12px;
-  margin-top: 1rem;
-  margin-bottom: 1rem;
-}
-
-.btn-tab {
-  background-color: white;
-  color: #1abc9c;
-  border: 1px solid #1abc9c;
-  padding: 0.5rem 1.2rem;
-  font-size: 0.95rem;
-  font-weight: 600;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.btn-tab.active {
-  background-color: #1abc9c;
-  color: white;
-  border: 1px solid #1abc9c;
-}
-
-.btn-tab:hover:not(.active) {
-  background-color: #e6f7f4;
-}
-
-.image-display {
-  width: 100%;
-  max-width: 1000px;
-  margin: 0 auto;
-  text-align: center;
-}
-
-.image-display img {
-  width: 100%;
-  max-height: 600px;
-  object-fit: cover;
-  border-radius: 4px;
-  transition: opacity 0.3s ease;
-}
-
-
-.blur-section {
-  background-image: url('/assets/mobile_back_bloor.jpg');
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  position: relative;
-
-  &::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.2);
-    backdrop-filter: blur(5px);
-    z-index: 0;
-  }
-
-  .content {
-    position: relative;
-    z-index: 1;
-    text-align: center;
-    color: white;
-  }
-}
-
-
-.hero-blur {
-  position: relative;
-  width: 100vw;
-  max-height: 680px;
-  background-image: url('/assets/mobile_back_bloor.jpg');
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
+.hero__photo-container {
+  margin-top: 2rem;
   overflow: hidden;
-}
-
-/* Светлый оверлей */
-.hero-blur::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background-color: rgba(255, 255, 255, 0.35); /* регулируй прозрачность для светлоты */
-  z-index: 1;
-}
-
-/* Контент поверх */
-.hero-blur-content {
-  position: relative;
-  z-index: 2;
-  color: black;
-  padding: 2rem;
-}
-
-
-.hero-section {
-  position: relative;
-  width: 100%;
-  max-height: 680px;
-  background-image: url('/assets/mobile_back_bloor.jpg');
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  overflow: hidden;
-}
-
-.overlay {
-  position: absolute;
-  inset: 0;
-  background-color: rgba(255, 255, 255, 0.4);
-  backdrop-filter: blur(4px);
-  z-index: 0;
-}
-
-.hero-content {
-  position: relative;
-  z-index: 1;
-  text-align: center;
-  padding: 4rem 1rem;
-  max-width: 1200px;
-  margin: 0 auto;
-}
-
-.subheading {
-  text-transform: uppercase;
-  font-size: 12px;
-  color: white;
-  margin-bottom: 0.5rem;
-  letter-spacing: 1px;
-}
-
-.main-heading {
-  font-size: 2.5rem;
-  color: black;
-  font-family: Georgia, serif;
-  font-weight: 400;
-  margin-bottom: 1rem;
-}
-
-.description {
-  color: white;
-  font-size: 14px;
-  max-width: 600px;
-  margin: 0 auto 2rem;
-}
-
-.hero-body {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2rem;
-}
-
-@media (min-width: 768px) {
-  .hero-body {
-    flex-direction: row;
-    justify-content: center;
-    gap: 4rem;
-  }
-}
-
-.phone-wrapper {
-  width: 200px;
   max-width: 100%;
 }
 
-.phone-image {
+.hero__photo {
   width: 100%;
-  border-radius: 1rem;
-  box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+  height: auto;
+  display: block;
+  object-fit: cover;
 }
 
-.social-links {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
+.hero__photo-text {
+  margin-top: 2rem;
+  color: #666666;
+  font-family: 'Montserrat', 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
 
-.social-btn {
-  background-color: white;
-  color: black;
-  padding: 0.5rem 1.5rem;
-  text-decoration: none;
-  border-radius: 9999px;
-  font-size: 14px;
-  transition: background-color 0.3s ease;
+.hero__photo-subtitle {
+  font-size: 0.8rem;
+  font-weight: 100;
+  color: #999999;
+  text-transform: uppercase;
 }
 
-.social-btn:hover {
-  background-color: #f0f0f0;
+.hero__photo-title {
+  font-size: 1.8rem;
+  font-weight: 500;
+  margin-bottom: 1.5rem;
+  color: #111;
+  line-height: 1.2;
+  letter-spacing: 0.02em;
 }

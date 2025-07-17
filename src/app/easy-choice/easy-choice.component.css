@@ -1,0 +1,74 @@
+.delivery-container {
+  font-family: 'Montserrat', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  display: flex;
+  flex-direction: row; /* Картинка слева, текст справа */
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+
+  @media (max-width: 768px) {
+    flex-direction: column; /* На мобильных картинка сверху, текст снизу */
+    align-items: stretch;
+  }
+}
+
+.image-section {
+  flex: 1;
+  order: 2; 
+  display: flex;
+  justify-content: flex-start;
+  padding-right: 1rem;
+}
+
+.text-section {
+  flex: 1;
+  order: 1; 
+}
+
+.image-section img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+}
+
+.small-title {
+  font-size: 0.8rem;
+  font-weight: 100;
+  color: #999999;
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+}
+
+.large-title {
+  font-size: 1.5rem;
+  font-weight: 500;
+  margin-bottom: 1rem;
+  color: #333;
+}
+
+.description {
+  font-size: 0.8rem;
+  color: #666;
+  margin-bottom: 1rem;
+}
+
+.features-list {
+  list-style: none;
+  padding: 0;
+}
+
+.features-list li {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1rem;
+  color: #333;
+  margin-bottom: 0.75rem;
+}
+
+.checkmark {
+  color: #28a745;
+  font-weight: bold;
+}

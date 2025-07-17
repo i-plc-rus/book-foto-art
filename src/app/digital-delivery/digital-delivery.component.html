@@ -1,0 +1,18 @@
+<!-- src/app/digital-delivery/digital-delivery.component.html -->
+<div class="delivery-container">
+  <div class="image-section">
+    <img src="assets/note1.jpg" alt="Digital Delivery" />
+  </div>
+  
+  <div class="text-section">
+    <h3 class="small-title">DOWNLOAD</h3>
+    <h1 class="large-title">Удобная доставка фото</h1>
+    <p class="description">Сначала были флешки, потом общие папки, но в итоге всё равно клиент хочет просто скачать файл</p>
+    <ul class="features-list">
+      <li *ngFor="let feature of features">
+        <span class="checkmark">✔</span> {{ feature }}
+      </li>
+    </ul>
+  </div>
+  
+</div>

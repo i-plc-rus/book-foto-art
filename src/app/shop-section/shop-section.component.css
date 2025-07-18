@@ -1,0 +1,136 @@
+.shop-section {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  background-color: #f4f4f5;
+  padding: 4rem 2rem;
+  font-family: 'Lato', sans-serif;
+}
+
+.shop-section__content {
+  max-width: 1200px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.shop-section__title {
+  /*font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 0.5rem;*/
+  font-size: 0.8rem;
+  font-weight: 100;
+  color: #999999;
+  text-transform: uppercase;
+}
+
+.shop-section__subtitle {
+  /*font-size: 1.25rem;
+  margin-bottom: 1rem;
+  color: #444;*/
+  font-size: 1.8rem;
+  font-weight: 500;
+  margin-bottom: 1.5rem;
+  color: #111;
+  line-height: 1.2;
+  letter-spacing: 0.02em;
+}
+
+.shop-section__description {
+  /*font-size: 1rem;
+  max-width: 700px;
+  margin: 0 auto 2rem;
+  color: #555;*/
+  /*font-size: 0.8rem;
+  font-weight: 100;
+  color: #999999;
+  text-transform: uppercase;*/
+  font-family: 'Montserrat', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-size: 0.8rem;
+  color: #666;
+  line-height: 1.6;
+}
+
+.shop-section__button {
+  /*background-color: #3b82f6;
+  color: white;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-bottom: 3rem;
+  transition: background 0.3s;*/
+  margin-top: 1.5rem;
+  background-color: #1abc9c;
+  color: white;
+  border: none;
+  padding: 0.6rem 0.6rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 2px;
+  cursor: pointer;
+  width: 250px;
+  height: 50px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s ease;
+}
+
+.shop-section__button:hover {
+  background-color: #2563eb;
+}
+
+.shop-section__features {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 2rem;
+  margin-bottom: 3rem;
+}
+
+.feature {
+  max-width: 300px;
+}
+
+.feature__title {
+  /*font-size: 1.1rem;
+  font-weight: bold;
+  margin-top: 0rem;*/
+  font-size: 1.2rem;
+  font-weight: 500;
+  margin-top: 0rem;
+  margin-bottom: 1.5rem;
+  color: #111;
+  line-height: 1.2;
+  letter-spacing: 0.02em;
+}
+
+.feature__description {
+  font-family: 'Montserrat', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-size: 0.8rem;
+  color: #666;
+  line-height: 1.6;
+}
+
+.shop-section__image {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.feature__icon {
+  width: 40px;
+  height: 40px;
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+  color: #666;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+  .shop-section__features {
+    flex-direction: column;
+    align-items: center;
+  }
+}
+

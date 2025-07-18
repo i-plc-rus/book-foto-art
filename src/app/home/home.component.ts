@@ -4,10 +4,13 @@ import { GallerySwitcherComponent } from '../gallery-switcher/gallery-switcher.c
 import { MobileBluurDemoComponent } from "../mobile-bluur-demo/mobile-bluur-demo.component";
 import { DigitalDeliveryComponent } from "../digital-delivery/digital-delivery.component";
 import { EasyChoiceComponent } from "../easy-choice/easy-choice.component";
+import { ShopSectionComponent } from "../shop-section/shop-section.component";
+import { GetStartedComponent } from "../get-started/get-started.component";
+import { FooterComponent } from "../footer/footer.component";
 
 @Component({
   selector: 'app-home',
-  imports: [HeaderComponent, GallerySwitcherComponent, MobileBluurDemoComponent, DigitalDeliveryComponent, EasyChoiceComponent],
+  imports: [HeaderComponent, GallerySwitcherComponent, MobileBluurDemoComponent, DigitalDeliveryComponent, EasyChoiceComponent, ShopSectionComponent, GetStartedComponent, FooterComponent],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css'
 })

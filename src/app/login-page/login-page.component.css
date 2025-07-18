@@ -1,0 +1,140 @@
+.login-page {
+  font-family: 'Montserrat', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  display: flex;
+  flex-direction: column;
+  min-height: 80vh;
+  padding: 2rem;
+  background-color: #fff;
+  position: relative;
+}
+
+.login-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.logo {
+  height: 48px;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: #333;
+  cursor: pointer;
+}
+
+.login-content {
+  max-width: 400px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.login-title {
+  /*font-size: 2.2rem;
+  margin-bottom: 1.5rem;
+  font-weight: 600;*/
+  font-size: 1.8rem;
+  font-weight: 500;
+  margin-bottom: 1.5rem;
+  color: #111;
+  line-height: 1.2;
+  letter-spacing: 0.02em;
+}
+
+.login-subtitle {
+  margin-top: 2rem;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.login-subtitle a {
+  font-weight: 500;
+  color: #000;
+  text-decoration: underline;
+}
+
+.social-btn {
+  width: 100%;
+  margin-bottom: 1rem;
+  padding: 0.75rem;
+  font-weight: 500;
+  border: 1px solid #ccc;
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  border-radius: 6px;
+}
+
+.yandex-logo {
+  height: 20px;
+}
+
+.login-or {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 1.5rem 0;
+  font-size: 0.85rem;
+  color: #999;
+}
+
+.login-or .line {
+  flex: 1;
+  height: 1px;
+  background-color: #ddd;
+  margin: 0 10px;
+}
+
+form input[type="email"],
+form input[type="password"] {
+  width: 100%;
+  padding: 0.75rem;
+  margin-bottom: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 1rem;
+  box-sizing: border-box;
+}
+
+.login-options {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.85rem;
+  margin-bottom: 1.5rem;
+  color: #555;
+}
+
+.submit-btn {
+  /*width: 100%;
+  padding: 0.75rem;
+  background-color: #28a745;
+  color: white;
+  font-weight: bold;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1rem;*/
+  margin-top: 1.5rem;
+  background-color: #1abc9c;
+  color: white;
+  border: none;
+  padding: 0.6rem 0.6rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 2px;
+  cursor: pointer;
+  width: 250px;
+  height: 50px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s ease;
+}

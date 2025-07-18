@@ -60,3 +60,4 @@ For more information on using the Angular CLI, including detailed command refere
 
 
 https://heroicons.com/outline
+https://www.svgrepo.com/

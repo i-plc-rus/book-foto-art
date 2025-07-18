@@ -1,0 +1,9 @@
+<svg width="220" height="60" viewBox="0 0 220 60" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    .text { font-family: Arial, sans-serif; font-weight: bold; font-size: 36px; }
+    .bookfoto { fill: #000000; }
+    .art { fill: #0066cc; }
+  </style>
+  <text x="0" y="45" class="text bookfoto">bookfoto</text>
+  <text x="155" y="45" class="text art">.art</text>
+</svg> 

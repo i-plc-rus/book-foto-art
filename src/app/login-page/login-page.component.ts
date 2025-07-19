@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule  } from '@angular/forms';
 import { AuthserviceService } from '../authservice.service';
 import { RouterModule } from '@angular/router';
-
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-login-page',
@@ -12,7 +12,7 @@ import { RouterModule } from '@angular/router';
 })
 export class LoginPageComponent implements OnInit {
   form!: FormGroup;
-  constructor(private fb: FormBuilder, private authService: AuthserviceService) {}
+  constructor(private fb: FormBuilder, private authService: AuthserviceService, private router: Router) {}
 
   ngOnInit() {
     this.form = this.fb.group({
@@ -25,7 +25,10 @@ export class LoginPageComponent implements OnInit {
  onSubmit() {
     if (this.form.valid) {
       this.authService.login(this.form.value).subscribe({
-        next: res => console.log('Login successful', res),
+        //next: res => console.log('Login successful', res),
+        next: () => {
+        this.router.navigate(['/profile']);
+      },
         error: err => alert('Login failed')
       });
     }

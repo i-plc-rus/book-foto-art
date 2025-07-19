@@ -2,7 +2,8 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { tap } from 'rxjs';
 
-const API_URL = 'http://localhost:8080/auth'; // <-- указываем URL бэкенда
+//const API_URL = 'http://localhost:8080/auth'; // <-- указываем URL бэкенда
+const API_URL = 'http://api.bookfoto.art/auth'; // <-- указываем URL бэкенда
 
 @Injectable({
   providedIn: 'root'

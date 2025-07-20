@@ -27,7 +27,11 @@ export class AuthserviceService {
       );
   }
 
-  register(data: { email: string, password: string }) {
-    return this.http.post(`${API_URL}/api/register`, data);
+  register(data: { username: string; email: string; password: string }) {
+    return this.http.post<{ token: string }>(`${API_URL}/register`, data).pipe(
+      tap(response => {
+        localStorage.setItem('auth_token', response.token);
+      })
+    );
   }
 }

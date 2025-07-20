@@ -1,31 +1,47 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule  } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { AuthserviceService } from '../authservice.service';
-import { RouterModule } from '@angular/router';
+import { Router } from '@angular/router';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-register-page',
-  imports: [ReactiveFormsModule, RouterModule,],
+  standalone: true,
+  imports: [ReactiveFormsModule, CommonModule, ],
   templateUrl: './register-page.component.html',
-  styleUrl: './register-page.component.css'
+  styleUrls: ['./register-page.component.css']
 })
 export class RegisterPageComponent implements OnInit {
-form!: FormGroup;
-  constructor(private fb: FormBuilder, private authService: AuthserviceService) {}
+  form!: FormGroup;
+  step: number = 1;
+
+  constructor(
+    private fb: FormBuilder,
+    private authService: AuthserviceService,
+    private router: Router
+  ) {}
 
   ngOnInit() {
     this.form = this.fb.group({
-      email: ['', [Validators.required, Validators.email]],
-      password: ['', Validators.required],
-      remember: [false]
+      username: ['', [Validators.required]],
+      email: ['', [Validators.required, Validators.email]],      
+      password: ['', [Validators.required]]
     });
   }
 
- onSubmit() {
+  nextStep() {
+    if (this.form.get('email')?.valid) {
+      this.step = 2;
+      this.form.get('password')?.setValidators([Validators.required, Validators.minLength(6)]);
+      this.form.get('password')?.updateValueAndValidity();
+    }
+  }
+
+  onSubmit() {
     if (this.form.valid) {
-      this.authService.login(this.form.value).subscribe({
-        next: res => console.log('Login successful', res),
-        error: err => alert('Login failed')
+      this.authService.register(this.form.value).subscribe({
+        next: () => this.router.navigate(['/profile']),
+        error: err => alert('Регистрация не удалась')
       });
     }
   }

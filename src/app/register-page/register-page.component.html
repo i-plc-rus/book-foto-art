@@ -26,12 +26,45 @@
       </div>
 
       <form [formGroup]="form" (ngSubmit)="onSubmit()">
-        <input type="email" placeholder="Email" formControlName="email" required />
 
-        <button type="submit" class="submit-btn">
+      <!-- Шаг 1 -->
+      <div *ngIf="step === 1">
+        <input
+          type="email"
+          placeholder="Email"
+          formControlName="email"
+          required
+        />
+        <button type="button" class="submit-btn" (click)="nextStep()">
           Продолжить с email
         </button>
-      </form>
+      </div>
+
+      <!-- Шаг 2 -->
+      <div *ngIf="step === 2">
+        <input
+          type="email"
+          [value]="form.get('email')?.value"
+          disabled
+        />
+        <input
+          type="username"
+          placeholder="Username"
+          formControlName="username"
+          required
+        />
+        <input
+          type="password"
+          placeholder="Пароль"
+          formControlName="password"
+          required
+        />
+        <button type="submit" class="submit-btn">
+          Создать аккаунт
+        </button>
+      </div>
+    </form>
+
 
       <p class="register-disclaimer">
         Создавая аккаунт, вы соглашаетесь с <a href="#">условиями Pixieset</a> и подтверждаете, что прочитали и поняли их.

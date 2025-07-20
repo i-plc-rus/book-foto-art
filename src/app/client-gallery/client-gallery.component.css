@@ -58,14 +58,18 @@
 }
 
 .main-content {
+  min-height: 100vh;
   padding: 2rem;
   flex-grow: 1;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
   align-items: center;
+  /* убираем центрирование по вертикали */
+  justify-content: flex-start;
 }
 
 .welcome.centered {
+  margin-top: 1rem;
   text-align: center;
   display: flex;
   flex-direction: column;
@@ -106,12 +110,18 @@
 }
 
 .promo-image {
-  margin-top: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 2rem;
 }
 
 .promo-image img {
-  max-width: 100%;
+  max-width: 50%; /* уменьшено в 2 раза */
   height: auto;
-  border-radius: 8px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.welcome img {
+  max-width: 50%; /* уменьшить в 2 раза */
+  height: auto;
 }

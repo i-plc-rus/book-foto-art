@@ -40,7 +40,7 @@ export class RegisterPageComponent implements OnInit {
   onSubmit() {
     if (this.form.valid) {
       this.authService.register(this.form.value).subscribe({
-        next: () => this.router.navigate(['/profile']),
+        next: () => this.router.navigate(['/client-gallery']),
         error: err => alert('Регистрация не удалась')
       });
     }

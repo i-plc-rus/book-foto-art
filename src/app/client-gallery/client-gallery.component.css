@@ -1,0 +1,117 @@
+.layout {
+  display: flex;
+  height: 100vh;
+  font-family: 'Inter', sans-serif;
+  background-color: #f9f9f9;
+}
+
+.sidebar {
+  width: 220px;
+  background-color: #ffffff;
+  border-right: 1px solid #e0e0e0;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+}
+
+.sidebar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.sidebar-header h2 {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.icons {
+  display: flex;
+  gap: 8px;
+}
+
+.icons .icon {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  filter: grayscale(100%); /* опционально, для однотонного стиля */
+}
+
+.menu {
+  margin-top: 40px;
+}
+
+.menu-item {
+  display: block;
+  margin-bottom: 12px;
+  color: #333;
+  text-decoration: none;
+  font-weight: 500;
+  padding: 8px 0;
+  border-left: 4px solid transparent;
+  padding-left: 12px;
+}
+
+.menu-item.active {
+  border-color: #000;
+  background-color: #f0f0f0;
+}
+
+.main-content {
+  padding: 2rem;
+  flex-grow: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.welcome.centered {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.subtitle {
+  font-size: 0.9rem;
+  color: #999;
+  margin-bottom: 0.5rem;
+}
+
+.headline {
+  font-size: 2rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  color: #111;
+}
+
+
+.welcome h1 {
+  font-size: 24px;
+  margin-bottom: 8px;
+}
+
+.welcome p {
+  margin-bottom: 20px;
+}
+
+.upload-button {
+  background-color: #000;
+  color: #fff;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.promo-image {
+  margin-top: 40px;
+}
+
+.promo-image img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}

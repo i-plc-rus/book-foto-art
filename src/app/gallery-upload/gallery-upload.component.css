@@ -17,8 +17,8 @@
 
 .sidebar-header {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+    align-items: center;
+    gap: 12px;
 }
 
 .sidebar-header h2 {
@@ -69,12 +69,24 @@
   justify-content: flex-start;
 }
 
-.welcome.centered {
-  /*margin-top: 1rem;*/
-  text-align: center;
+.welcome.centered {  
+  /*text-align: center;
+  display: flex;  
+  align-items: center;*/
+  width: 100%;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  text-align: left;           /* было center */
+  align-items: flex-start;    /* было center */
+}
+
+.welcome.full-width {
+  width: 100%;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 0; /* можно добавить отступ по желанию */
 }
 
 .subtitle {
@@ -186,4 +198,36 @@
 .file-label {
   color: #1abc9c;
   cursor: pointer;
+}
+
+.back-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  margin: 0;
+}
+
+.back-button img {
+  width: 24px;
+  height: 24px;
+}
+
+
+.collection-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  line-height: 1.2;
+}
+
+.collection-name {
+  font-weight: 600;
+  font-size: 16px;
+  color: #333;
+}
+
+.collection-date {
+  font-size: 14px;
+  color: #999;
 }

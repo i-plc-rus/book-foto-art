@@ -1,10 +1,13 @@
 <div class="layout">
   <aside class="sidebar">
     <div class="sidebar-header">
-      <button class="back-button" (click)="goBackToPreviousPage()">←</button>
-      <span class="collection-name">{{ galleryName }}</span>
-      <span class="dot">•</span>
-      <span class="collection-date">{{ galleryDate }}</span>
+      <button class="back-button" (click)="goBackToPreviousPage()">
+         <img src="assets/back-svgrepo-com.svg" alt="Назад" />
+      </button>
+      <div class="collection-info">
+        <div class="collection-name">{{ galleryName }}</div>
+        <div class="collection-date">{{ galleryDate | date:'d MMMM yy г.' }}</div>
+      </div>
     </div>
     <nav class="menu">
       <a class="menu-item active">Обложка</a>
@@ -14,8 +17,8 @@
   </aside>
 
   <main class="main-content">
-    <section class="welcome centered">
-      <h1 class="headline">Фото и видео</h1>
+    <section class="welcome full-width">
+      <h1 class="headline">Медиа файлы</h1>
 
 
       

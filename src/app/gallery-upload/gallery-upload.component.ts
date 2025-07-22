@@ -12,7 +12,7 @@ import { CommonModule } from '@angular/common';
 export class GalleryUploadComponent implements OnInit {
 
   @Input() galleryName: string = '';
-  @Input() galleryDate: string = '';
+  @Input() galleryDate: Date | undefined;
   //@Output() goBack = new EventEmitter<void>();
 
   files: File[] = [];
@@ -26,7 +26,8 @@ export class GalleryUploadComponent implements OnInit {
     const state = history.state;
     if (state && state.galleryName && state.galleryDate) {
       this.galleryName = state.galleryName;
-      this.galleryDate = state.galleryDate;
+      //this.galleryDate = state.galleryDate;
+      this.galleryDate = new Date(state.galleryDate);
     } else {
       // fallback или редирект, если пришли напрямую по ссылке
       console.warn('Нет данных из state');

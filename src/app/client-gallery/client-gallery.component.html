@@ -1,7 +1,7 @@
 <div class="layout">
   <aside class="sidebar">
     <div class="sidebar-header">
-      <h2>Фотогалереи</h2>
+      <h2>Галереи</h2>
       <div class="icons">        
         <img src="assets/question-circle-svgrepo-com.svg"  class="icon"/>
         <img src="assets/bell-alt-svgrepo-com.svg"  class="icon"/>
@@ -17,14 +17,46 @@
   </aside>
 
   <main class="main-content">
-  <section class="welcome centered">
+  <!-- Шаг 1 -->
+  <section class="welcome centered" *ngIf="currentStep === 1">
     <p class="subtitle">Начало работы</p>
-    <h1 class="headline">Создать фотогалерею за 3 шага</h1>
-    <button class="upload-button">Загрузить фото</button>
-
+    <h1 class="headline">Опубликовать свою первую галерею всего за 3 шага</h1>
+    <button class="upload-button" (click)="nextStep()">Загрузить фото</button>
     <div class="promo-image">
       <img src="assets/promo.png" alt="Promo Image" />
     </div>
   </section>
+
+  <!-- Шаг 2 -->
+  <section class="welcome centered" *ngIf="currentStep === 2">
+    <p class="subtitle">Шаг 2 из 3</p>
+    <h1 class="headline">Введите наименование коллекции</h1>
+
+    <div class="form-group">
+    <label for="galleryName">Имя коллекции</label>
+    <input
+      id="galleryName"
+      type="text"
+      placeholder="пример: Псков - Свадьба"
+      [(ngModel)]="galleryName"
+      name="galleryName"
+    />
+  </div>
+
+  <div class="form-group">
+    <label for="galleryDate">Дата события</label>
+    <input
+      id="galleryDate"
+      type="date"
+      [(ngModel)]="galleryDate"
+      name="galleryDate"
+    />  
+  </div>
+  <div class="form-group">
+    <button class="upload-button" (click)="nextStep()">Создать коллекцию</button>
+  </div>
+    
+  </section>
+
 </main>
 </div>

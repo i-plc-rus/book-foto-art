@@ -1,4 +1,5 @@
 .layout {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   display: flex;
   height: 100vh;
   font-family: 'Inter', sans-serif;
@@ -69,7 +70,7 @@
 }
 
 .welcome.centered {
-  margin-top: 1rem;
+  /*margin-top: 1rem;*/
   text-align: center;
   display: flex;
   flex-direction: column;
@@ -77,36 +78,48 @@
 }
 
 .subtitle {
-  font-size: 0.9rem;
-  color: #999;
-  margin-bottom: 0.5rem;
+
+  font-size: 0.8rem;
+  font-weight: 100;
+  color: #999999;
+
 }
 
 .headline {
-  font-size: 2rem;
-  font-weight: 600;
+  font-size: 1.8rem;
+  font-weight: 500;
   margin-bottom: 1.5rem;
   color: #111;
+  line-height: 1.2;
+  letter-spacing: 0.02em;
+  margin-top: 0px;
 }
 
 
 .welcome h1 {
   font-size: 24px;
-  margin-bottom: 8px;
+  
 }
 
-.welcome p {
-  margin-bottom: 20px;
-}
+
 
 .upload-button {
-  background-color: #000;
-  color: #fff;
-  padding: 10px 16px;
+
+  margin-top: 0px;
+  background-color: #1abc9c;
+  color: white;
   border: none;
-  border-radius: 6px;
+  padding: 0.6rem 0.6rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 2px;
   cursor: pointer;
-  font-size: 14px;
+  width: 250px;
+  height: 50px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s ease;
 }
 
 .promo-image {
@@ -124,4 +137,31 @@
 .welcome img {
   max-width: 50%; /* уменьшить в 2 раза */
   height: auto;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1rem;
+  width: 100%;
+  max-width: 400px;
+  align-items: flex-start; /* выравнивание по левому краю */
+}
+
+.form-group label {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #444;
+  margin-bottom: 1rem; /* label ближе к input */
+}
+
+.form-group input {
+
+   width: 100%;
+    padding: 0.75rem;
+    margin-bottom: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 1rem;
+    box-sizing: border-box;
 }

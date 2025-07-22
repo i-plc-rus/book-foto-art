@@ -9,11 +9,16 @@
         <div class="collection-date">{{ galleryDate | date:'d MMMM yy г.' }}</div>
       </div>
     </div>
-    <nav class="menu">
-      <a class="menu-item active">Обложка</a>
-      <a class="menu-item">таба</a>
-      <a class="menu-item">Разделы</a>
-    </nav>
+  
+    <div class="cover-image-wrapper">
+    <img class="cover-image" src="assets/cover.png" alt="Обложка" />
+  </div>
+
+    <div class="icons">        
+        <img src="assets/question-circle-svgrepo-com.svg"  class="icon"/>
+        <img src="assets/bell-alt-svgrepo-com.svg"  class="icon"/>
+        <img src="assets/profile-svgrepo-com.svg"  class="icon"/>        
+      </div>
   </aside>
 
   <main class="main-content">
@@ -24,10 +29,9 @@
       
           <div class="upload-area" (drop)="handleDrop($event)" (dragover)="$event.preventDefault()">
             <ng-container *ngIf="files.length === 0">
-              <p class="drop-text">
-                Перетащите фото или видео сюда или
-                <label for="fileInput" class="file-label">выберите на устройстве</label>
-              </p>
+              <p class="drop-text">Перетащите фото или видео сюда или</p>
+                <p class="drop-text"></p><label for="fileInput" class="file-label">Выберите на устройстве</label>
+              
               <input type="file" multiple hidden id="fileInput" (change)="handleFileSelect($event)" />
             </ng-container>
 

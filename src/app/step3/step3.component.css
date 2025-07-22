@@ -1,0 +1,47 @@
+.upload-page {
+  padding: 2rem;
+}
+
+.upload-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.meta h4 {
+  margin: 0;
+  font-size: 1.2rem;
+}
+
+.meta span {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.upload-area {
+  margin-top: 2rem;
+  border: 2px dashed #ccc;
+  border-radius: 8px;
+  padding: 60px;
+  text-align: center;
+  cursor: pointer;
+  color: #666;
+}
+
+.preview-grid {
+  margin-top: 2rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 1rem;
+}
+
+.preview-grid img {
+  width: 100%;
+  height: auto;
+  border-radius: 6px;
+  object-fit: cover;
+}
+
+.upload-actions button {
+  margin-left: 0.5rem;
+}

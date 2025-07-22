@@ -1,0 +1,12 @@
+<div class="step-container">
+  <div class="step-header">Шаг 2 из 3</div>
+
+  <h2>Введите имя и дату</h2>
+
+  <form [formGroup]="form" (ngSubmit)="onNext()" class="form-fields">
+    <input type="text" placeholder="Название галереи" formControlName="title" required />
+    <input type="date" formControlName="date" required />
+
+    <button type="submit" class="next-btn">Далее</button>
+  </form>
+</div>

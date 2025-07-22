@@ -1,6 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { GalleryUploadComponent } from "../gallery-upload/gallery-upload.component";
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-client-gallery',
@@ -8,13 +10,35 @@ import { FormsModule } from '@angular/forms';
   templateUrl: './client-gallery.component.html',
   styleUrl: './client-gallery.component.css'
 })
-export class ClientGalleryComponent {
+export class ClientGalleryComponent implements OnInit {
   currentStep = 1;
 
   galleryName = '';
   galleryDate = '';
+  
+  constructor(private router: Router) { }
+
+  ngOnInit() {
+  }
 
   nextStep() {
     this.currentStep++;
+    if (this.currentStep >= 3) {
+      this.currentStep = 3;
+      this.router.navigate(['/upload'], {
+        state: {
+          galleryName: this.galleryName,
+          galleryDate: this.galleryDate
+        }
+      });
+    }
   }
+
+  goBack() {
+    this.currentStep--;
+    if (this.currentStep<=0) {
+      this.currentStep == 0;
+    }
+  }
+
 }

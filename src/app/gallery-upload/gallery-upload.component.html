@@ -1,1 +1,47 @@
-<p>gallery-upload works!</p>
+<div class="layout">
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <button class="back-button" (click)="goBackToPreviousPage()">←</button>
+      <span class="collection-name">{{ galleryName }}</span>
+      <span class="dot">•</span>
+      <span class="collection-date">{{ galleryDate }}</span>
+    </div>
+    <nav class="menu">
+      <a class="menu-item active">Обложка</a>
+      <a class="menu-item">таба</a>
+      <a class="menu-item">Разделы</a>
+    </nav>
+  </aside>
+
+  <main class="main-content">
+    <section class="welcome centered">
+      <h1 class="headline">Фото и видео</h1>
+
+
+      
+          <div class="upload-area" (drop)="handleDrop($event)" (dragover)="$event.preventDefault()">
+            <ng-container *ngIf="files.length === 0">
+              <p class="drop-text">
+                Перетащите фото или видео сюда или
+                <label for="fileInput" class="file-label">выберите на устройстве</label>
+              </p>
+              <input type="file" multiple hidden id="fileInput" (change)="handleFileSelect($event)" />
+            </ng-container>
+
+            <div class="file-grid" *ngIf="files.length > 0">
+              <h3>Фото и видео файлы</h3>
+              <div class="file-tile" *ngFor="let file of files">
+                <img [src]="file | filePreview" />
+                <p>{{ file.name }}</p>
+              </div>
+            </div>
+          </div>
+        
+
+    </section>
+
+
+
+
+  </main>
+</div>

@@ -2,23 +2,24 @@
   <aside class="sidebar">
     <div class="sidebar-header">
       <button class="back-button" (click)="goBackToPreviousPage()">
-         <img src="assets/back-svgrepo-com.svg" alt="Назад" />
+        <img src="assets/back-svgrepo-com.svg" alt="Назад" />
       </button>
       <div class="collection-info">
         <div class="collection-name">{{ galleryName }}</div>
         <div class="collection-date">{{ galleryDate | date:'d MMMM yy г.' }}</div>
       </div>
     </div>
-  
-    <div class="cover-image-wrapper">
-    <img class="cover-image" src="assets/cover.png" alt="Обложка" />
-  </div>
 
-    <div class="icons">        
-        <img src="assets/question-circle-svgrepo-com.svg"  class="icon"/>
-        <img src="assets/bell-alt-svgrepo-com.svg"  class="icon"/>
-        <img src="assets/profile-svgrepo-com.svg"  class="icon"/>        
-      </div>
+    <div class="cover-image-wrapper">
+      <img class="cover-image" src="assets/cover.png" alt="Обложка" />
+    </div>
+
+    <div class="icons">
+      <img src="assets/question-circle-svgrepo-com.svg" class="icon" />
+      <img src="assets/bell-alt-svgrepo-com.svg" class="icon" />
+      <img src="assets/profile-svgrepo-com.svg" class="icon" />
+    </div>
+
   </aside>
 
   <main class="main-content">
@@ -26,24 +27,35 @@
       <h1 class="headline">Медиа файлы</h1>
 
 
-      
-          <div class="upload-area" (drop)="handleDrop($event)" (dragover)="$event.preventDefault()">
-            <ng-container *ngIf="files.length === 0">
-              <p class="drop-text">Перетащите фото или видео сюда или</p>
-                <p class="drop-text"></p><label for="fileInput" class="file-label">Выберите на устройстве</label>
-              
-              <input type="file" multiple hidden id="fileInput" (change)="handleFileSelect($event)" />
-            </ng-container>
 
-            <div class="file-grid" *ngIf="files.length > 0">
-              <h3>Фото и видео файлы</h3>
-              <div class="file-tile" *ngFor="let file of files">
-                <img [src]="file | filePreview" />
-                <p>{{ file.name }}</p>
+      <div class="upload-area" (drop)="handleDrop($event)" (dragover)="$event.preventDefault()">
+        <!-- Пустое состояние -->
+        <ng-container *ngIf="files.length === 0">
+          <div class="empty-state">
+            <p class="drop-text">Перетащите медиафайлы сюда или</p>
+            <label for="fileInput" class="file-label">выберите на устройстве</label>
+            <input type="file" multiple hidden id="fileInput" (change)="handleFileSelect($event)" />
+          </div>
+        </ng-container>
+
+        <!-- Список файлов -->
+        <ng-container *ngIf="files.length > 0">
+          <h3 class="media-header">Медиа файлы</h3>
+          <div class="file-grid">
+            <div class="file-tile" *ngFor="let file of files">
+              <img [src]="file.previewUrl" />
+              <p>{{ file.file.name }}</p>
+
+              <div class="progress-container">
+                <div class="progress-bar" [style.width.%]="file.progress"></div>
               </div>
+              <span class="progress-text">{{ file.progress }}%</span>
             </div>
           </div>
-        
+        </ng-container>
+      </div>
+
+
 
     </section>
 

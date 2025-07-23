@@ -170,6 +170,7 @@
 .file-label {
   color: #1abc9c;
   cursor: pointer;
+  text-decoration: underline;
 }
 
 .back-button {
@@ -224,4 +225,38 @@
   margin-top: 20px;
   margin-bottom: 0px;
 
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  text-align: center;
+}
+
+.media-header {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  text-align: left;
+}
+
+.file-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: flex-start;
+}
+
+.file-tile {
+  width: 120px;
+  text-align: center;
+}
+
+.file-tile img {
+  width: 100%;
+  height: auto;
+  border-radius: 4px;
 }

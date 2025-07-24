@@ -1,3 +1,4 @@
+<!-- gallery-upload.component.html -->
 <div class="layout">
   <aside class="sidebar">
     <div class="sidebar-header">
@@ -5,8 +6,8 @@
         <img src="assets/back-svgrepo-com.svg" alt="Назад" />
       </button>
       <div class="collection-info">
-        <div class="collection-name">{{ galleryName }}</div>
-        <div class="collection-date">{{ galleryDate | date:'d MMMM yy г.' }}</div>
+        <div class="collection-name">{{ galleryName() }}</div>
+        <div class="collection-date">{{ galleryDate() | date:'d MMMM yy г.' }}</div>
       </div>
     </div>
 
@@ -15,52 +16,83 @@
     </div>
 
     <div class="icons">
-      <img src="assets/question-circle-svgrepo-com.svg" class="icon" />
-      <img src="assets/bell-alt-svgrepo-com.svg" class="icon" />
-      <img src="assets/profile-svgrepo-com.svg" class="icon" />
+      <img src="assets/question-circle-svgrepo-com.svg" class="icon"  alt=""/>
+      <img src="assets/bell-alt-svgrepo-com.svg" class="icon"  alt=""/>
+      <img src="assets/profile-svgrepo-com.svg" class="icon"  alt=""/>
     </div>
-
   </aside>
 
   <main class="main-content">
     <section class="welcome full-width">
       <h1 class="headline">Медиа файлы</h1>
 
-
-
-      <div class="upload-area" (drop)="handleDrop($event)" (dragover)="$event.preventDefault()">
-        <!-- Пустое состояние -->
-        <ng-container *ngIf="files.length === 0">
+      <div
+        class="upload-area"
+        [ngClass]="{ 'centered': files().length === 0 }"
+        (drop)="handleDrop($event)"
+        (dragover)="$event.preventDefault()">
+        @if (files().length === 0) {
           <div class="empty-state">
             <p class="drop-text">Перетащите медиафайлы сюда или</p>
             <label for="fileInput" class="file-label">выберите на устройстве</label>
             <input type="file" multiple hidden id="fileInput" (change)="handleFileSelect($event)" />
           </div>
-        </ng-container>
-
-        <!-- Список файлов -->
-        <ng-container *ngIf="files.length > 0">
-          <h3 class="media-header">Медиа файлы</h3>
+        } @else {
           <div class="file-grid">
-            <div class="file-tile" *ngFor="let file of files">
-              <img [src]="file.previewUrl" />
-              <p>{{ file.file.name }}</p>
+            @for (file of files(); track file.id) {
+              <div class="file-tile">
+                <div class="media-container">
+                  @if (!file.loaded) {
+                    <div class="skeleton-loader"></div>
+                  }
 
-              <div class="progress-container">
-                <div class="progress-bar" [style.width.%]="file.progress"></div>
+                  <div class="media-content">
+                    <img [src]="file.previewUrl" [alt]="file.file.name" [class.hidden]="!file.loaded" />
+
+                    @if (!file.loaded) {
+                      <div class="loader-overlay">
+                        <div class="circular-loader">
+                          <svg class="circular" viewBox="0 0 50 50">
+                            <circle class="path" cx="25" cy="25" r="20" fill="none" stroke-width="5"></circle>
+                          </svg>
+                        </div>
+                        <div class="percentage">Progressing</div>
+                      </div>
+                    }
+                  </div>
+                </div>
               </div>
-              <span class="progress-text">{{ file.progress }}%</span>
-            </div>
+            }
           </div>
-        </ng-container>
+        }
       </div>
 
-
-
+      @if (files().length > 0 && !allFilesUploaded() && showStatus()) {
+        <div class="upload-status">
+          <div class="upload-info">
+            <div class="upload-header">
+              <div class="upload-text">
+                Uploading {{ uploadedFiles() }} of {{ totalFiles() }} items
+              </div>
+              <button class="close-button" (click)="closeStatus()">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M13 1L1 13M1 1L13 13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </button>
+            </div>
+            <div class="upload-stats">
+              {{ formatBytes(uploadedSize()) }} / {{ formatBytes(totalSize()) }} •
+              {{ formatBytes(uploadSpeed()) }}/s
+            </div>
+          </div>
+          <div class="progress-container">
+            <div
+              class="progress-bar"
+              [style.width.%]="(uploadedSize() / totalSize()) * 100">
+            </div>
+          </div>
+        </div>
+      }
     </section>
-
-
-
-
   </main>
 </div>

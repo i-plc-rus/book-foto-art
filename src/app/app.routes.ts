@@ -12,10 +12,10 @@ export const routes: Routes = [
      { path: 'login', component: LoginPageComponent },
      { path: 'register', component: RegisterPageComponent },
      { path: 'client-gallery', component: ClientGalleryComponent,
-          canActivate: [AuthGuard]  
+          canActivate: [AuthGuard]
       },
      { path: 'upload', component: GalleryUploadComponent,
-          canActivate: [AuthGuard]  
+          canActivate: [AuthGuard]
       },
      {
      path: 'profile',

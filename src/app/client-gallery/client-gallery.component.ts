@@ -1,13 +1,13 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { GalleryUploadComponent } from "../gallery-upload/gallery-upload.component";
 import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-client-gallery',
   imports: [CommonModule, FormsModule],
   templateUrl: './client-gallery.component.html',
+  standalone: true,
   styleUrl: './client-gallery.component.css'
 })
 export class ClientGalleryComponent implements OnInit {
@@ -15,7 +15,7 @@ export class ClientGalleryComponent implements OnInit {
 
   galleryName = '';
   galleryDate = '';
-  
+
   constructor(private router: Router) { }
 
   ngOnInit() {

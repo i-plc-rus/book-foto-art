@@ -1,4 +1,3 @@
-<!-- gallery-upload.component.html -->
 <div class="layout">
   <aside class="sidebar">
     <div class="sidebar-header">
@@ -10,35 +9,53 @@
         <div class="collection-date">{{ galleryDate() | date:'d MMMM yy г.' }}</div>
       </div>
     </div>
-
     <div class="cover-image-wrapper">
       <img class="cover-image" src="assets/cover.png" alt="Обложка" />
     </div>
-
     <div class="icons">
-      <img src="assets/question-circle-svgrepo-com.svg" class="icon"  alt=""/>
-      <img src="assets/bell-alt-svgrepo-com.svg" class="icon"  alt=""/>
-      <img src="assets/profile-svgrepo-com.svg" class="icon"  alt=""/>
+      <img src="assets/question-circle-svgrepo-com.svg" class="icon" alt=""/>
+      <img src="assets/bell-alt-svgrepo-com.svg" class="icon" alt=""/>
+      <img src="assets/profile-svgrepo-com.svg" class="icon" alt=""/>
     </div>
   </aside>
 
   <main class="main-content">
     <section class="welcome full-width">
-      <h1 class="headline">Медиа файлы</h1>
+      <div class="w-full py-3 flex items-center justify-between">
+        <h1 class="headline">Медиа файлы</h1>
+        <div class="flex justify-end gap-2">
+          <app-sort-menu (sortChange)="onSortChange($event)"></app-sort-menu>
+          <app-grid-settings
+            (gridSizeChange)="onGridSizeChange($event)"
+            (showFilenameChange)="onShowFilenameChange($event)">
+          </app-grid-settings>
+        </div>
+      </div>
 
       <div
         class="upload-area"
-        [ngClass]="{ 'centered': files().length === 0 }"
+        [class.centered]="files().length === 0"
         (drop)="handleDrop($event)"
         (dragover)="$event.preventDefault()">
+
         @if (files().length === 0) {
           <div class="empty-state">
             <p class="drop-text">Перетащите медиафайлы сюда или</p>
             <label for="fileInput" class="file-label">выберите на устройстве</label>
-            <input type="file" multiple hidden id="fileInput" (change)="handleFileSelect($event)" />
+            <input
+              type="file"
+              multiple
+              hidden
+              id="fileInput"
+              (change)="handleFileSelect($event)"
+            />
           </div>
         } @else {
-          <div class="file-grid">
+          <div
+            class="file-grid"
+            [class.grid-small]="gridSize() === 'small'"
+            [class.grid-large]="gridSize() === 'large'">
+
             @for (file of files(); track file.id) {
               <div class="file-tile">
                 <div class="media-container">
@@ -47,7 +64,15 @@
                   }
 
                   <div class="media-content">
-                    <img [src]="file.previewUrl" [alt]="file.file.name" [class.hidden]="!file.loaded" />
+                    <img
+                      [src]="file.previewUrl"
+                      [alt]="file.file.name"
+                      [class.hidden]="!file.loaded"
+                    />
+
+                    @if (showFilename()) {
+                      <p class="filename">{{ file.file.name }}</p>
+                    }
 
                     @if (!file.loaded) {
                       <div class="loader-overlay">
@@ -67,12 +92,12 @@
         }
       </div>
 
-      @if (files().length > 0 && !allFilesUploaded() && showStatus()) {
+      @if (files().length > 0 && !uploadStats.allFilesUploaded() && showStatus()) {
         <div class="upload-status">
           <div class="upload-info">
             <div class="upload-header">
               <div class="upload-text">
-                Uploading {{ uploadedFiles() }} of {{ totalFiles() }} items
+                Uploading {{ uploadStats.uploadedFiles() }} of {{ uploadStats.totalFiles() }} items
               </div>
               <button class="close-button" (click)="closeStatus()">
                 <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -81,14 +106,15 @@
               </button>
             </div>
             <div class="upload-stats">
-              {{ formatBytes(uploadedSize()) }} / {{ formatBytes(totalSize()) }} •
-              {{ formatBytes(uploadSpeed()) }}/s
+              {{ uploadStats.formatBytes(uploadStats.uploadedSize()) }} /
+              {{ uploadStats.formatBytes(uploadStats.totalSize()) }} •
+              {{ uploadStats.formatBytes(uploadStats.uploadSpeed()) }}/s
             </div>
           </div>
           <div class="progress-container">
             <div
               class="progress-bar"
-              [style.width.%]="(uploadedSize() / totalSize()) * 100">
+              [style.width.%]="(uploadStats.uploadedSize() / uploadStats.totalSize()) * 100">
             </div>
           </div>
         </div>

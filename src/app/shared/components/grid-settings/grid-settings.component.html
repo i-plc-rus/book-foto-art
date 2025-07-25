@@ -1,0 +1,55 @@
+<div class="relative inline-block text-left">
+  <button
+    (click)="toggleMenu()"
+    class="flex items-center justify-center p-2 hover:bg-gray-200 transition-colors"
+    #menuButton
+  >
+    <img src="assets/icons/net-grid.svg" alt="Grid" class="w-5 h-5" />
+  </button>
+
+  @if (isOpen()) {
+    <div
+      class="absolute right-0 z-50 mt-2 w-64 bg-white shadow-lg ring-black ring-opacity-5 focus:outline-none"
+      #menuPanel
+    >
+      <div class="py-1">
+        <h3 class="text-xs px-5 py-2 font-semibold tracking-wider text-gray-500">Grid Size</h3>
+
+        @for (size of gridSizes; track size.value) {
+          <button
+            (click)="setGridSize(size.value)"
+            class="flex w-full items-center justify-between px-5 py-3 text-sm hover:bg-gray-100"
+            [class.font-medium]="gridSize() === size.value"
+          >
+            <span>{{ size.label }}</span>
+            @if (gridSize() === size.value) {
+              <span>✓</span>
+            }
+          </button>
+        }
+      </div>
+
+      <!-- Divider -->
+      <div class="border-t border-gray-200"></div>
+
+      <!-- Show Section -->
+      <div class="py-1">
+        <h3 class="text-xs px-5 py-2 font-semibold tracking-wider text-gray-500">Show</h3>
+        <div class="flex items-center justify-between px-5 py-2 text-sm hover:bg-gray-100">
+          <span>Filename</span>
+          <label class="relative inline-flex cursor-pointer items-center">
+            <input
+              type="checkbox"
+              class="peer sr-only"
+              [checked]="showFilename()"
+              (change)="toggleFilename()"
+            />
+            <div
+              class="peer h-5 w-9 rounded-full bg-gray-300 after:absolute after:start-[2px] after:top-[2px] after:h-4 after:w-4 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all peer-checked:bg-blue-500 peer-checked:after:translate-x-4"
+            ></div>
+          </label>
+        </div>
+      </div>
+    </div>
+  }
+</div>

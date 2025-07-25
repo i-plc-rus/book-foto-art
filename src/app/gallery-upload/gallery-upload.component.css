@@ -1,4 +1,11 @@
 
+.file-grid.grid-small {
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+}
+.file-grid.grid-large {
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+}
+
 .upload-status {
   width: 400px;
   position: fixed;
@@ -166,7 +173,6 @@
 .headline {
   font-size: 1rem;
   font-weight: 200;
-  margin-bottom: 1.5rem;
   color: #111;
   line-height: 1.2;
   letter-spacing: 0.02em;
@@ -399,7 +405,11 @@
 }
 
 .filename {
+  position: absolute;
+  bottom: 0;
   padding: 8px;
+  background: white;
+  width: 100%;
   margin: 0;
   font-size: 0.8rem;
   text-align: center;

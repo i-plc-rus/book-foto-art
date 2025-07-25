@@ -1,36 +1,79 @@
-import { Component, inject, signal } from '@angular/core';
+import {Component, effect, inject, OnDestroy, signal} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Location } from '@angular/common';
-import { UploadStatsService } from '../core/service/upload-stats.service';
-import { IUploadFile } from './interface/upload-file';
+import { SortMenuComponent } from '../shared/components/sort-menu/sort-menu.component';
+import { GridSettingsComponent } from '../shared/components/grid-settings/grid-settings.component';
+
+interface UploadFile {
+  id: string;
+  file: File;
+  progress: number;
+  previewUrl: string;
+  loaded: boolean;
+}
 
 @Component({
   standalone: true,
   selector: 'app-gallery-upload',
   templateUrl: './gallery-upload.component.html',
-  styleUrl: './gallery-upload.component.css',
-  imports: [CommonModule]
+  styleUrls: ['./gallery-upload.component.css'],
+  imports: [CommonModule, SortMenuComponent, GridSettingsComponent]
 })
-export class GalleryUploadComponent  {
-  galleryName = signal('Моя галерея');
-  galleryDate = signal(new Date());
-  files = signal<IUploadFile[]>([]);
-  showStatus = signal(true);
+export class GalleryUploadComponent implements OnDestroy{
+  private readonly location = inject(Location);
+  readonly galleryName = signal('Моя галерея');
+  readonly galleryDate = signal(new Date());
+  readonly files = signal<UploadFile[]>([]);
+  readonly showStatus = signal(true);
+  readonly sortType = signal('uploaded_new');
+  readonly gridSize = signal<'small' | 'large'>('small');
+  readonly showFilename = signal(false);
 
-  private location = inject(Location);
-  private uploadStats = inject(UploadStatsService);
+  readonly uploadStats = {
+    totalFiles: signal(0),
+    uploadedFiles: signal(0),
+    totalSize: signal(0),
+    uploadedSize: signal(0),
+    uploadSpeed: signal(0),
+    allFilesUploaded: signal(false),
+    startTime: signal(0),
 
-  get totalFiles() { return this.uploadStats.totalFiles; }
-  get uploadedFiles() { return this.uploadStats.uploadedFiles; }
-  get totalSize() { return this.uploadStats.totalSize; }
-  get uploadedSize() { return this.uploadStats.uploadedSize; }
-  get uploadSpeed() { return this.uploadStats.uploadSpeed; }
-  get allFilesUploaded() { return this.uploadStats.allFilesUploaded; }
+    formatBytes(bytes: number, decimals = 2): string {
+      if (bytes === 0) return '0 Bytes';
+      const k = 1024;
+      const dm = decimals < 0 ? 0 : decimals;
+      const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+      const i = Math.floor(Math.log(bytes) / Math.log(k));
+      return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+    }
+  };
 
-  formatBytes = this.uploadStats.formatBytes.bind(this.uploadStats);
+  private uploadTimers: { [key: string]: any } = {};
+
+  constructor() {
+    effect(() => {
+      this.applySort(this.sortType());
+    }, { allowSignalWrites: true });
+  }
+
+  onSortChange(sort: string) {
+    this.sortType.set(sort);
+  }
+
+  onGridSizeChange(size: 'small' | 'large') {
+    this.gridSize.set(size);
+  }
+
+  onShowFilenameChange(value: boolean) {
+    this.showFilename.set(value);
+  }
 
   closeStatus() {
     this.showStatus.set(false);
+  }
+
+  goBackToPreviousPage() {
+    this.location.back();
   }
 
   handleFileSelect(event: Event) {
@@ -42,46 +85,53 @@ export class GalleryUploadComponent  {
 
   handleDrop(event: DragEvent) {
     event.preventDefault();
-    if (!event.dataTransfer?.files.length) return;
-    this.processFiles([...event.dataTransfer.files]);
+    if (event.dataTransfer?.files.length) {
+      this.processFiles([...event.dataTransfer.files]);
+    }
   }
 
-  simulateUpload(fileIds?: string[]) {
-    const idsToUpload = fileIds ?? this.files().filter(f => !f.loaded).map(f => f.id);
-    let index = 0;
+  private async processFiles(files: File[]) {
+    if (files.length === 0) return;
 
-    const uploadNext = () => {
-      if (index >= idsToUpload.length) return;
+    this.showStatus.set(true);
+    const newFiles: UploadFile[] = [];
+    const existingHashes = await this.getExistingHashes();
 
-      const currentFileId = idsToUpload[index];
-      let progress = 0;
+    for (const file of files) {
+      const hash = await this.getFileHash(file);
 
-      const interval = setInterval(() => {
-        progress += 5;
+      if (!existingHashes.has(hash)) {
+        newFiles.push(this.createUploadFile(file));
+        existingHashes.add(hash);
+      }
+    }
 
-        this.files.update(prev =>
-          prev.map(f =>
-            f.id === currentFileId
-              ? { ...f, progress, loaded: progress >= 100 }
-              : f
-          )
-        );
+    if (newFiles.length === 0) return;
 
-        this.uploadStats.files.set(this.files());
+    this.files.update(prev => [...prev, ...newFiles]);
+    this.updateUploadStats();
+    this.simulateUpload(newFiles.map(f => f.id));
+  }
 
-        if (progress >= 100) {
-          clearInterval(interval);
-          index++;
-          uploadNext();
-        }
-      }, 150);
+  private createUploadFile(file: File): UploadFile {
+    return {
+      file,
+      progress: 0,
+      previewUrl: URL.createObjectURL(file),
+      id: Math.random().toString(36).substring(2),
+      loaded: false
     };
-
-    uploadNext();
   }
 
-  goBackToPreviousPage() {
-    this.location.back();
+  private async getExistingHashes(): Promise<Set<string>> {
+    const hashes = new Set<string>();
+    const files = this.files();
+
+    for (const file of files) {
+      hashes.add(await this.getFileHash(file.file));
+    }
+
+    return hashes;
   }
 
   private async getFileHash(file: File): Promise<string> {
@@ -91,44 +141,86 @@ export class GalleryUploadComponent  {
     return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
   }
 
-  private async processFiles(files: File[]) {
-    this.showStatus.set(true);
-    const existing = this.files();
-    const hashes = new Map<string, File>();
+  private updateUploadStats() {
+    const files = this.files();
+    this.uploadStats.totalFiles.set(files.length);
+    this.uploadStats.uploadedFiles.set(files.filter(f => f.loaded).length);
 
-    for (const file of files) {
-      const hash = await this.getFileHash(file);
-      hashes.set(hash, file);
-    }
+    const totalSize = files.reduce((sum, f) => sum + f.file.size, 0);
+    const uploadedSize = files.reduce((sum, f) => sum + (f.file.size * f.progress / 100), 0);
 
-    const existingHashes = new Set<string>();
-    for (const f of existing) {
-      const hash = await this.getFileHash(f.file);
-      existingHashes.add(hash);
-    }
+    this.uploadStats.totalSize.set(totalSize);
+    this.uploadStats.uploadedSize.set(uploadedSize);
 
-    const filtered: File[] = [];
-    for (const [hash, file] of hashes.entries()) {
-      if (!existingHashes.has(hash)) {
-        filtered.push(file);
-      }
-    }
+    const elapsed = (Date.now() - this.uploadStats.startTime()) / 1000;
+    this.uploadStats.uploadSpeed.set(elapsed > 0 ? uploadedSize / elapsed : 0);
 
-    if (filtered.length === 0) return;
+    this.uploadStats.allFilesUploaded.set(
+      files.length > 0 && files.every(f => f.loaded)
+    );
+  }
 
-    const newFiles: IUploadFile[] = filtered.map(file => ({
-      file,
-      progress: 0,
-      previewUrl: URL.createObjectURL(file),
-      id: Math.random().toString(36).substring(2),
-      loaded: false
-    }));
-
-    this.files.update(prev => [...prev, ...newFiles]);
-
-    this.uploadStats.files.set(this.files());
+  private simulateUpload(fileIds: string[]) {
     this.uploadStats.startTime.set(Date.now());
+    let index = 0;
 
-    this.simulateUpload(newFiles.map(f => f.id));
+    const uploadNext = () => {
+      if (index >= fileIds.length) return;
+
+      const fileId = fileIds[index];
+      let progress = 0;
+
+      this.uploadTimers[fileId] = setInterval(() => {
+        progress += 5;
+
+        this.files.update(prev =>
+          prev.map(f =>
+            f.id === fileId ? { ...f, progress, loaded: progress >= 100 } : f
+          )
+        );
+
+        this.updateUploadStats();
+
+        if (progress >= 100) {
+          clearInterval(this.uploadTimers[fileId]);
+          delete this.uploadTimers[fileId];
+          index++;
+          uploadNext();
+        }
+      }, 150);
+    };
+
+    uploadNext();
+  }
+
+  private applySort(sortType: string) {
+    this.files.update(prev => {
+      const sorted = [...prev];
+
+      switch (sortType) {
+        case 'uploaded_new':
+          return sorted.sort((a, b) => b.file.lastModified - a.file.lastModified);
+        case 'uploaded_old':
+          return sorted.sort((a, b) => a.file.lastModified - b.file.lastModified);
+        case 'az':
+          return sorted.sort((a, b) => a.file.name.localeCompare(b.file.name));
+        case 'za':
+          return sorted.sort((a, b) => b.file.name.localeCompare(a.file.name));
+        case 'random':
+          return sorted.sort(() => Math.random() - 0.5);
+        default:
+          return sorted;
+      }
+    });
+  }
+
+  ngOnDestroy() {
+    for (const timer of Object.values(this.uploadTimers)) {
+      clearInterval(timer);
+    }
+
+    this.files().forEach(file => {
+      URL.revokeObjectURL(file.previewUrl);
+    });
   }
 }

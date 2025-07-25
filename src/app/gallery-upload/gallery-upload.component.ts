@@ -1,8 +1,9 @@
-import {Component, effect, inject, OnDestroy, signal} from '@angular/core';
+import { Component, effect, inject, OnDestroy, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Location } from '@angular/common';
 import { SortMenuComponent } from '../shared/components/sort-menu/sort-menu.component';
 import { GridSettingsComponent } from '../shared/components/grid-settings/grid-settings.component';
+import {UploadModalComponent} from '../shared/modal/upload-modal/upload-modal.component';
 
 interface UploadFile {
   id: string;
@@ -17,9 +18,14 @@ interface UploadFile {
   selector: 'app-gallery-upload',
   templateUrl: './gallery-upload.component.html',
   styleUrls: ['./gallery-upload.component.css'],
-  imports: [CommonModule, SortMenuComponent, GridSettingsComponent]
+  imports: [
+    CommonModule,
+    SortMenuComponent,
+    GridSettingsComponent,
+    UploadModalComponent
+  ]
 })
-export class GalleryUploadComponent implements OnDestroy{
+export class GalleryUploadComponent implements OnDestroy {
   private readonly location = inject(Location);
   readonly galleryName = signal('Моя галерея');
   readonly galleryDate = signal(new Date());
@@ -28,6 +34,7 @@ export class GalleryUploadComponent implements OnDestroy{
   readonly sortType = signal('uploaded_new');
   readonly gridSize = signal<'small' | 'large'>('small');
   readonly showFilename = signal(false);
+  readonly showUploadModal = signal(false);
 
   readonly uploadStats = {
     totalFiles: signal(0),
@@ -54,6 +61,11 @@ export class GalleryUploadComponent implements OnDestroy{
     effect(() => {
       this.applySort(this.sortType());
     }, { allowSignalWrites: true });
+  }
+
+  onModalFileSelected(files: File[]) {
+    this.processFiles(files);
+    this.showUploadModal.set(false);
   }
 
   onSortChange(sort: string) {

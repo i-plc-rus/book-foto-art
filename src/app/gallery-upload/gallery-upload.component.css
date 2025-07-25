@@ -417,3 +417,13 @@
   white-space: nowrap;
   overflow: hidden;
 }
+
+.relative::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 25%;
+  height: 49%;
+  width: 1px;
+  background-color: #b0b0b0;
+}

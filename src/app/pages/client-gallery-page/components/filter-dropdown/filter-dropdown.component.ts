@@ -26,14 +26,13 @@ export class FilterDropdownComponent implements OnInit, OnDestroy {
   readonly selected: WritableSignal<string[]> = signal([]);
 
   private readonly elementRef = inject(ElementRef);
-  private clickHandler = this.handleOutsideClick.bind(this);
 
-  private handleOutsideClick(event: MouseEvent) {
+  private handleOutsideClick = (event: MouseEvent) => {
     const target = event.target as HTMLElement;
     if (!this.elementRef.nativeElement.contains(target)) {
       this.isOpen.set(false);
     }
-  }
+  };
 
   readonly summary = computed(() => {
     const selected = this.selected();
@@ -45,11 +44,11 @@ export class FilterDropdownComponent implements OnInit, OnDestroy {
   });
 
   ngOnInit() {
-    document.addEventListener('click', this.clickHandler);
+    document.addEventListener('click', this.handleOutsideClick);
   }
 
   ngOnDestroy() {
-    document.removeEventListener('click', this.clickHandler);
+    document.removeEventListener('click', this.handleOutsideClick);
   }
 
   toggle() {

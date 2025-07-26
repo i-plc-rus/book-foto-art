@@ -14,9 +14,9 @@ export const routes: Routes = [
   {
     path: 'client-gallery',
     loadComponent: () =>
-      import('./pages/client-gallery/client-gallery.component').then(
-        (m) => m.ClientGalleryComponent
-      ),
+      import(
+        './pages/client-gallery-page/client-gallery/client-gallery.component'
+      ).then((m) => m.ClientGalleryComponent),
     canActivate: [AuthGuard],
   },
 

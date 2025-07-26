@@ -18,7 +18,8 @@
 
   <main class="main-content">
     <!-- Шаг 1 -->
-    <section class="welcome centered" *ngIf="currentStep === 1">
+    @if(currentStep() === 1){
+    <section class="welcome centered">
       <p class="subtitle">Начало работы</p>
       <h1 class="headline">Опубликовать свою первую галерею всего за 3 шага</h1>
       <button class="upload-button" (click)="nextStep()">Загрузить фото</button>
@@ -26,9 +27,9 @@
         <img src="assets/promo.png" alt="Promo Image" />
       </div>
     </section>
-
+    }@else {
     <!-- Шаг 2 -->
-    <section class="welcome centered" *ngIf="currentStep === 2">
+    <section class="welcome centered">
       <p class="subtitle">Шаг 2 из 3</p>
       <h1 class="headline">Введите наименование коллекции</h1>
 
@@ -58,12 +59,6 @@
         </button>
       </div>
     </section>
-    <!-- <section *ngIf="currentStep === 3" class="step-three-upload">
-      <app-gallery-upload
-        [galleryName]="galleryName"
-        [galleryDate]="galleryDate"
-        (goBack)="goBack()"
-      ></app-gallery-upload>
-    </section> -->
+    }
   </main>
 </div>

@@ -15,6 +15,13 @@
   </button>
 
   @if (isOpen()) {
-  <div class="filter-dropdown__menu"></div>
+  <div class="">
+    <ngx-daterangepicker-material
+      [locale]="locale"
+      [autoApply]="true"
+      (choosedDate)="choosedDate($event)"
+    >
+    </ngx-daterangepicker-material>
+  </div>
   }
 </div>

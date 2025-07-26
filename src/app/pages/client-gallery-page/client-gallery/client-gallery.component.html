@@ -19,7 +19,10 @@
   <main class="main-content">
     <div class="collection-top">
       <app-collection-header />
-      <app-filter-dropdown [config]="STATUS" />
+      <div class="collection-top__filter">
+        <app-filter-dropdown [config]="STATUS" />
+        <app-filter-date [config]="EVENT_DATE" />
+      </div>
     </div>
 
     <!-- Шаг 1 -->

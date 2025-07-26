@@ -162,3 +162,8 @@
   flex-direction: column;
   gap: 1rem;
 }
+
+.collection-top__filter {
+  display: flex;
+  gap: 1rem;
+}

@@ -4,11 +4,17 @@ import { Router } from '@angular/router';
 import { CollectionHeaderComponent } from '../components/collection-header/collection-header.component';
 import { FilterDropdownComponent } from '../components/filter-dropdown/filter-dropdown.component';
 import { EVENT_DATE, STATUS } from '../models/filter.model';
+import { FilterDateComponent } from '../components/filter-date/filter-date.component';
 
 @Component({
   selector: 'app-client-gallery',
   standalone: true,
-  imports: [FormsModule, CollectionHeaderComponent, FilterDropdownComponent],
+  imports: [
+    FormsModule,
+    CollectionHeaderComponent,
+    FilterDropdownComponent,
+    FilterDateComponent,
+  ],
   templateUrl: './client-gallery.component.html',
   styleUrls: ['./client-gallery.component.css'],
 })

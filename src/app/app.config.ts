@@ -1,6 +1,7 @@
 import {
   ApplicationConfig,
   importProvidersFrom,
+  LOCALE_ID,
   provideZoneChangeDetection,
 } from '@angular/core';
 import { provideRouter } from '@angular/router';
@@ -30,5 +31,6 @@ export const appConfig: ApplicationConfig = {
         format: 'DD.MM.YYYY',
       })
     ),
+    { provide: LOCALE_ID, useValue: 'ru' },
   ],
 };

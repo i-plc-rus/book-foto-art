@@ -18,7 +18,7 @@
 
   <main class="main-content">
     <div class="collection-top">
-      <app-collection-header />
+      <app-collection-header (newCollection)="handleNewCollection()" />
       <div class="collection-top__filter">
         <app-filter-dropdown [config]="STATUS" />
         <app-filter-date [config]="EVENT_DATE" />

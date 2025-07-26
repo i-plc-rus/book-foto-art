@@ -47,4 +47,8 @@ export class ClientGalleryComponent {
   goBack() {
     this.currentStep.update((step) => Math.max(1, step - 1));
   }
+
+  handleNewCollection(): void {
+    this.currentStep.set(2);
+  }
 }

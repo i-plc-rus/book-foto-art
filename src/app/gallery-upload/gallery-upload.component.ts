@@ -3,7 +3,9 @@ import { CommonModule } from '@angular/common';
 import { Location } from '@angular/common';
 import { SortMenuComponent } from '../shared/components/sort-menu/sort-menu.component';
 import { GridSettingsComponent } from '../shared/components/grid-settings/grid-settings.component';
-import {UploadModalComponent} from '../shared/modal/upload-modal/upload-modal.component';
+import { UploadModalComponent } from '../shared/modal/upload-modal/upload-modal.component';
+import { Router } from '@angular/router';
+import { ISavedGallery, GALLERY_STORAGE_KEY } from './interface/upload-file';
 
 interface UploadFile {
   id: string;
@@ -22,11 +24,13 @@ interface UploadFile {
     CommonModule,
     SortMenuComponent,
     GridSettingsComponent,
-    UploadModalComponent
-  ]
+    UploadModalComponent,
+  ],
 })
 export class GalleryUploadComponent implements OnDestroy {
   private readonly location = inject(Location);
+  private readonly router = inject(Router);
+
   readonly galleryName = signal('Моя галерея');
   readonly galleryDate = signal(new Date());
   readonly files = signal<UploadFile[]>([]);
@@ -52,15 +56,34 @@ export class GalleryUploadComponent implements OnDestroy {
       const sizes = ['Bytes', 'KB', 'MB', 'GB'];
       const i = Math.floor(Math.log(bytes) / Math.log(k));
       return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
-    }
+    },
   };
 
   private uploadTimers: { [key: string]: any } = {};
 
   constructor() {
-    effect(() => {
-      this.applySort(this.sortType());
-    }, { allowSignalWrites: true });
+    const nav = this.router.getCurrentNavigation();
+    const state = nav?.extras?.state as {
+      galleryName?: string;
+      galleryDate?: string;
+    };
+
+    if (state?.galleryName) {
+      this.galleryName.set(state.galleryName);
+    }
+
+    if (state?.galleryDate) {
+      this.galleryDate.set(new Date(state.galleryDate));
+    }
+
+    this.saveGalleryToLocalStorage();
+
+    effect(
+      () => {
+        this.applySort(this.sortType());
+      },
+      { allowSignalWrites: true }
+    );
   }
 
   onModalFileSelected(files: File[]) {
@@ -120,9 +143,10 @@ export class GalleryUploadComponent implements OnDestroy {
 
     if (newFiles.length === 0) return;
 
-    this.files.update(prev => [...prev, ...newFiles]);
+    this.files.update((prev) => [...prev, ...newFiles]);
     this.updateUploadStats();
-    this.simulateUpload(newFiles.map(f => f.id));
+    this.simulateUpload(newFiles.map((f) => f.id));
+    this.saveGalleryToLocalStorage();
   }
 
   private createUploadFile(file: File): UploadFile {
@@ -131,7 +155,7 @@ export class GalleryUploadComponent implements OnDestroy {
       progress: 0,
       previewUrl: URL.createObjectURL(file),
       id: Math.random().toString(36).substring(2),
-      loaded: false
+      loaded: false,
     };
   }
 
@@ -150,16 +174,19 @@ export class GalleryUploadComponent implements OnDestroy {
     const buffer = await file.arrayBuffer();
     const hashBuffer = await crypto.subtle.digest('SHA-256', buffer);
     const hashArray = Array.from(new Uint8Array(hashBuffer));
-    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    return hashArray.map((b) => b.toString(16).padStart(2, '0')).join('');
   }
 
   private updateUploadStats() {
     const files = this.files();
     this.uploadStats.totalFiles.set(files.length);
-    this.uploadStats.uploadedFiles.set(files.filter(f => f.loaded).length);
+    this.uploadStats.uploadedFiles.set(files.filter((f) => f.loaded).length);
 
     const totalSize = files.reduce((sum, f) => sum + f.file.size, 0);
-    const uploadedSize = files.reduce((sum, f) => sum + (f.file.size * f.progress / 100), 0);
+    const uploadedSize = files.reduce(
+      (sum, f) => sum + (f.file.size * f.progress) / 100,
+      0
+    );
 
     this.uploadStats.totalSize.set(totalSize);
     this.uploadStats.uploadedSize.set(uploadedSize);
@@ -168,7 +195,7 @@ export class GalleryUploadComponent implements OnDestroy {
     this.uploadStats.uploadSpeed.set(elapsed > 0 ? uploadedSize / elapsed : 0);
 
     this.uploadStats.allFilesUploaded.set(
-      files.length > 0 && files.every(f => f.loaded)
+      files.length > 0 && files.every((f) => f.loaded)
     );
   }
 
@@ -185,8 +212,8 @@ export class GalleryUploadComponent implements OnDestroy {
       this.uploadTimers[fileId] = setInterval(() => {
         progress += 5;
 
-        this.files.update(prev =>
-          prev.map(f =>
+        this.files.update((prev) =>
+          prev.map((f) =>
             f.id === fileId ? { ...f, progress, loaded: progress >= 100 } : f
           )
         );
@@ -206,14 +233,18 @@ export class GalleryUploadComponent implements OnDestroy {
   }
 
   private applySort(sortType: string) {
-    this.files.update(prev => {
+    this.files.update((prev) => {
       const sorted = [...prev];
 
       switch (sortType) {
         case 'uploaded_new':
-          return sorted.sort((a, b) => b.file.lastModified - a.file.lastModified);
+          return sorted.sort(
+            (a, b) => b.file.lastModified - a.file.lastModified
+          );
         case 'uploaded_old':
-          return sorted.sort((a, b) => a.file.lastModified - b.file.lastModified);
+          return sorted.sort(
+            (a, b) => a.file.lastModified - b.file.lastModified
+          );
         case 'az':
           return sorted.sort((a, b) => a.file.name.localeCompare(b.file.name));
         case 'za':
@@ -231,8 +262,32 @@ export class GalleryUploadComponent implements OnDestroy {
       clearInterval(timer);
     }
 
-    this.files().forEach(file => {
+    this.files().forEach((file) => {
       URL.revokeObjectURL(file.previewUrl);
     });
+  }
+
+  private saveGalleryToLocalStorage() {
+    const name = this.galleryName();
+    const createDate = this.galleryDate().toISOString();
+
+    const previewUrls = this.files().map((f) => f.previewUrl);
+
+    const newGallery: ISavedGallery = {
+      name,
+      createDate,
+      images: previewUrls.length ? previewUrls : ['assets/cover.png'],
+    };
+
+    const existingRaw = localStorage.getItem(GALLERY_STORAGE_KEY);
+    const existing: ISavedGallery[] = existingRaw
+      ? JSON.parse(existingRaw)
+      : [];
+
+    const filtered = existing.filter((g) => g.name !== name);
+
+    filtered.push(newGallery);
+
+    localStorage.setItem(GALLERY_STORAGE_KEY, JSON.stringify(filtered));
   }
 }

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, output } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
 @Component({
@@ -10,7 +10,11 @@ import { RouterLink } from '@angular/router';
 })
 export class CollectionHeaderComponent {
   /** Флаг, включён ли роутер для «Просмотреть пресеты» */
+
+  readonly newCollection = output<void>();
   readonly isPresetsDisabled = true;
 
-  createNewCollection(): void {}
+  createNewCollection(): void {
+    this.newCollection.emit();
+  }
 }

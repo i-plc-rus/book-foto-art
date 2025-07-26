@@ -1,0 +1,20 @@
+<div class="filter-dropdown" [class._open]="isOpen()">
+  <button class="filter-dropdown__btn" type="button" (click)="toggle()">
+    {{ summary() }}
+
+    @if (startDate() && endDate()) {
+    <button
+      type="button"
+      class="filter-dropdown__clear"
+      (click)="clear($event)"
+      aria-label="Очистить фильтр"
+    >
+      ✕
+    </button>
+    }
+  </button>
+
+  @if (isOpen()) {
+  <div class="filter-dropdown__menu"></div>
+  }
+</div>

@@ -10,7 +10,7 @@ import { RouterLink } from '@angular/router';
 })
 export class CollectionHeaderComponent {
   /** Флаг, включён ли роутер для «Просмотреть пресеты» */
-  isPresetsDisabled = true;
+  readonly isPresetsDisabled = true;
 
   createNewCollection(): void {}
 }

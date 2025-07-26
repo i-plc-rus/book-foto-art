@@ -156,3 +156,9 @@
   font-size: 1rem;
   box-sizing: border-box;
 }
+
+.collection-top {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}

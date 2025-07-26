@@ -1,0 +1,31 @@
+<div class="filter-dropdown" [class._open]="isOpen()">
+  <button class="filter-dropdown__btn" type="button" (click)="toggle()">
+    {{ summary() }}
+    <svg class="filter-dropdown__icon" viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M7 10l5 5 5-5H7z" />
+    </svg>
+    @if (selected().length) {
+    <button
+      type="button"
+      class="filter-dropdown__clear"
+      (click)="clear($event)"
+      aria-label="Очистить фильтр"
+    >
+      ✕
+    </button>
+    }
+  </button>
+
+  @if (isOpen()) {
+  <ul class="filter-dropdown__menu">
+    @for (opt of config().options; track $index) {
+    <li class="filter-dropdown__item" (click)="choose(opt)">
+      {{ opt }}
+      @if (selected().includes(opt)) {
+      <span class="filter-dropdown__check">✔</span>
+      }
+    </li>
+    }
+  </ul>
+  }
+</div>

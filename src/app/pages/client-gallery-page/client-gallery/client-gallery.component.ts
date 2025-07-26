@@ -1,20 +1,21 @@
 import { Component, signal, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { CollectionHeaderComponent } from '../components/collection-header/collection-header.component';
 
 @Component({
   selector: 'app-client-gallery',
   standalone: true,
-  imports: [FormsModule],
+  imports: [FormsModule, CollectionHeaderComponent],
   templateUrl: './client-gallery.component.html',
   styleUrls: ['./client-gallery.component.css'],
 })
 export class ClientGalleryComponent {
-  currentStep = signal(1);
-  galleryName = signal('');
-  galleryDate = signal('');
+  readonly currentStep = signal(1);
+  readonly galleryName = signal('');
+  readonly galleryDate = signal('');
 
-  private router = inject(Router);
+  private readonly router = inject(Router);
 
   nextStep() {
     this.currentStep.update((step) => {

@@ -1,0 +1,69 @@
+<div class="layout">
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <h2>Галереи</h2>
+      <div class="icons">
+        <img src="assets/question-circle-svgrepo-com.svg" class="icon" />
+        <img src="assets/bell-alt-svgrepo-com.svg" class="icon" />
+        <img src="assets/profile-svgrepo-com.svg" class="icon" />
+      </div>
+    </div>
+    <nav class="menu">
+      <a class="menu-item active">Коллекции</a>
+      <a class="menu-item">Избранное</a>
+      <a class="menu-item">Домашняя страница</a>
+      <a class="menu-item">Настройки</a>
+    </nav>
+  </aside>
+
+  <main class="main-content">
+    <!-- Шаг 1 -->
+    <section class="welcome centered" *ngIf="currentStep === 1">
+      <p class="subtitle">Начало работы</p>
+      <h1 class="headline">Опубликовать свою первую галерею всего за 3 шага</h1>
+      <button class="upload-button" (click)="nextStep()">Загрузить фото</button>
+      <div class="promo-image">
+        <img src="assets/promo.png" alt="Promo Image" />
+      </div>
+    </section>
+
+    <!-- Шаг 2 -->
+    <section class="welcome centered" *ngIf="currentStep === 2">
+      <p class="subtitle">Шаг 2 из 3</p>
+      <h1 class="headline">Введите наименование коллекции</h1>
+
+      <div class="form-group">
+        <label for="galleryName">Имя коллекции</label>
+        <input
+          id="galleryName"
+          type="text"
+          placeholder="например: Псков - Свадьба"
+          [(ngModel)]="galleryName"
+          name="galleryName"
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="galleryDate">Дата события</label>
+        <input
+          id="galleryDate"
+          type="date"
+          [(ngModel)]="galleryDate"
+          name="galleryDate"
+        />
+      </div>
+      <div class="form-group">
+        <button class="upload-button" (click)="nextStep()">
+          Создать коллекцию
+        </button>
+      </div>
+    </section>
+    <!-- <section *ngIf="currentStep === 3" class="step-three-upload">
+      <app-gallery-upload
+        [galleryName]="galleryName"
+        [galleryDate]="galleryDate"
+        (goBack)="goBack()"
+      ></app-gallery-upload>
+    </section> -->
+  </main>
+</div>

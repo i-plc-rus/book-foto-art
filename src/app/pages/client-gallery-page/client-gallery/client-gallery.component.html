@@ -17,6 +17,7 @@
   </aside>
 
   <main class="main-content">
+    @if(isGalleryEmpty() && !isCreatingNewCollection()){
     <div class="collection-top">
       <app-collection-header (newCollection)="handleNewCollection()" />
       <div class="collection-top__filter">
@@ -25,48 +26,58 @@
       </div>
     </div>
 
-    <!-- Шаг 1 -->
-    @if(currentStep() === 1){
-    <section class="welcome centered">
-      <p class="subtitle">Начало работы</p>
-      <h1 class="headline">Опубликовать свою первую галерею всего за 3 шага</h1>
-      <button class="upload-button" (click)="nextStep()">Загрузить фото</button>
-      <div class="promo-image">
-        <img src="assets/promo.png" alt="Promo Image" />
-      </div>
-    </section>
+    <app-collection-display
+      [(viewMode)]="displayView"
+      [collections]="collections()"
+    />
     }@else {
-    <!-- Шаг 2 -->
-    <section class="welcome centered">
-      <p class="subtitle">Шаг 2 из 3</p>
-      <h1 class="headline">Введите наименование коллекции</h1>
-
-      <div class="form-group">
-        <label for="galleryName">Имя коллекции</label>
-        <input
-          id="galleryName"
-          type="text"
-          placeholder="например: Псков - Свадьба"
-          [(ngModel)]="galleryName"
-          name="galleryName"
-        />
-      </div>
-
-      <div class="form-group">
-        <label for="galleryDate">Дата события</label>
-        <input
-          id="galleryDate"
-          type="date"
-          [(ngModel)]="galleryDate"
-          name="galleryDate"
-        />
-      </div>
-      <div class="form-group">
-        <button class="upload-button" (click)="nextStep()">
-          Создать коллекцию
-        </button>
-      </div>
-    </section>
+    <ng-container [ngTemplateOutlet]="steps"></ng-container>
     }
   </main>
 </div>
+
+<ng-template #steps>
+  <!-- Шаг 1 -->
+  @if(currentStep() === 1){
+  <section class="welcome centered">
+    <p class="subtitle">Начало работы</p>
+    <h1 class="headline">Опубликовать свою первую галерею всего за 3 шага</h1>
+    <button class="upload-button" (click)="nextStep()">Загрузить фото</button>
+    <div class="promo-image">
+      <img src="assets/promo.png" alt="Promo Image" />
+    </div>
+  </section>
+  }@else {
+  <!-- Шаг 2 -->
+  <section class="welcome centered">
+    <p class="subtitle">Шаг 2 из 3</p>
+    <h1 class="headline">Введите наименование коллекции</h1>
+
+    <div class="form-group">
+      <label for="galleryName">Имя коллекции</label>
+      <input
+        id="galleryName"
+        type="text"
+        placeholder="например: Псков - Свадьба"
+        [(ngModel)]="galleryName"
+        name="galleryName"
+      />
+    </div>
+
+    <div class="form-group">
+      <label for="galleryDate">Дата события</label>
+      <input
+        id="galleryDate"
+        type="date"
+        [(ngModel)]="galleryDate"
+        name="galleryDate"
+      />
+    </div>
+    <div class="form-group">
+      <button class="upload-button" (click)="nextStep()">
+        Создать коллекцию
+      </button>
+    </div>
+  </section>
+  }
+</ng-template>

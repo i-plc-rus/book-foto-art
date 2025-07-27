@@ -1,0 +1,24 @@
+@if (viewMode() === 'grid') {
+<div class="grid-view">
+  @for (item of collections(); track $index) {
+  <app-collection-card [collection]="item" />
+  }
+</div>
+} @else {
+<table class="list-view">
+  <thead>
+    <tr>
+      <th>Название</th>
+      <th>Дата создания</th>
+    </tr>
+  </thead>
+  <tbody>
+    @for (item of collections(); track $index) {
+    <tr>
+      <td>{{ item.name }}</td>
+      <td>{{ item.createDate }}</td>
+    </tr>
+    }
+  </tbody>
+</table>
+}

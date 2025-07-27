@@ -66,6 +66,7 @@
   flex-direction: column;
   /* убираем центрирование по вертикали */
   justify-content: flex-start;
+  gap: 2rem;
 }
 
 .welcome.centered {

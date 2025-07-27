@@ -267,16 +267,18 @@ export class GalleryUploadComponent implements OnDestroy {
     });
   }
 
-  private saveGalleryToLocalStorage() {
+  private async saveGalleryToLocalStorage() {
     const name = this.galleryName();
     const createDate = this.galleryDate().toISOString();
 
-    const previewUrls = this.files().map((f) => f.previewUrl);
+    const base64Images = await Promise.all(
+      this.files().map((f) => this.fileToBase64(f.file))
+    );
 
     const newGallery: ISavedGallery = {
       name,
       createDate,
-      images: previewUrls.length ? previewUrls : ['assets/cover.png'],
+      images: base64Images.length ? base64Images : ['assets/cover.png'],
     };
 
     const existingRaw = localStorage.getItem(GALLERY_STORAGE_KEY);
@@ -289,5 +291,14 @@ export class GalleryUploadComponent implements OnDestroy {
     filtered.push(newGallery);
 
     localStorage.setItem(GALLERY_STORAGE_KEY, JSON.stringify(filtered));
+  }
+
+  async fileToBase64(file: File): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result as string);
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
   }
 }

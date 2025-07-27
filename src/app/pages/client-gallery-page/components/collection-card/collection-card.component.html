@@ -1,0 +1,40 @@
+<div class="collection-card">
+  <div class="collection-image">
+    <img [src]="coverImage()" alt="Preview" />
+  </div>
+
+  <div class="collection-content">
+    <div class="collection-title">{{ collection().name }}</div>
+    <div class="collection-meta">
+      <span class="dot"></span>
+      <span>{{ itemCount() }} {{ itemWord() }}</span>
+      <span class="dot"></span>
+      <span>{{ collection().createDate | date : "d MMM y" }}</span>
+    </div>
+  </div>
+
+  <button class="menu-button" type="button" (click)="toggleMenu()">
+    <svg
+      class="menu-icon"
+      aria-hidden="true"
+      focusable="false"
+      data-prefix="far"
+      data-icon="ellipsis-vertical"
+      role="img"
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 128 512"
+    >
+      <path
+        fill="currentColor"
+        d="M64 368a48 48 0 1 0 0 96 48 48 0 1 0 0-96zm0-160a48 48 0 1 0 0 96 48 48 0 1 0 0-96zM112 96A48 48 0 1 0 16 96a48 48 0 1 0 96 0z"
+      ></path>
+    </svg>
+  </button>
+</div>
+
+@if(isMenuOpen()){
+<div class="menu-dropdown" (clickOutside)="onClickedOutside()">
+  <button class="menu-item danger" (click)="onDelete()">🗑 Удалить</button>
+</div>
+
+}

@@ -20,15 +20,21 @@
     @if(isGalleryEmpty() && !isCreatingNewCollection()){
     <div class="collection-top">
       <app-collection-header (newCollection)="handleNewCollection()" />
-      <div class="collection-top__filter">
-        <app-filter-dropdown [config]="STATUS" />
-        <app-filter-date [config]="EVENT_DATE" />
+      <div class="collection-top__header">
+        <div class="collection-top__filter">
+          <app-filter-dropdown [config]="STATUS" />
+          <app-filter-date [config]="EVENT_DATE" />
+        </div>
+
+        <div class="collection-top__filter">
+          <app-sort-dropdown (sortChange)="onSortChange($event)" />
+        </div>
       </div>
     </div>
 
     <app-collection-display
       [(viewMode)]="displayView"
-      [collections]="collections()"
+      [collections]="sortedCollections()"
     />
     }@else {
     <ng-container [ngTemplateOutlet]="steps"></ng-container>

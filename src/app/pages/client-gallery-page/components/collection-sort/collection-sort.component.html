@@ -1,0 +1,16 @@
+<div class="sort-container" (clickOutside)="closeDropdown()">
+  <button class="sort-icon-btn" (click)="toggleDropdown()">
+    <img src="assets/icons/sort-descending.svg" alt="Sort" class="w-5 h-5" />
+  </button>
+
+  @if (isOpen()) {
+  <div class="sort-dropdown">
+    <p class="sort-title">Сортировать по</p>
+    @for (opt of options; track opt.value) {
+    <button class="sort-option" (click)="choose(opt.value)">
+      {{ opt.label }}
+    </button>
+    }
+  </div>
+  }
+</div>

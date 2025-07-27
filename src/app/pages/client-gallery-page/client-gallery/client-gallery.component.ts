@@ -5,13 +5,14 @@ import { CollectionHeaderComponent } from '../components/collection-header/colle
 import { FilterDropdownComponent } from '../components/filter-dropdown/filter-dropdown.component';
 import { EVENT_DATE, STATUS } from '../models/filter.model';
 import { FilterDateComponent } from '../components/filter-date/filter-date.component';
-import { DisplayView } from '../models/collection-display.model';
+import { DisplayView, SortOption } from '../models/collection-display.model';
 import { CollectionDisplayComponent } from '../components/collection-display/collection-display.component';
 import {
   GALLERY_STORAGE_KEY,
   ISavedGallery,
 } from '../../../gallery-upload/interface/upload-file';
 import { NgTemplateOutlet } from '@angular/common';
+import { CollectionSortComponent } from '../components/collection-sort/collection-sort.component';
 
 @Component({
   selector: 'app-client-gallery',
@@ -22,6 +23,7 @@ import { NgTemplateOutlet } from '@angular/common';
     FilterDropdownComponent,
     FilterDateComponent,
     CollectionDisplayComponent,
+    CollectionSortComponent,
     NgTemplateOutlet,
   ],
   templateUrl: './client-gallery.component.html',
@@ -34,6 +36,8 @@ export class ClientGalleryComponent {
 
   private readonly router = inject(Router);
 
+  readonly sortOption = signal<SortOption>('created-new');
+
   readonly STATUS = STATUS;
   readonly EVENT_DATE = EVENT_DATE;
 
@@ -43,6 +47,25 @@ export class ClientGalleryComponent {
   readonly isCreatingNewCollection = signal(false);
 
   readonly isGalleryEmpty = computed(() => !!this.collections().length);
+
+  readonly sortedCollections = computed(() => {
+    const list = [...this.collections()];
+    return list.sort((a, b) => {
+      const sort = this.sortOption();
+      switch (sort) {
+        case 'created-new':
+          return +new Date(b.createDate) - +new Date(a.createDate);
+        case 'created-old':
+          return +new Date(a.createDate) - +new Date(b.createDate);
+        case 'name-asc':
+          return a.name.localeCompare(b.name);
+        case 'name-desc':
+          return b.name.localeCompare(a.name);
+        default:
+          return 0;
+      }
+    });
+  });
 
   constructor() {
     this.loadCollectionsFromStorage();
@@ -85,5 +108,9 @@ export class ClientGalleryComponent {
   handleNewCollection(): void {
     this.isCreatingNewCollection.set(true);
     this.currentStep.set(2);
+  }
+
+  onSortChange(option: SortOption) {
+    this.sortOption.set(option);
   }
 }

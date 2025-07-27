@@ -164,6 +164,12 @@
   gap: 1rem;
 }
 
+.collection-top__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
 .collection-top__filter {
   display: flex;
   gap: 1rem;

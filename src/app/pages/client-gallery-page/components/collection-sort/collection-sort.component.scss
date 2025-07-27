@@ -1,0 +1,51 @@
+.sort-container {
+  position: relative;
+  display: inline-block;
+}
+
+.sort-icon-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+}
+
+.sort-icon {
+  width: 1rem;
+  height: 1rem;
+  color: #555;
+}
+
+.sort-dropdown {
+  position: absolute;
+  right: 0;
+  top: 2.5rem;
+  background: white;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  padding: 0.75rem;
+  z-index: 100;
+  width: 220px;
+
+  .sort-title {
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: #999;
+    margin-bottom: 0.5rem;
+  }
+
+  .sort-option {
+    background: transparent;
+    border: none;
+    text-align: left;
+    padding: 0.5rem 0;
+    width: 100%;
+    font-size: 0.875rem;
+    color: #333;
+    cursor: pointer;
+
+    &:hover {
+      background: #f2f2f2;
+    }
+  }
+}

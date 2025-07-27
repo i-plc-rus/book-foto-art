@@ -1,5 +1,15 @@
-<div class="filter-dropdown" [class._open]="isOpen()">
-  <button class="filter-dropdown__btn" type="button" (click)="toggle()">
+<div
+  class="filter-dropdown"
+  [class._open]="isOpen()"
+  [class._disabled]="disabled()"
+>
+  <button
+    class="filter-dropdown__btn"
+    type="button"
+    [disabled]="disabled()"
+    [attr.aria-disabled]="disabled()"
+    (click)="toggle()"
+  >
     {{ summary() }}
     <svg class="filter-dropdown__icon" viewBox="0 0 24 24" aria-hidden="true">
       <path d="M7 10l5 5 5-5H7z" />

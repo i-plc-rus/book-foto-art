@@ -19,6 +19,7 @@ import { FilterConfig } from '../../models/filter.model';
   standalone: true,
 })
 export class FilterDropdownComponent implements OnInit, OnDestroy {
+  readonly disabled = input(true);
   readonly config = input.required<FilterConfig>();
   readonly onSelect = output<string[]>();
 

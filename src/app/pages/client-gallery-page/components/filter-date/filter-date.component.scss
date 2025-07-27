@@ -75,3 +75,26 @@
     color: #333;
   }
 }
+
+// ::ng-deep .md-drppicker td.active,
+// ::ng-deep .md-drppicker td.active:hover {
+//   background-color: rgb(26, 188, 156) !important;
+//   border-color: transparent;
+//   color: #fff;
+// }
+
+::ng-deep .md-drppicker td.active,
+.md-drppicker td.active:hover {
+  background-color: rgb(26, 188, 156) !important;
+  border-color: transparent;
+  color: #fff;
+}
+
+::ng-deep .md-drppicker td.off,
+::ng-deep .md-drppicker td.off.in-range,
+::ng-deep .md-drppicker td.off.start-date,
+::ng-deep .md-drppicker td.off.end-date {
+  background-color: #fff !important;
+  border-color: transparent;
+  color: #999;
+}

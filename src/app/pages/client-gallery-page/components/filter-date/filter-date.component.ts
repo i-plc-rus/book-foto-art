@@ -54,6 +54,14 @@ export class FilterDateComponent implements OnInit, OnDestroy {
     firstDay: 1,
   };
 
+  readonly start = computed(() =>
+    this.startDate() ? dayjs(this.startDate()!) : dayjs()
+  );
+
+  readonly end = computed(() =>
+    this.endDate() ? dayjs(this.endDate()!) : dayjs()
+  );
+
   readonly summary = computed(() => {
     const start = this.startDate();
     const end = this.endDate();
@@ -96,8 +104,8 @@ export class FilterDateComponent implements OnInit, OnDestroy {
   }
 
   choosedDate(event: { startDate: dayjs.Dayjs; endDate: dayjs.Dayjs }): void {
-    const start = event.startDate?.toDate?.();
-    const end = event.endDate?.toDate?.();
+    const start = event.startDate.startOf('day').toDate();
+    const end = event.endDate.startOf('day').toDate();
     if (!start || !end) return;
 
     this.startDate.set(start);

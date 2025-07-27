@@ -17,6 +17,8 @@
   @if (isOpen()) {
   <div class="filter-dropdown__menu">
     <ngx-daterangepicker-material
+      [startDate]="start()"
+      [endDate]="end()"
       [locale]="locale"
       [autoApply]="true"
       (choosedDate)="choosedDate($event)"

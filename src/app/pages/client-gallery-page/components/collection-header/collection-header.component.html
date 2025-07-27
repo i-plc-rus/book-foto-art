@@ -26,6 +26,16 @@
         placeholder="Поиск..."
         [(ngModel)]="searchTerm"
       />
+      @if(searchTerm()){
+      <button
+        class="collections-header__clear-button"
+        type="button"
+        (click)="searchTerm.set('')"
+        aria-label="Очистить поиск"
+      >
+        ×
+      </button>
+      }
     </label>
   </div>
 

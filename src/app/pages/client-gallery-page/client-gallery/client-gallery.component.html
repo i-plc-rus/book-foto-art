@@ -26,7 +26,10 @@
       <div class="collection-top__header">
         <div class="collection-top__filter">
           <app-filter-dropdown [config]="STATUS" />
-          <app-filter-date [config]="EVENT_DATE" />
+          <app-filter-date
+            [config]="EVENT_DATE"
+            (onSelect)="onSelectDate($event)"
+          />
         </div>
 
         <div class="collection-top__filter">

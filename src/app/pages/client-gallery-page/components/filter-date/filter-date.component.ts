@@ -25,7 +25,7 @@ import { FilterConfig } from '../../models/filter.model';
 })
 export class FilterDateComponent implements OnInit, OnDestroy {
   readonly config = input.required<FilterConfig>();
-  readonly onSelect = output<[string, string] | null>();
+  readonly onSelect = output<[dayjs.Dayjs, dayjs.Dayjs] | null>();
 
   readonly isOpen = signal(false);
   readonly startDate = signal<Date | null>(null);
@@ -104,16 +104,15 @@ export class FilterDateComponent implements OnInit, OnDestroy {
   }
 
   choosedDate(event: { startDate: dayjs.Dayjs; endDate: dayjs.Dayjs }): void {
-    const start = event.startDate.startOf('day').toDate();
-    const end = event.endDate.startOf('day').toDate();
+    const start = event.startDate.startOf('day');
+    const end = event.endDate.startOf('day');
     if (!start || !end) return;
 
-    this.startDate.set(start);
-    this.endDate.set(end);
-    this.onSelect.emit([
-      event.startDate.format('YYYY-MM-DD'),
-      event.endDate.format('YYYY-MM-DD'),
-    ]);
+    this.startDate.set(start.toDate());
+    this.endDate.set(end.toDate());
+
+    // Передаём Dayjs-объекты напрямую
+    this.onSelect.emit([start, end]);
 
     this.isOpen.set(false);
   }

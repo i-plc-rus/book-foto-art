@@ -15,6 +15,7 @@ import { CollectionSortComponent } from '../components/collection-sort/collectio
 import { CollectionViewComponent } from '../components/collection-view/collection-view.component';
 import { CollectionTableComponent } from '../components/collection-table/collection-table.component';
 import { CollectionCardComponent } from '../components/collection-card/collection-card.component';
+import dayjs from 'dayjs';
 
 @Component({
   selector: 'app-client-gallery',
@@ -34,25 +35,21 @@ import { CollectionCardComponent } from '../components/collection-card/collectio
   styleUrls: ['./client-gallery.component.css'],
 })
 export class ClientGalleryComponent {
-  readonly currentStep = signal(1);
-  readonly galleryName = signal('');
-  readonly galleryDate = signal('');
-
   private readonly router = inject(Router);
-
-  readonly sortOption = signal<SortOption>('created-new');
 
   readonly STATUS = STATUS;
   readonly EVENT_DATE = EVENT_DATE;
 
+  readonly currentStep = signal(1);
+  readonly galleryName = signal('');
+  readonly galleryDate = signal('');
+
+  readonly sortOption = signal<SortOption>('created-new');
+  readonly dateRange = signal<[dayjs.Dayjs, dayjs.Dayjs] | null>(null);
   readonly displayView = signal<DisplayView>('grid');
   readonly collections = signal<ISavedGallery[]>([]);
-
   readonly isCreatingNewCollection = signal(false);
-
   readonly searchTerm = signal('');
-
-  readonly isGalleryEmpty = computed(() => !!this.collections().length);
 
   private readonly sortedCollections = computed(() => {
     const list = [...this.collections()];
@@ -75,11 +72,22 @@ export class ClientGalleryComponent {
 
   readonly filteredCollections = computed(() => {
     const term = this.searchTerm().toLowerCase();
+    const range = this.dateRange();
     const list = this.sortedCollections();
-    return term
-      ? list.filter((item) => item.name.toLowerCase().includes(term))
-      : list;
+
+    return list.filter((item) => {
+      const nameMatch = !term || item.name.toLowerCase().includes(term);
+
+      const dateMatch =
+        !range ||
+        (dayjs(item.createDate).isAfter(range[0].subtract(1, 'day')) &&
+          dayjs(item.createDate).isBefore(range[1].add(1, 'day')));
+
+      return nameMatch && dateMatch;
+    });
   });
+
+  readonly isGalleryEmpty = computed(() => !!this.collections().length);
 
   constructor() {
     this.loadCollectionsFromStorage();
@@ -136,5 +144,9 @@ export class ClientGalleryComponent {
     const updated = this.collections().filter((item) => item.name !== name);
     this.collections.set(updated);
     localStorage.setItem(GALLERY_STORAGE_KEY, JSON.stringify(updated));
+  }
+
+  onSelectDate(range: [dayjs.Dayjs, dayjs.Dayjs] | null) {
+    this.dateRange.set(range);
   }
 }

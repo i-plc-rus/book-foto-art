@@ -97,3 +97,23 @@
     background-color: rgb(0, 142, 116);
   }
 }
+
+.collections-header__search-label {
+  position: relative;
+  display: flex;
+  align-items: center;
+
+  .collections-header__clear-button {
+    position: absolute;
+    right: 0.75rem;
+    background: none;
+    border: none;
+    font-size: 1.25rem;
+    cursor: pointer;
+    color: #888;
+
+    &:hover {
+      color: #000;
+    }
+  }
+}

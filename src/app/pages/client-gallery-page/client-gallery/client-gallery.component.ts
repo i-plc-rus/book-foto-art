@@ -6,7 +6,6 @@ import { FilterDropdownComponent } from '../components/filter-dropdown/filter-dr
 import { EVENT_DATE, STATUS } from '../models/filter.model';
 import { FilterDateComponent } from '../components/filter-date/filter-date.component';
 import { DisplayView, SortOption } from '../models/collection-display.model';
-import { CollectionDisplayComponent } from '../components/collection-display/collection-display.component';
 import {
   GALLERY_STORAGE_KEY,
   ISavedGallery,
@@ -14,6 +13,8 @@ import {
 import { NgTemplateOutlet } from '@angular/common';
 import { CollectionSortComponent } from '../components/collection-sort/collection-sort.component';
 import { CollectionViewComponent } from '../components/collection-view/collection-view.component';
+import { CollectionTableComponent } from '../components/collection-table/collection-table.component';
+import { CollectionCardComponent } from '../components/collection-card/collection-card.component';
 
 @Component({
   selector: 'app-client-gallery',
@@ -23,9 +24,10 @@ import { CollectionViewComponent } from '../components/collection-view/collectio
     CollectionHeaderComponent,
     FilterDropdownComponent,
     FilterDateComponent,
-    CollectionDisplayComponent,
     CollectionSortComponent,
     CollectionViewComponent,
+    CollectionCardComponent,
+    CollectionTableComponent,
     NgTemplateOutlet,
   ],
   templateUrl: './client-gallery.component.html',
@@ -118,5 +120,11 @@ export class ClientGalleryComponent {
 
   changeDisplayView(view: DisplayView): void {
     this.displayView.set(view);
+  }
+
+  onDelete(name: string): void {
+    const updated = this.collections().filter((item) => item.name !== name);
+    this.collections.set(updated);
+    localStorage.setItem(GALLERY_STORAGE_KEY, JSON.stringify(updated));
   }
 }

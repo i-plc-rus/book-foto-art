@@ -174,3 +174,9 @@
   display: flex;
   gap: 1rem;
 }
+
+.grid-view {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+}

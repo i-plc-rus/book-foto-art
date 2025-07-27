@@ -1,5 +1,5 @@
 import { CommonModule, DatePipe } from '@angular/common';
-import { Component, computed, input } from '@angular/core';
+import { Component, computed, input, output } from '@angular/core';
 import { ISavedGallery } from '../../../../gallery-upload/interface/upload-file';
 import { CollectionMenuComponent } from '../collection-menu/collection-menu.component';
 
@@ -11,6 +11,7 @@ import { CollectionMenuComponent } from '../collection-menu/collection-menu.comp
 })
 export class CollectionTableComponent {
   readonly collections = input.required<ISavedGallery[]>();
+  readonly delete = output<string>();
 
   readonly collectionWithMeta = computed(() => {
     return this.collections().map((item) => {
@@ -36,4 +37,8 @@ export class CollectionTableComponent {
       };
     });
   });
+
+  onDelete(value: string): void {
+    this.delete.emit(value);
+  }
 }

@@ -1,9 +1,0 @@
-@if (viewMode() === 'grid') {
-<div class="grid-view">
-  @for (item of collections(); track $index) {
-  <app-collection-card [collection]="item" />
-  }
-</div>
-} @else {
-<app-collection-table [collections]="collections()" />
-}

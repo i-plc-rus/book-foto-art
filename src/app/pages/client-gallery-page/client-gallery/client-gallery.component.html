@@ -39,10 +39,12 @@
       </div>
     </div>
 
-    <app-collection-display
+    <!-- <app-collection-display
       [(viewMode)]="displayView"
       [collections]="sortedCollections()"
-    />
+    /> -->
+
+    <ng-container [ngTemplateOutlet]="view"></ng-container>
     }@else {
     <ng-container [ngTemplateOutlet]="steps"></ng-container>
     }
@@ -93,4 +95,36 @@
     </div>
   </section>
   }
+</ng-template>
+
+<ng-template #gridView>
+  <div class="grid-view">
+    @for (item of sortedCollections(); track $index) {
+    <app-collection-card [collection]="item" (delete)="onDelete(item.name)" />
+    }
+  </div>
+</ng-template>
+
+<ng-template #tableView>
+  <app-collection-table
+    [collections]="sortedCollections()"
+    (delete)="onDelete($event)"
+  />
+</ng-template>
+
+<ng-template #emptyView>
+  <div class="empty-container">
+    <img class="cover-image" src="assets/icons/empty.svg" alt="Пусто" />
+    <p>Ничего не найдено</p>
+  </div>
+</ng-template>
+
+<ng-template #view>
+  @if (sortedCollections().length === 0) {
+  <ng-container [ngTemplateOutlet]="emptyView"></ng-container>
+  } @else { @if (displayView() === 'grid') {
+  <ng-container [ngTemplateOutlet]="gridView"></ng-container>
+  } @else {
+  <ng-container [ngTemplateOutlet]="tableView"></ng-container>
+  } }
 </ng-template>

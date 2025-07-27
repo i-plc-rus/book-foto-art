@@ -25,11 +25,14 @@
       />
       <div class="collection-top__header">
         <div class="collection-top__filter">
-          <app-filter-dropdown [config]="STATUS" />
+          <app-filter-dropdown [config]="CATEGORY_TAG" [disabled]="true" />
+          <app-filter-dropdown [config]="STATUS" [disabled]="true" />
           <app-filter-date
             [config]="EVENT_DATE"
             (onSelect)="onSelectDate($event)"
           />
+          <app-filter-dropdown [config]="EXPIRY_DATE" [disabled]="true" />
+          <app-filter-dropdown [config]="STARRED" [disabled]="true" />
         </div>
 
         <div class="collection-top__filter">

@@ -74,6 +74,17 @@
     font-size: 1rem;
     color: #333;
   }
+
+  &._disabled {
+    pointer-events: none;
+    opacity: 0.6;
+  }
+
+  &__btn:disabled,
+  &__btn[aria-disabled="true"] {
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
 }
 
 ::ng-deep .md-drppicker td.active,

@@ -3,7 +3,13 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { CollectionHeaderComponent } from '../components/collection-header/collection-header.component';
 import { FilterDropdownComponent } from '../components/filter-dropdown/filter-dropdown.component';
-import { EVENT_DATE, STATUS } from '../models/filter.model';
+import {
+  CATEGORY_TAG,
+  EVENT_DATE,
+  EXPIRY_DATE,
+  STARRED,
+  STATUS,
+} from '../models/filter.model';
 import { FilterDateComponent } from '../components/filter-date/filter-date.component';
 import { DisplayView, SortOption } from '../models/collection-display.model';
 import {
@@ -39,6 +45,9 @@ export class ClientGalleryComponent {
 
   readonly STATUS = STATUS;
   readonly EVENT_DATE = EVENT_DATE;
+  readonly CATEGORY_TAG = CATEGORY_TAG;
+  readonly EXPIRY_DATE = EXPIRY_DATE;
+  readonly STARRED = STARRED;
 
   readonly currentStep = signal(1);
   readonly galleryName = signal('');

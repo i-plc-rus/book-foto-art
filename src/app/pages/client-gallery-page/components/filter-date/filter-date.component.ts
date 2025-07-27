@@ -25,6 +25,7 @@ import { FilterConfig } from '../../models/filter.model';
 })
 export class FilterDateComponent implements OnInit, OnDestroy {
   readonly config = input.required<FilterConfig>();
+  readonly disabled = input(false);
   readonly onSelect = output<[dayjs.Dayjs, dayjs.Dayjs] | null>();
 
   readonly isOpen = signal(false);

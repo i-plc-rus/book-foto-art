@@ -19,3 +19,22 @@ export const EVENT_DATE: FilterConfig = {
   label: 'Дата события',
   type: 'date',
 };
+
+export const CATEGORY_TAG: FilterConfig = {
+  label: 'Категория',
+  type: 'select',
+  selection: 'multiple',
+  options: [],
+};
+
+export const EXPIRY_DATE: FilterConfig = {
+  label: 'Дата истечения',
+  type: 'date',
+};
+
+export const STARRED: FilterConfig = {
+  label: 'Избранное',
+  type: 'select',
+  selection: 'single',
+  options: ['Да', 'Нет'],
+};

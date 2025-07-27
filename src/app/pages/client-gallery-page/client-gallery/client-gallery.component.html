@@ -19,7 +19,10 @@
   <main class="main-content">
     @if(isGalleryEmpty() && !isCreatingNewCollection()){
     <div class="collection-top">
-      <app-collection-header (newCollection)="handleNewCollection()" />
+      <app-collection-header
+        [(searchTerm)]="searchTerm"
+        (newCollection)="handleNewCollection()"
+      />
       <div class="collection-top__header">
         <div class="collection-top__filter">
           <app-filter-dropdown [config]="STATUS" />
@@ -39,12 +42,8 @@
       </div>
     </div>
 
-    <!-- <app-collection-display
-      [(viewMode)]="displayView"
-      [collections]="sortedCollections()"
-    /> -->
-
     <ng-container [ngTemplateOutlet]="view"></ng-container>
+
     }@else {
     <ng-container [ngTemplateOutlet]="steps"></ng-container>
     }
@@ -99,7 +98,7 @@
 
 <ng-template #gridView>
   <div class="grid-view">
-    @for (item of sortedCollections(); track $index) {
+    @for (item of filteredCollections(); track $index) {
     <app-collection-card [collection]="item" (delete)="onDelete(item.name)" />
     }
   </div>
@@ -107,7 +106,7 @@
 
 <ng-template #tableView>
   <app-collection-table
-    [collections]="sortedCollections()"
+    [collections]="filteredCollections()"
     (delete)="onDelete($event)"
   />
 </ng-template>
@@ -120,7 +119,7 @@
 </ng-template>
 
 <ng-template #view>
-  @if (sortedCollections().length === 0) {
+  @if (filteredCollections().length === 0) {
   <ng-container [ngTemplateOutlet]="emptyView"></ng-container>
   } @else { @if (displayView() === 'grid') {
   <ng-container [ngTemplateOutlet]="gridView"></ng-container>

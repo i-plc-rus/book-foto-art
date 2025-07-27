@@ -50,9 +50,11 @@ export class ClientGalleryComponent {
 
   readonly isCreatingNewCollection = signal(false);
 
+  readonly searchTerm = signal('');
+
   readonly isGalleryEmpty = computed(() => !!this.collections().length);
 
-  readonly sortedCollections = computed(() => {
+  private readonly sortedCollections = computed(() => {
     const list = [...this.collections()];
     return list.sort((a, b) => {
       const sort = this.sortOption();
@@ -69,6 +71,14 @@ export class ClientGalleryComponent {
           return 0;
       }
     });
+  });
+
+  readonly filteredCollections = computed(() => {
+    const term = this.searchTerm().toLowerCase();
+    const list = this.sortedCollections();
+    return term
+      ? list.filter((item) => item.name.toLowerCase().includes(term))
+      : list;
   });
 
   constructor() {

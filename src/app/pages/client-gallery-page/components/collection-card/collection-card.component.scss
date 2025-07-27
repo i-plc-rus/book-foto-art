@@ -93,6 +93,8 @@
   z-index: 10;
 
   .menu-item {
+    display: flex;
+    justify-content: space-between;
     padding: 0.5rem 1rem;
     border: none;
     background: transparent;

@@ -34,7 +34,9 @@
 
 @if(isMenuOpen()){
 <div class="menu-dropdown" (clickOutside)="onClickedOutside()">
-  <button class="menu-item danger" (click)="onDelete()">🗑 Удалить</button>
+  <button class="menu-item danger" (click)="onDelete()">
+    <span>Удалить</span><span>🗑</span>
+  </button>
 </div>
 
 }

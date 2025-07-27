@@ -1,13 +1,14 @@
 import { Component, input, model } from '@angular/core';
 import { ISavedGallery } from '../../../../gallery-upload/interface/upload-file';
 import { CollectionCardComponent } from '../collection-card/collection-card.component';
+import { CollectionTableComponent } from '../collection-table/collection-table.component';
 
 export type DisplayView = 'grid' | 'list';
 
 @Component({
   selector: 'app-collection-display',
   standalone: true,
-  imports: [CollectionCardComponent],
+  imports: [CollectionCardComponent, CollectionTableComponent],
   templateUrl: './collection-display.component.html',
   styleUrls: ['./collection-display.component.scss'],
 })

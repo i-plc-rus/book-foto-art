@@ -1,0 +1,25 @@
+<div class="menu-container" (clickOutside)="closeMenu()">
+  <button class="menu-button" type="button" (click)="toggleMenu()">
+    <svg
+      class="menu-icon"
+      aria-hidden="true"
+      focusable="false"
+      data-prefix="far"
+      data-icon="ellipsis-vertical"
+      role="img"
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 128 512"
+    >
+      <path
+        fill="currentColor"
+        d="M64 368a48 48 0 1 0 0 96 48 48 0 1 0 0-96zm0-160a48 48 0 1 0 0 96 48 48 0 1 0 0-96zM112 96A48 48 0 1 0 16 96a48 48 0 1 0 96 0z"
+      ></path>
+    </svg>
+  </button>
+
+  @if (isMenuOpen()) {
+  <div class="menu-dropdown">
+    <button class="menu-item" (click)="onDeleteClick()">Удалить</button>
+  </div>
+  }
+</div>

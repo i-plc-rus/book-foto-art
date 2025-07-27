@@ -37,7 +37,7 @@ export class ClientGalleryComponent {
   readonly STATUS = STATUS;
   readonly EVENT_DATE = EVENT_DATE;
 
-  readonly displayView = signal<DisplayView>('grid');
+  readonly displayView = signal<DisplayView>('list');
   readonly collections = signal<ISavedGallery[]>([]);
 
   readonly isCreatingNewCollection = signal(false);

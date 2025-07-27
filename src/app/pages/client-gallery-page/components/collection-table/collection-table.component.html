@@ -1,0 +1,36 @@
+<table class="collection-table">
+  <thead>
+    <tr>
+      <th>Фото</th>
+      <th>Дата создания</th>
+      <th>-</th>
+    </tr>
+  </thead>
+  <tbody>
+    @for (item of collectionWithMeta(); track $index) {
+    <tr>
+      <td>
+        <div class="collection-table__cell-wrapper">
+          <img
+            [src]="item.fixedImage"
+            alt="Превью"
+            class="collection-table__image"
+          />
+          <div class="collection-table__text">
+            <div class="collection-table__name">{{ item.name }}</div>
+            <div class="collection-table__meta">
+              {{ item.itemCount }} {{ item.itemWord }}
+            </div>
+          </div>
+        </div>
+      </td>
+
+      <td>{{ item.createDate | date : "d MMM y" }}</td>
+
+      <td>
+        <app-collection-menu />
+      </td>
+    </tr>
+    }
+  </tbody>
+</table>

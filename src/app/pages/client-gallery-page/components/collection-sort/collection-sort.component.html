@@ -8,7 +8,10 @@
     <p class="sort-title">Сортировать по</p>
     @for (opt of options; track opt.value) {
     <button class="sort-option" (click)="choose(opt.value)">
-      {{ opt.label }}
+      <span>{{ opt.label }}</span>
+      @if (sort() === opt.value) {
+      <span>✓</span>
+      }
     </button>
     }
   </div>

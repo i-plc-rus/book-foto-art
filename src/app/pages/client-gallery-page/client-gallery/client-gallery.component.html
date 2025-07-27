@@ -27,7 +27,14 @@
         </div>
 
         <div class="collection-top__filter">
-          <app-sort-dropdown (sortChange)="onSortChange($event)" />
+          <app-sort-dropdown
+            [sort]="sortOption()"
+            (sortChange)="onSortChange($event)"
+          />
+          <app-collection-view
+            [view]="displayView()"
+            (chooseView)="changeDisplayView($event)"
+          />
         </div>
       </div>
     </div>

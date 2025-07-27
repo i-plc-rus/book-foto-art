@@ -1,5 +1,4 @@
-import { Component, EventEmitter, Output, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, input, output, signal } from '@angular/core';
 import {
   SORT_OPTIONS,
   SortOption,
@@ -14,7 +13,8 @@ import { NgClickOutsideDirective } from 'ng-click-outside2';
   styleUrls: ['./collection-sort.component.scss'],
 })
 export class CollectionSortComponent {
-  @Output() sortChange = new EventEmitter<SortOption>();
+  readonly sort = input.required<SortOption>();
+  readonly sortChange = output<SortOption>();
 
   readonly options = SORT_OPTIONS;
 

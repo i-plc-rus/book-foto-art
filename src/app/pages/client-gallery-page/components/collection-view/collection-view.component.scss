@@ -1,22 +1,22 @@
-.sort-container {
+.view-container {
   position: relative;
   display: inline-block;
 }
 
-.sort-icon-btn {
+.view-icon-btn {
   background: transparent;
   border: none;
   cursor: pointer;
   padding: 0.5rem;
 }
 
-.sort-icon {
+.view-icon {
   width: 1rem;
   height: 1rem;
   color: #555;
 }
 
-.sort-dropdown {
+.view-dropdown {
   position: absolute;
   right: 0;
   top: 2.5rem;
@@ -27,14 +27,14 @@
   z-index: 100;
   width: 220px;
 
-  .sort-title {
+  .view-title {
     font-size: 0.75rem;
     font-weight: 500;
     color: #999;
     margin-bottom: 0.5rem;
   }
 
-  .sort-option {
+  .view-option {
     display: flex;
     justify-content: space-between;
     gap: 1rem;
@@ -51,5 +51,9 @@
     &:hover {
       background: #f2f2f2;
     }
+  }
+
+  .checkmark {
+    color: #555;
   }
 }

@@ -1,0 +1,33 @@
+<div class="view-container" (clickOutside)="closeDropdown()">
+  <button class="view-icon-btn" (click)="toggleDropdown()">
+    <img src="assets/icons/net-grid.svg" alt="Grid" class="w-5 h-5" />
+  </button>
+
+  @if (isOpen()) {
+  <div class="view-dropdown">
+    <p class="view-title">Стиль отображения</p>
+
+    <button
+      class="view-option"
+      (click)="setView('grid')"
+      [class.active]="view() === 'grid'"
+    >
+      <span>Сетка</span>
+      @if (view() === 'grid') {
+      <span class="checkmark">✓</span>
+      }
+    </button>
+
+    <button
+      class="view-option"
+      (click)="setView('list')"
+      [class.active]="view() === 'list'"
+    >
+      <span>Список</span>
+      @if (view() === 'list') {
+      <span class="checkmark">✓</span>
+      }
+    </button>
+  </div>
+  }
+</div>

@@ -13,6 +13,7 @@ import {
 } from '../../../gallery-upload/interface/upload-file';
 import { NgTemplateOutlet } from '@angular/common';
 import { CollectionSortComponent } from '../components/collection-sort/collection-sort.component';
+import { CollectionViewComponent } from '../components/collection-view/collection-view.component';
 
 @Component({
   selector: 'app-client-gallery',
@@ -24,6 +25,7 @@ import { CollectionSortComponent } from '../components/collection-sort/collectio
     FilterDateComponent,
     CollectionDisplayComponent,
     CollectionSortComponent,
+    CollectionViewComponent,
     NgTemplateOutlet,
   ],
   templateUrl: './client-gallery.component.html',
@@ -41,7 +43,7 @@ export class ClientGalleryComponent {
   readonly STATUS = STATUS;
   readonly EVENT_DATE = EVENT_DATE;
 
-  readonly displayView = signal<DisplayView>('list');
+  readonly displayView = signal<DisplayView>('grid');
   readonly collections = signal<ISavedGallery[]>([]);
 
   readonly isCreatingNewCollection = signal(false);
@@ -112,5 +114,9 @@ export class ClientGalleryComponent {
 
   onSortChange(option: SortOption) {
     this.sortOption.set(option);
+  }
+
+  changeDisplayView(view: DisplayView): void {
+    this.displayView.set(view);
   }
 }

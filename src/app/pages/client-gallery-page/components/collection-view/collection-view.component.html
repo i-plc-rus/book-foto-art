@@ -1,31 +1,31 @@
-<div class="view-container" (clickOutside)="closeDropdown()">
-  <button class="view-icon-btn" (click)="toggleDropdown()">
-    <img src="assets/icons/net-grid.svg" alt="Grid" class="w-5 h-5" />
+<div class="view" (clickOutside)="closeDropdown()">
+  <button class="view__button" (click)="toggleDropdown()">
+    <img src="assets/icons/net-grid.svg" alt="Grid" class="view__icon" />
   </button>
 
   @if (isOpen()) {
-  <div class="view-dropdown">
-    <p class="view-title">Стиль отображения</p>
+  <div class="view__dropdown">
+    <p class="view__title">Стиль отображения</p>
 
     <button
-      class="view-option"
+      class="view__option"
       (click)="setView('grid')"
-      [class.active]="view() === 'grid'"
+      [class.view__option_active]="view() === 'grid'"
     >
       <span>Сетка</span>
       @if (view() === 'grid') {
-      <span class="checkmark">✓</span>
+      <span class="view__checkmark">✓</span>
       }
     </button>
 
     <button
-      class="view-option"
+      class="view__option"
       (click)="setView('list')"
-      [class.active]="view() === 'list'"
+      [class.view__option_active]="view() === 'list'"
     >
       <span>Список</span>
       @if (view() === 'list') {
-      <span class="checkmark">✓</span>
+      <span class="view__checkmark">✓</span>
       }
     </button>
   </div>

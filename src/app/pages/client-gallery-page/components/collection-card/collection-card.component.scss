@@ -12,7 +12,7 @@
   width: 14.48rem;
   height: 14.23rem;
 
-  .collection-image {
+  &__image {
     width: 100%;
     height: 10rem;
     background-color: #f1f1f1;
@@ -26,33 +26,33 @@
     }
   }
 
-  .collection-content {
+  &__content {
     display: flex;
     flex-direction: column;
     gap: 0.25rem;
-
-    .collection-title {
-      font-weight: 500;
-      color: #222;
-    }
-
-    .collection-meta {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      font-size: 0.75rem;
-      color: #888;
-
-      .dot {
-        width: 4px;
-        height: 4px;
-        background: #bbb;
-        border-radius: 50%;
-      }
-    }
   }
 
-  .menu-button {
+  &__title {
+    font-weight: 500;
+    color: #222;
+  }
+
+  &__meta {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.75rem;
+    color: #888;
+  }
+
+  &__dot {
+    width: 4px;
+    height: 4px;
+    background: #bbb;
+    border-radius: 50%;
+  }
+
+  &__menu-btn {
     padding: 0.3rem;
     position: absolute;
     top: 0.5rem;
@@ -61,7 +61,7 @@
     border: none;
     cursor: pointer;
 
-    .menu-icon {
+    .collection-card__menu-icon {
       width: 1rem;
       height: 1rem;
       color: #666;
@@ -69,30 +69,28 @@
     }
   }
 
-  &:hover {
-    .menu-button {
-      background-color: #f6f7f74d;
-      border-radius: 0.3rem;
+  &:hover &__menu-btn {
+    background-color: #f6f7f74d;
+    border-radius: 0.3rem;
 
-      .menu-icon {
-        color: white;
-      }
+    .collection-card__menu-icon {
+      color: white;
     }
   }
-}
 
-.menu-dropdown {
-  position: absolute;
-  top: 2.2rem;
-  left: 13rem;
-  background: white;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  display: flex;
-  flex-direction: column;
-  min-width: 10rem;
-  z-index: 10;
+  &__menu-dropdown {
+    position: absolute;
+    top: 2.2rem;
+    left: 13rem;
+    background: white;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    display: flex;
+    flex-direction: column;
+    min-width: 10rem;
+    z-index: 10;
+  }
 
-  .menu-item {
+  &__menu-item {
     display: flex;
     justify-content: space-between;
     padding: 0.5rem 1rem;

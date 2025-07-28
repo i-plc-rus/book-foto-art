@@ -111,8 +111,6 @@ export class FilterDateComponent implements OnInit, OnDestroy {
 
     this.startDate.set(start.toDate());
     this.endDate.set(end.toDate());
-
-    // Передаём Dayjs-объекты напрямую
     this.onSelect.emit([start, end]);
 
     this.isOpen.set(false);

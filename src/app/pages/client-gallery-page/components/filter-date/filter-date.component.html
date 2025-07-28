@@ -1,10 +1,10 @@
 <div
-  class="filter-dropdown"
+  class="filter-date"
   [class._open]="isOpen()"
   [class._disabled]="disabled()"
 >
   <button
-    class="filter-dropdown__btn"
+    class="filter-date__btn"
     type="button"
     [disabled]="disabled()"
     [attr.aria-disabled]="disabled()"
@@ -15,7 +15,7 @@
     @if (startDate() && endDate()) {
     <button
       type="button"
-      class="filter-dropdown__clear"
+      class="filter-date__clear"
       (click)="clear($event)"
       aria-label="Очистить фильтр"
     >
@@ -25,7 +25,7 @@
   </button>
 
   @if (isOpen()) {
-  <div class="filter-dropdown__menu">
+  <div class="filter-date__menu">
     <ngx-daterangepicker-material
       [startDate]="start()"
       [endDate]="end()"

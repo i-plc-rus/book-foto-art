@@ -1,7 +1,7 @@
 <div class="menu-container" (clickOutside)="closeMenu()">
-  <button class="menu-button" type="button" (click)="toggleMenu()">
+  <button class="menu-container__button" type="button" (click)="toggleMenu()">
     <svg
-      class="menu-icon"
+      class="menu-container__icon"
       aria-hidden="true"
       focusable="false"
       data-prefix="far"
@@ -18,8 +18,10 @@
   </button>
 
   @if (isMenuOpen()) {
-  <div class="menu-dropdown">
-    <button class="menu-item" (click)="onDeleteClick()">Удалить</button>
+  <div class="menu-container__dropdown">
+    <button class="menu-container__item" (click)="onDeleteClick()">
+      Удалить
+    </button>
   </div>
   }
 </div>

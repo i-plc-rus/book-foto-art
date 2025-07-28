@@ -1,21 +1,25 @@
 <div class="collection-card">
-  <div class="collection-image">
+  <div class="collection-card__image">
     <img [src]="coverImage()" alt="Preview" />
   </div>
 
-  <div class="collection-content">
-    <div class="collection-title">{{ collection().name }}</div>
-    <div class="collection-meta">
-      <span class="dot"></span>
+  <div class="collection-card__content">
+    <div class="collection-card__title">{{ collection().name }}</div>
+    <div class="collection-card__meta">
+      <span class="collection-card__dot"></span>
       <span>{{ itemCount() }} {{ itemWord() }}</span>
-      <span class="dot"></span>
+      <span class="collection-card__dot"></span>
       <span>{{ collection().createDate | date : "d MMM y" }}</span>
     </div>
   </div>
 
-  <button class="menu-button" type="button" (click)="toggleMenu()">
+  <button
+    class="collection-card__menu-btn"
+    type="button"
+    (click)="toggleMenu()"
+  >
     <svg
-      class="menu-icon"
+      class="collection-card__menu-icon"
       aria-hidden="true"
       focusable="false"
       data-prefix="far"
@@ -30,13 +34,15 @@
       ></path>
     </svg>
   </button>
-</div>
 
-@if(isMenuOpen()){
-<div class="menu-dropdown" (clickOutside)="onClickedOutside()">
-  <button class="menu-item danger" (click)="onDelete()">
-    <span>Удалить</span><span>🗑</span>
-  </button>
+  @if (isMenuOpen()) {
+  <div
+    class="collection-card__menu-dropdown"
+    (clickOutside)="onClickedOutside()"
+  >
+    <button class="collection-card__menu-item" (click)="onDelete()">
+      <span>Удалить</span><span>🗑</span>
+    </button>
+  </div>
+  }
 </div>
-
-}

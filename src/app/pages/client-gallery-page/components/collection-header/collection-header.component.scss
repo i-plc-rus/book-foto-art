@@ -1,119 +1,113 @@
 .collections-header {
   display: flex;
   justify-content: space-between;
-}
 
-.collections-header__inner {
-  display: flex;
-  align-items: center;
-  gap: 1.5rem;
-}
-
-.collections-header__title {
-  margin: 0;
-  font-size: 1.5rem;
-  font-weight: 500;
-}
-
-.collections-header__search-label {
-  display: flex;
-  align-items: center;
-  padding: 0.25rem 1.25rem;
-  border-radius: 0.25rem;
-  transition: background-color 0.2s ease;
-}
-
-.collections-header__search-label:hover,
-.collections-header__search-label:focus-within {
-  background-color: rgb(233 233 233);
-}
-
-.collections-header__search-icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-right: 0.5rem;
-  font-size: 1rem;
-  color: #555;
-  width: 1rem;
-  height: 1rem;
-  transition: color 0.2s ease;
-}
-
-.collections-header__search-label:hover .collections-header__search-icon,
-.collections-header__search-label:focus-within
-  .collections-header__search-icon {
-  color: #333;
-}
-
-.collections-header__search-input {
-  flex: 1;
-  border: none;
-  background: transparent;
-  font-size: 0.875rem;
-  color: #333;
-  outline: none;
-  padding: 0.5rem 0.75rem;
-
-  &::placeholder {
-    opacity: 0.5;
+  &__inner {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
   }
-}
 
-.collections-header__controls {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
-
-.collections-header__control-link {
-  font-size: 0.875rem;
-  color: #555;
-  text-decoration: none;
-
-  &:hover {
-    text-decoration: underline;
+  &__title {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 500;
   }
-}
 
-.collections-header__control-link_disabled {
-  color: #aaa;
-  pointer-events: none;
-  text-decoration: none;
-}
+  &__search-label {
+    position: relative;
+    display: flex;
+    align-items: center;
+    padding: 0.25rem 1.25rem;
+    border-radius: 0.25rem;
+    transition: background-color 0.2s ease;
 
-.collections-header__control-button {
-  padding: 0.5rem 1rem;
-  font-size: 0.875rem;
-  font-weight: 500;
-  background-color: rgb(26, 188, 156);
-  color: #fff;
-  border: none;
-  border-radius: 0.25rem;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
+    &:hover,
+    &:focus-within {
+      background-color: rgb(233 233 233);
+    }
 
-  &:hover {
-    background-color: rgb(0, 142, 116);
+    .collections-header__search-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 0.5rem;
+      font-size: 1rem;
+      color: #555;
+      width: 1rem;
+      height: 1rem;
+      transition: color 0.2s ease;
+    }
+
+    &:hover .collections-header__search-icon,
+    &:focus-within .collections-header__search-icon {
+      color: #333;
+    }
+
+    .collections-header__search-input {
+      flex: 1;
+      border: none;
+      background: transparent;
+      font-size: 0.875rem;
+      color: #333;
+      outline: none;
+      padding: 0.5rem 0.75rem;
+
+      &::placeholder {
+        opacity: 0.5;
+      }
+    }
+
+    .collections-header__clear-button {
+      position: absolute;
+      right: 0.75rem;
+      background: none;
+      border: none;
+      font-size: 1.25rem;
+      cursor: pointer;
+      color: #888;
+
+      &:hover {
+        color: #000;
+      }
+    }
   }
-}
 
-.collections-header__search-label {
-  position: relative;
-  display: flex;
-  align-items: center;
+  &__controls {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
 
-  .collections-header__clear-button {
-    position: absolute;
-    right: 0.75rem;
-    background: none;
-    border: none;
-    font-size: 1.25rem;
-    cursor: pointer;
-    color: #888;
+  &__control-link {
+    font-size: 0.875rem;
+    color: #555;
+    text-decoration: none;
 
     &:hover {
-      color: #000;
+      text-decoration: underline;
+    }
+
+    &_disabled {
+      color: #aaa;
+      pointer-events: none;
+      text-decoration: none;
+    }
+  }
+
+  &__control-button {
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    background-color: rgb(26, 188, 156);
+    color: #fff;
+    border: none;
+    border-radius: 0.25rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+
+    &:hover {
+      background-color: rgb(0, 142, 116);
     }
   }
 }

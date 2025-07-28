@@ -1,21 +1,22 @@
 export type DisplayView = 'grid' | 'list';
 
-export type SortOption =
-  | 'created-new'
-  | 'created-old'
-  | 'event-new'
-  | 'event-old'
-  | 'name-asc'
-  | 'name-desc';
+export enum SortOption {
+  CreatedNew = 'created-new',
+  CreatedOld = 'created-old',
+  EventNew = 'event-new',
+  EventOld = 'event-old',
+  NameAsc = 'name-asc',
+  NameDesc = 'name-desc',
+}
 
-interface SortOptionItem {
+export interface SortOptionItem {
   label: string;
   value: SortOption;
 }
 
 export const SORT_OPTIONS: SortOptionItem[] = [
-  { label: 'Создано: Новые → Старые', value: 'created-new' },
-  { label: 'Создано: Старые → Новые', value: 'created-old' },
-  { label: 'Название: A–Я', value: 'name-asc' },
-  { label: 'Название: Я–A', value: 'name-desc' },
+  { label: 'Создано: Новые → Старые', value: SortOption.CreatedNew },
+  { label: 'Создано: Старые → Новые', value: SortOption.CreatedOld },
+  { label: 'Название: A–Я', value: SortOption.NameAsc },
+  { label: 'Название: Я–A', value: SortOption.NameDesc },
 ];

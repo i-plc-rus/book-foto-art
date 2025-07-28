@@ -3,14 +3,13 @@ import {
   SORT_OPTIONS,
   SortOption,
 } from '../../models/collection-display.model';
-import { NgClickOutsideDirective } from 'ng-click-outside2';
+import { SortComponent } from '../../../../shared/components/sort/sort.component';
 
 @Component({
   selector: 'app-sort-dropdown',
   standalone: true,
-  imports: [NgClickOutsideDirective],
+  imports: [SortComponent],
   templateUrl: './collection-sort.component.html',
-  styleUrls: ['./collection-sort.component.scss'],
 })
 export class CollectionSortComponent {
   readonly sort = input.required<SortOption>();
@@ -18,18 +17,7 @@ export class CollectionSortComponent {
 
   readonly options = SORT_OPTIONS;
 
-  isOpen = signal(false);
-
-  toggleDropdown() {
-    this.isOpen.update((v) => !v);
-  }
-
-  closeDropdown() {
-    this.isOpen.set(false);
-  }
-
   choose(option: SortOption) {
     this.sortChange.emit(option);
-    this.closeDropdown();
   }
 }

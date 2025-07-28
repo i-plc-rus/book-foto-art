@@ -53,7 +53,7 @@ export class ClientGalleryComponent {
   readonly galleryName = signal('');
   readonly galleryDate = signal('');
 
-  readonly sortOption = signal<SortOption>('created-new');
+  readonly sortOption = signal<SortOption>(SortOption.CreatedNew);
   readonly dateRange = signal<[dayjs.Dayjs, dayjs.Dayjs] | null>(null);
   readonly displayView = signal<DisplayView>('grid');
   readonly collections = signal<ISavedGallery[]>([]);
@@ -62,21 +62,24 @@ export class ClientGalleryComponent {
 
   private readonly sortedCollections = computed(() => {
     const list = [...this.collections()];
-    return list.sort((a, b) => {
-      const sort = this.sortOption();
-      switch (sort) {
-        case 'created-new':
-          return +new Date(b.createDate) - +new Date(a.createDate);
-        case 'created-old':
-          return +new Date(a.createDate) - +new Date(b.createDate);
-        case 'name-asc':
-          return a.name.localeCompare(b.name);
-        case 'name-desc':
-          return b.name.localeCompare(a.name);
-        default:
-          return 0;
-      }
-    });
+    const sort = this.sortOption();
+
+    switch (sort) {
+      case SortOption.CreatedNew:
+        return list.sort(
+          (a, b) => +new Date(b.createDate) - +new Date(a.createDate)
+        );
+      case SortOption.CreatedOld:
+        return list.sort(
+          (a, b) => +new Date(a.createDate) - +new Date(b.createDate)
+        );
+      case SortOption.NameAsc:
+        return list.sort((a, b) => a.name.localeCompare(b.name));
+      case SortOption.NameDesc:
+        return list.sort((a, b) => b.name.localeCompare(a.name));
+      default:
+        return list;
+    }
   });
 
   readonly filteredCollections = computed(() => {

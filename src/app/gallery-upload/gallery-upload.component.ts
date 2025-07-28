@@ -55,6 +55,7 @@ export class GalleryUploadComponent implements OnDestroy {
     }
   };
 
+  private currentlyUploading = new Set<string>();
   private uploadTimers: { [key: string]: any } = {};
 
   constructor() {
@@ -107,11 +108,11 @@ export class GalleryUploadComponent implements OnDestroy {
 
     this.showStatus.set(true);
     const newFiles: UploadFile[] = [];
+
     const existingHashes = await this.getExistingHashes();
 
     for (const file of files) {
       const hash = await this.getFileHash(file);
-
       if (!existingHashes.has(hash)) {
         newFiles.push(this.createUploadFile(file));
         existingHashes.add(hash);
@@ -119,6 +120,8 @@ export class GalleryUploadComponent implements OnDestroy {
     }
 
     if (newFiles.length === 0) return;
+
+    this.currentlyUploading = new Set(newFiles.map(f => f.id));
 
     this.files.update(prev => [...prev, ...newFiles]);
     this.updateUploadStats();
@@ -154,7 +157,8 @@ export class GalleryUploadComponent implements OnDestroy {
   }
 
   private updateUploadStats() {
-    const files = this.files();
+    const files = this.files().filter(f => this.currentlyUploading.has(f.id));
+
     this.uploadStats.totalFiles.set(files.length);
     this.uploadStats.uploadedFiles.set(files.filter(f => f.loaded).length);
 
@@ -167,9 +171,7 @@ export class GalleryUploadComponent implements OnDestroy {
     const elapsed = (Date.now() - this.uploadStats.startTime()) / 1000;
     this.uploadStats.uploadSpeed.set(elapsed > 0 ? uploadedSize / elapsed : 0);
 
-    this.uploadStats.allFilesUploaded.set(
-      files.length > 0 && files.every(f => f.loaded)
-    );
+    this.uploadStats.allFilesUploaded.set(files.every(f => f.loaded));
   }
 
   private simulateUpload(fileIds: string[]) {
@@ -177,7 +179,10 @@ export class GalleryUploadComponent implements OnDestroy {
     let index = 0;
 
     const uploadNext = () => {
-      if (index >= fileIds.length) return;
+      if (index >= fileIds.length) {
+        this.currentlyUploading.clear();
+        return;
+      }
 
       const fileId = fileIds[index];
       let progress = 0;

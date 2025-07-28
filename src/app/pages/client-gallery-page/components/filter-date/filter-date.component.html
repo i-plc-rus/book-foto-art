@@ -27,14 +27,11 @@
 
   @if (isOpen()) {
   <div class="filter-date__menu">
-    <ngx-daterangepicker-material
-      [startDate]="start()"
-      [endDate]="end()"
-      [locale]="locale"
-      [autoApply]="true"
-      (choosedDate)="choosedDate($event)"
-    >
-    </ngx-daterangepicker-material>
+    <app-range-calendar
+      [(startDate)]="startDate"
+      [(endDate)]="endDate"
+      [(isOpen)]="isOpen"
+    ></app-range-calendar>
   </div>
   }
 </div>

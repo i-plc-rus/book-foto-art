@@ -4,6 +4,8 @@ import { Location } from '@angular/common';
 import { SortMenuComponent } from '../shared/components/sort-menu/sort-menu.component';
 import { GridSettingsComponent } from '../shared/components/grid-settings/grid-settings.component';
 import {UploadModalComponent} from '../shared/modal/upload-modal/upload-modal.component';
+import {TabsComponent} from '../shared/components/tabs/tabs.component';
+import {SidebarService} from '../core/service/sidebar.service';
 
 interface UploadFile {
   id: string;
@@ -22,11 +24,14 @@ interface UploadFile {
     CommonModule,
     SortMenuComponent,
     GridSettingsComponent,
-    UploadModalComponent
-  ]
+    UploadModalComponent,
+    TabsComponent
+  ],
+  providers: [SidebarService]
 })
 export class GalleryUploadComponent implements OnDestroy {
   private readonly location = inject(Location);
+  private sidebarService = inject(SidebarService);
   readonly galleryName = signal('Моя галерея');
   readonly galleryDate = signal(new Date());
   readonly files = signal<UploadFile[]>([]);
@@ -59,6 +64,9 @@ export class GalleryUploadComponent implements OnDestroy {
   private uploadTimers: { [key: string]: any } = {};
 
   constructor() {
+    this.sidebarService.setTitle('Медиа файлы');
+    this.sidebarService.setDate(new Date());
+
     effect(() => {
       this.applySort(this.sortType());
     }, { allowSignalWrites: true });

@@ -1,12 +1,18 @@
-import { Component, input, output, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  output,
+  signal,
+} from '@angular/core';
 import { NgClickOutsideDirective } from 'ng-click-outside2';
 
 @Component({
   selector: 'app-collection-menu',
-  standalone: true,
   templateUrl: './collection-menu.component.html',
   styleUrls: ['./collection-menu.component.scss'],
   imports: [NgClickOutsideDirective],
+  standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CollectionMenuComponent {
   readonly delete = output<void>();

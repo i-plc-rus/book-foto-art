@@ -1,4 +1,11 @@
-import { Component, computed, input, output, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  input,
+  output,
+  signal,
+} from '@angular/core';
 import { ISavedGallery } from '../../../../gallery-upload/interface/upload-file';
 import { DatePipe } from '@angular/common';
 import { NgClickOutsideDirective } from 'ng-click-outside2';
@@ -8,6 +15,8 @@ import { NgClickOutsideDirective } from 'ng-click-outside2';
   templateUrl: './collection-card.component.html',
   styleUrls: ['./collection-card.component.scss'],
   imports: [DatePipe, NgClickOutsideDirective],
+  standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CollectionCardComponent {
   readonly collection = input.required<ISavedGallery>();

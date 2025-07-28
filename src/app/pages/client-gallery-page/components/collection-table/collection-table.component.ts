@@ -1,5 +1,11 @@
 import { CommonModule, DatePipe } from '@angular/common';
-import { Component, computed, input, output } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  input,
+  output,
+} from '@angular/core';
 import { ISavedGallery } from '../../../../gallery-upload/interface/upload-file';
 import { CollectionMenuComponent } from '../collection-menu/collection-menu.component';
 
@@ -8,6 +14,8 @@ import { CollectionMenuComponent } from '../collection-menu/collection-menu.comp
   templateUrl: './collection-table.component.html',
   styleUrls: ['./collection-table.component.scss'],
   imports: [DatePipe, CollectionMenuComponent],
+  standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CollectionTableComponent {
   readonly collections = input.required<ISavedGallery[]>();

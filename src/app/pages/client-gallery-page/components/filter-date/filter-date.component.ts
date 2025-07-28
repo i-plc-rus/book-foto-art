@@ -1,4 +1,5 @@
 import {
+  ChangeDetectionStrategy,
   Component,
   computed,
   effect,
@@ -15,7 +16,6 @@ import { RangeCalendarComponent } from '../../../../shared/components/range-cale
 
 @Component({
   selector: 'app-filter-date',
-  standalone: true,
   imports: [
     FormsModule,
     NgxDaterangepickerMd,
@@ -24,6 +24,8 @@ import { RangeCalendarComponent } from '../../../../shared/components/range-cale
   ],
   templateUrl: './filter-date.component.html',
   styleUrls: ['./filter-date.component.scss'],
+  standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FilterDateComponent {
   readonly config = input.required<FilterConfig>();

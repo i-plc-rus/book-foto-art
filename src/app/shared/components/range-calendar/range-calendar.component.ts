@@ -1,9 +1,9 @@
 import {
   booleanAttribute,
+  ChangeDetectionStrategy,
   Component,
   computed,
   model,
-  signal,
 } from '@angular/core';
 import dayjs from 'dayjs';
 import { NgxDaterangepickerMd } from 'ngx-daterangepicker-material';
@@ -13,6 +13,8 @@ import { NgxDaterangepickerMd } from 'ngx-daterangepicker-material';
   templateUrl: './range-calendar.component.html',
   styleUrls: ['./range-calendar.component.scss'],
   imports: [NgxDaterangepickerMd],
+  standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RangeCalendarComponent {
   readonly startDate = model<Date | null>(null);

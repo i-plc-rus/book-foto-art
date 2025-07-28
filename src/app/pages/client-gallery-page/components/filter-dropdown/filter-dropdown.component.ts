@@ -1,4 +1,11 @@
-import { Component, signal, input, output, computed } from '@angular/core';
+import {
+  Component,
+  signal,
+  input,
+  output,
+  computed,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 import { FilterConfig } from '../../models/filter.model';
 import { NgClickOutsideDirective } from 'ng-click-outside2';
 
@@ -8,6 +15,7 @@ import { NgClickOutsideDirective } from 'ng-click-outside2';
   styleUrls: ['./filter-dropdown.component.scss'],
   imports: [NgClickOutsideDirective],
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FilterDropdownComponent {
   readonly config = input.required<FilterConfig>();

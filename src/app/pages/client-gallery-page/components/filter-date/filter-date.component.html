@@ -2,6 +2,7 @@
   class="filter-date"
   [class._open]="isOpen()"
   [class._disabled]="disabled()"
+  (clickOutside)="isOpen.set(false)"
 >
   <button
     class="filter-date__btn"

@@ -1,39 +1,21 @@
-import {
-  Component,
-  ElementRef,
-  signal,
-  input,
-  output,
-  computed,
-  WritableSignal,
-  inject,
-  OnInit,
-  OnDestroy,
-} from '@angular/core';
+import { Component, signal, input, output, computed } from '@angular/core';
 import { FilterConfig } from '../../models/filter.model';
+import { NgClickOutsideDirective } from 'ng-click-outside2';
 
 @Component({
   selector: 'app-filter-dropdown',
   templateUrl: './filter-dropdown.component.html',
   styleUrls: ['./filter-dropdown.component.scss'],
+  imports: [NgClickOutsideDirective],
   standalone: true,
 })
-export class FilterDropdownComponent implements OnInit, OnDestroy {
+export class FilterDropdownComponent {
   readonly config = input.required<FilterConfig>();
   readonly disabled = input(false);
   readonly onSelect = output<string[]>();
 
   readonly isOpen = signal(false);
-  readonly selected: WritableSignal<string[]> = signal([]);
-
-  private readonly elementRef = inject(ElementRef);
-
-  private handleOutsideClick = (event: MouseEvent) => {
-    const target = event.target as HTMLElement;
-    if (!this.elementRef.nativeElement.contains(target)) {
-      this.isOpen.set(false);
-    }
-  };
+  readonly selected = signal<string[]>([]);
 
   readonly summary = computed(() => {
     const selected = this.selected();
@@ -43,14 +25,6 @@ export class FilterDropdownComponent implements OnInit, OnDestroy {
     const extra = selected.length > 2 ? `, +${selected.length - 2}` : '';
     return `${this.config().label}: ${visible}${extra}`;
   });
-
-  ngOnInit() {
-    document.addEventListener('click', this.handleOutsideClick);
-  }
-
-  ngOnDestroy() {
-    document.removeEventListener('click', this.handleOutsideClick);
-  }
 
   toggle() {
     this.isOpen.update((v) => !v);

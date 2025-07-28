@@ -2,6 +2,7 @@
   class="filter-dropdown"
   [class._open]="isOpen()"
   [class._disabled]="disabled()"
+  (clickOutside)="isOpen.set(false)"
 >
   <button
     class="filter-dropdown__btn"

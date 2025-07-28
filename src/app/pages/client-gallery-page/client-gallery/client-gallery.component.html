@@ -25,8 +25,9 @@
       />
       <div class="collection-top__header">
         <div class="collection-top__filter">
+          <app-filter-dropdown [config]="STATUS" [disabled]="false" />
           <app-filter-dropdown [config]="CATEGORY_TAG" [disabled]="true" />
-          <app-filter-dropdown [config]="STATUS" [disabled]="true" />
+
           <app-filter-date
             [config]="EVENT_DATE"
             (onSelect)="onSelectDate($event)"

@@ -1,29 +1,18 @@
-import {
-  Component,
-  ElementRef,
-  OnDestroy,
-  OnInit,
-  computed,
-  effect,
-  inject,
-  input,
-  output,
-  signal,
-} from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, computed, input, output, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NgxDaterangepickerMd } from 'ngx-daterangepicker-material';
 import dayjs from 'dayjs';
 import { FilterConfig } from '../../models/filter.model';
+import { NgClickOutsideDirective } from 'ng-click-outside2';
 
 @Component({
   selector: 'app-filter-date',
   standalone: true,
-  imports: [FormsModule, NgxDaterangepickerMd],
+  imports: [FormsModule, NgxDaterangepickerMd, NgClickOutsideDirective],
   templateUrl: './filter-date.component.html',
   styleUrls: ['./filter-date.component.scss'],
 })
-export class FilterDateComponent implements OnInit, OnDestroy {
+export class FilterDateComponent {
   readonly config = input.required<FilterConfig>();
   readonly disabled = input(false);
   readonly onSelect = output<[dayjs.Dayjs, dayjs.Dayjs] | null>();
@@ -31,8 +20,6 @@ export class FilterDateComponent implements OnInit, OnDestroy {
   readonly isOpen = signal(false);
   readonly startDate = signal<Date | null>(null);
   readonly endDate = signal<Date | null>(null);
-
-  private readonly elementRef = inject(ElementRef);
 
   readonly locale = {
     applyLabel: 'Выбрать',
@@ -77,21 +64,6 @@ export class FilterDateComponent implements OnInit, OnDestroy {
 
     return `${this.config().label}: ${format(start)} – ${format(end)}`;
   });
-
-  ngOnInit() {
-    document.addEventListener('click', this.handleClickOutside);
-  }
-
-  ngOnDestroy() {
-    document.removeEventListener('click', this.handleClickOutside);
-  }
-
-  private handleClickOutside = (event: MouseEvent) => {
-    const target = event.target as HTMLElement;
-    if (!this.elementRef.nativeElement.contains(target)) {
-      this.isOpen.set(false);
-    }
-  };
 
   toggle() {
     this.isOpen.update((v) => !v);

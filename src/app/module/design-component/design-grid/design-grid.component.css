@@ -1,0 +1,20 @@
+.pb_ {
+  padding: 31.86%;
+}
+
+.template-item {
+  transition: border-color 0.2s ease;
+}
+
+.template-item:hover {
+  border-color: #1abc9c;
+}
+
+.border-green-500 {
+  border-color: #1abc9c;
+  border-width: 1px;
+}
+
+.images-grid {
+  filter: grayscale(100%) brightness(0.2);
+}

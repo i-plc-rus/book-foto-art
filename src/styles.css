@@ -48,7 +48,7 @@ body {
 }
 
 .template-item:hover:not(.active) {
-  border-color: #cecccc;
+  border-color: #1abc9c;
 }
 
 .template-item.active {

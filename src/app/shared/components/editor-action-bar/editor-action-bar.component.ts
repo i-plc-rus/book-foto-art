@@ -37,8 +37,9 @@ export class ActionBarComponent {
 
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: MouseEvent): void {
-    if (!this.moreMenuRef.nativeElement.contains(event.target)) {
+    if (this.moreMenuRef && !this.moreMenuRef?.nativeElement.contains(event.target)) {
       this.isMenuOpen = false;
     }
   }
+
 }

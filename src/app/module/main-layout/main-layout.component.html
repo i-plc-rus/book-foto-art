@@ -46,8 +46,5 @@
 
   <main class="main-content">
     <router-outlet></router-outlet>
-    @if (isDesignRoute()) {
-      <ng-container *ngComponentOutlet="designService.getActiveSection()?.component"></ng-container>
-    }
   </main>
 </div>

@@ -1,6 +1,5 @@
 import {Component, inject} from '@angular/core';
 import {Router, RouterLink, RouterLinkActive} from '@angular/router';
-import {NgOptimizedImage} from '@angular/common';
 
 @Component({
   standalone: true,
@@ -9,7 +8,6 @@ import {NgOptimizedImage} from '@angular/common';
   styleUrl: './tabs.component.css',
   imports: [
     RouterLink,
-    NgOptimizedImage,
     RouterLinkActive
   ]
 })

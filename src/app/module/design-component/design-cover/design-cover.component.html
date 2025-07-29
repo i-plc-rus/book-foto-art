@@ -1,6 +1,75 @@
-<div class="p-6">
-  <h2 class="text-xl font-bold mb-4">Cover Settings</h2>
-  <div class="bg-gray-100 border-2 border-dashed rounded-xl w-full h-64 flex items-center justify-center">
-    <p class="text-gray-500">Cover settings will appear here</p>
-  </div>
+<app-editor-action-bar
+        [menuItems]="actionBarItems"
+        [previewDisabled]="isPreviewDisabled"
+        [publishDisabled]="isPublishDisabled"
+        (menuItemClick)="handleMenuItem($event)"
+        (buttonClick)="handleButtonClick($event)"
+></app-editor-action-bar>
+<div class="flex bg-[#fff] max-h">
+    <div class="template border-t border-t-[#cecccc] flex flex-col w-1/2">
+        <div class="bg-white z-10 p-[32px] border-b border-[#eaeaea]">
+            <div class="flex items-center justify-between">
+                <h2 class="font-medium text-[1.375rem] leading-[1.18]">Cover</h2>
+
+                <div class="flex gap-2 ml-4">
+                    <button type="button"
+                            class="cursor-pointer flex items-center justify-center py-1 h-8 bg-transparent text-[#1abc9c] text-[0.875rem] font-medium tracking-normal leading-none transition-colors rounded disabled:text-gray-300 hover:text-[#008e74]">
+                        <img src="assets/icons/images.svg" alt="preview"
+                             class="w-[14px] h-full filter-green transition-filter hover:filter-green-hover mr-1"/>
+                        Cover Photo
+                    </button>
+
+                    <button type="button"
+                            class="cursor-pointer flex items-center justify-center py-1 h-8 bg-transparent text-[#1abc9c] text-[0.875rem] font-medium tracking-normal leading-none transition-colors rounded disabled:text-gray-300 hover:text-[#008e74]">
+                        <img src="assets/icons/dots.svg" alt="preview"
+                             class="w-[14px] h-full filter-green transition-filter hover:filter-green-hover mr-1"/>
+                        Focal
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="scroll p-[32px] pt-0 overflow-y-auto bg-[#fff] flex-1">
+            <div class="grid gap-4">
+                @for (template of visibleTemplates(); track template.id) {
+                    <div class="flex justify-center flex-col items-center">
+                        <div (click)="selectTemplate(template)"
+                             [class.active]="isSelected(template)"
+                             class="template-item">
+                            <img [src]="template.image" alt="cover" class="w-full h-[115px]"/>
+                        </div>
+                        <label class="p-2 text-center text-sm font-medium">{{ template.name }}</label>
+                    </div>
+                }
+
+                <div class="flex justify-center flex-col items-center">
+                    <div (click)="selectTemplate(noneTemplate())"
+                         [class.active]="isSelected(noneTemplate())"
+                         class="template-item">
+                        <img [src]="noneTemplate().image" alt="cover" class="w-full h-[115px]"/>
+                    </div>
+                    <label class="p-2 text-center text-sm font-medium">{{ noneTemplate().name }}</label>
+                </div>
+
+                @if (hasMore()) {
+                    <div class="flex justify-center flex-col items-center">
+                        <div (click)="loadMore()"
+                             class="template-item w-full h-full custom-fill flex justify-center items-center">
+                            <span class="text-2xl">...</span>
+                        </div>
+                        <label class="p-2 text-center text-sm font-medium">More</label>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <div class="device border-t border-t-[#cecccc] flex flex-col w-full">
+        <app-device-preview
+                [previewImage]="selectedTemplate() ? selectedTemplate()!.image : null"
+                [viewMode]="viewMode()"
+                (viewModeChange)="setViewMode($event)"
+        ></app-device-preview>
+
+    </div>
 </div>

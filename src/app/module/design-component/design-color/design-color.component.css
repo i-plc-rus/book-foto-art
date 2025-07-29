@@ -1,0 +1,10 @@
+
+@media screen and (max-width: 1120px) {
+  .device {
+    display: none;
+  }
+
+  .template {
+    width: 100%;
+  }
+}

@@ -1,6 +1,40 @@
-<div class="p-6">
-  <h2 class="text-xl font-bold mb-4">Typography Settings</h2>
-  <div class="bg-gray-100 border-2 border-dashed rounded-xl w-full h-64 flex items-center justify-center">
-    <p class="text-gray-500">Typography settings will appear here</p>
+<app-editor-action-bar
+  [menuItems]="actionBarItems"
+  [previewDisabled]="isPreviewDisabled"
+  [publishDisabled]="isPublishDisabled"
+  (menuItemClick)="handleMenuItem($event)"
+  (buttonClick)="handleButtonClick($event)"
+></app-editor-action-bar>
+<div class="flex bg-[#fff] max-h">
+  <div class="template flex flex-col w-1/2">
+    <div class="bg-white z-10 p-[32px]">
+      <div class="flex items-center justify-between">
+        <h2 class="font-medium text-[1.375rem] leading-[1.18]">Typography</h2>
+      </div>
+    </div>
+
+    <div class="scroll p-[32px] pt-0 overflow-y-auto bg-[#fff] flex-1">
+      <div class="grid gap-4">
+        @for (template of visibleTemplates(); track template.id) {
+          <div class="flex justify-center flex-col items-center">
+            <div (click)="selectTemplate(template)"
+                 [class.active]="isSelected(template)"
+                 class="template-item">
+              <img [src]="template.image" alt="cover" class="w-full h-[115px]"/>
+            </div>
+            <label class="p-2 text-center text-sm font-medium">{{ template.name }}</label>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+
+  <div class="device border-t border-t-[#cecccc] flex flex-col w-full">
+    <app-device-preview
+      [previewImage]="selectedTemplate() ? selectedTemplate()!.image : null"
+      [viewMode]="viewMode()"
+      (viewModeChange)="setViewMode($event)"
+    ></app-device-preview>
+
   </div>
 </div>

@@ -7,10 +7,9 @@ import { AuthGuard } from './guards/auth.guard';
 import { GalleryUploadComponent } from './gallery-upload/gallery-upload.component';
 
 export const routes: Routes = [
-  { path: '', component: HomeComponent, pathMatch: 'full' },
+  { path: '', component: HomeComponent },
   { path: 'login', component: LoginPageComponent },
   { path: 'register', component: RegisterPageComponent },
-
   {
     path: 'client-gallery',
     loadComponent: () =>
@@ -19,7 +18,6 @@ export const routes: Routes = [
       ).then((m) => m.ClientGalleryComponent),
     canActivate: [AuthGuard],
   },
-
   {
     path: 'upload',
     component: GalleryUploadComponent,

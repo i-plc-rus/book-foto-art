@@ -1,141 +1,117 @@
-<div class="layout">
-  <aside class="sidebar">
-    <div class="sidebar-header">
-      <button class="back-button" (click)="goBackToPreviousPage()">
-        <img src="assets/back-svgrepo-com.svg" alt="Назад"/>
-      </button>
-      <div class="collection-info">
-        <div class="collection-name">{{ galleryName() }}</div>
-        <div class="collection-date">{{ galleryDate() | date:'d MMMM yy г.' }}</div>
-      </div>
-    </div>
-    <div class="cover-image-wrapper">
-      <img class="cover-image" src="assets/cover.png" alt="Обложка"/>
-    </div>
-    <div class="icons">
-      <img src="assets/question-circle-svgrepo-com.svg" class="icon" alt=""/>
-      <img src="assets/bell-alt-svgrepo-com.svg" class="icon" alt=""/>
-      <img src="assets/profile-svgrepo-com.svg" class="icon" alt=""/>
-    </div>
-  </aside>
-
-  <main class="main-content">
-    <section class="welcome full-width">
-      <div class="w-full py-3 flex items-center justify-between">
-        <h1 class="headline">Медиа файлы</h1>
-        <div class="flex justify-end gap-2">
-          <app-sort-menu (sortChange)="onSortChange($event)"></app-sort-menu>
-          <app-grid-settings
-            (gridSizeChange)="onGridSizeChange($event)"
-            (showFilenameChange)="onShowFilenameChange($event)">
-          </app-grid-settings>
-          <div
-            (click)="showUploadModal.set(true)"
-            class="flex items-center gap-1 px-3 py-1.5 cursor-pointer text-[#1ac2c4] relative">
-            <svg xmlns="http://www.w3.org/2000/svg" class="border border-[#1ac2c4] rounded-full w-4 h-4" viewBox="0 0 24 24" fill="none"
-                 stroke="currentColor" stroke-width="2">
-              <path d="M12 5v14M5 12h14"/>
-            </svg>
-            <span>Add Media</span>
-          </div>
-        </div>
-      </div>
-
+<section class="welcome full-width">
+  <div class="w-full py-3 flex items-center justify-between">
+    <h1 class="headline">Медиа файлы</h1>
+    <div class="flex justify-end gap-2">
+      <app-sort-menu (sortChange)="onSortChange($event)"></app-sort-menu>
+      <app-grid-settings
+        (gridSizeChange)="onGridSizeChange($event)"
+        (showFilenameChange)="onShowFilenameChange($event)">
+      </app-grid-settings>
       <div
-        class="upload-area"
-        [class.centered]="files().length === 0"
-        (drop)="handleDrop($event)"
-        (dragover)="$event.preventDefault()">
+        (click)="showUploadModal.set(true)"
+        class="flex items-center gap-1 px-3 py-1.5 cursor-pointer text-[#1ac2c4] relative">
+        <svg xmlns="http://www.w3.org/2000/svg" class="border border-[#1ac2c4] rounded-full w-4 h-4" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2">
+          <path d="M12 5v14M5 12h14"/>
+        </svg>
+        <span>Add Media</span>
+      </div>
+    </div>
+  </div>
 
-        @if (files().length === 0) {
-          <div class="empty-state">
-            <p class="drop-text">Перетащите медиафайлы сюда или</p>
-            <label for="fileInput" class="file-label">выберите на устройстве</label>
-            <input
-              type="file"
-              multiple
-              hidden
-              id="fileInput"
-              (change)="handleFileSelect($event)"
-            />
-          </div>
-        } @else {
-          <div
-            class="file-grid"
-            [class.grid-small]="gridSize() === 'small'"
-            [class.grid-large]="gridSize() === 'large'">
+  <div
+    class="upload-area"
+    [class.centered]="files().length === 0"
+    (drop)="handleDrop($event)"
+    (dragover)="$event.preventDefault()">
 
-            @for (file of files(); track file.id) {
-              <div class="file-tile">
-                <div class="media-container">
-                  @if (!file.loaded) {
-                    <div class="skeleton-loader"></div>
-                  }
+    @if (files().length === 0) {
+      <div class="empty-state">
+        <p class="drop-text">Перетащите медиафайлы сюда или</p>
+        <label for="fileInput" class="file-label">выберите на устройстве</label>
+        <input
+          type="file"
+          multiple
+          hidden
+          id="fileInput"
+          (change)="handleFileSelect($event)"
+        />
+      </div>
+    } @else {
+      <div
+        class="file-grid"
+        [class.grid-small]="gridSize() === 'small'"
+        [class.grid-large]="gridSize() === 'large'">
 
-                  <div class="media-content">
-                    <img
-                      [src]="file.previewUrl"
-                      [alt]="file.file.name"
-                      [class.hidden]="!file.loaded"
-                    />
+        @for (file of files(); track file.id) {
+          <div class="file-tile">
+            <div class="media-container">
+              @if (!file.loaded) {
+                <div class="skeleton-loader"></div>
+              }
 
-                    @if (showFilename()) {
-                      <p class="filename">{{ file.file.name }}</p>
-                    }
+              <div class="media-content">
+                <img
+                  [src]="file.previewUrl"
+                  [alt]="file.file.name"
+                  [class.hidden]="!file.loaded"
+                />
 
-                    @if (!file.loaded) {
-                      <div class="loader-overlay">
-                        <div class="circular-loader">
-                          <svg class="circular" viewBox="0 0 50 50">
-                            <circle class="path" cx="25" cy="25" r="20" fill="none" stroke-width="5"></circle>
-                          </svg>
-                        </div>
-                        <div class="percentage">Progressing</div>
-                      </div>
-                    }
+                @if (showFilename()) {
+                  <p class="filename">{{ file.file.name }}</p>
+                }
+
+                @if (!file.loaded) {
+                  <div class="loader-overlay">
+                    <div class="circular-loader">
+                      <svg class="circular" viewBox="0 0 50 50">
+                        <circle class="path" cx="25" cy="25" r="20" fill="none" stroke-width="5"></circle>
+                      </svg>
+                    </div>
+                    <div class="percentage">Progressing</div>
                   </div>
-                </div>
+                }
               </div>
-            }
+            </div>
           </div>
         }
       </div>
+    }
+  </div>
 
-      @if (files().length > 0 && !uploadStats.allFilesUploaded() && showStatus()) {
-        <div class="upload-status">
-          <div class="upload-info">
-            <div class="upload-header">
-              <div class="upload-text">
-                Uploading {{ uploadStats.uploadedFiles() }} of {{ uploadStats.totalFiles() }} items
-              </div>
-              <button class="close-button" (click)="closeStatus()">
-                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M13 1L1 13M1 1L13 13" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                        stroke-linejoin="round"/>
-                </svg>
-              </button>
-            </div>
-            <div class="upload-stats">
-              {{ uploadStats.formatBytes(uploadStats.uploadedSize()) }} /
-              {{ uploadStats.formatBytes(uploadStats.totalSize()) }} •
-              {{ uploadStats.formatBytes(uploadStats.uploadSpeed()) }}/s
-            </div>
+  @if (files().length > 0 && !uploadStats.allFilesUploaded() && showStatus()) {
+    <div class="upload-status">
+      <div class="upload-info">
+        <div class="upload-header">
+          <div class="upload-text">
+            Uploading {{ uploadStats.uploadedFiles() }} of {{ uploadStats.totalFiles() }} items
           </div>
-          <div class="progress-container">
-            <div
-              class="progress-bar"
-              [style.width.%]="(uploadStats.uploadedSize() / uploadStats.totalSize()) * 100">
-            </div>
-          </div>
+          <button class="close-button" (click)="closeStatus()">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M13 1L1 13M1 1L13 13" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round"/>
+            </svg>
+          </button>
         </div>
-      }
-    </section>
-  </main>
-
-  @if (showUploadModal()) {
-    <app-upload-modal
-      (fileSelected)="onModalFileSelected($event)"
-      (close)="showUploadModal.set(false)"
-    ></app-upload-modal>
+        <div class="upload-stats">
+          {{ uploadStats.formatBytes(uploadStats.uploadedSize()) }} /
+          {{ uploadStats.formatBytes(uploadStats.totalSize()) }} •
+          {{ uploadStats.formatBytes(uploadStats.uploadSpeed()) }}/s
+        </div>
+      </div>
+      <div class="progress-container">
+        <div
+          class="progress-bar"
+          [style.width.%]="(uploadStats.uploadedSize() / uploadStats.totalSize()) * 100">
+        </div>
+      </div>
+    </div>
   }
-</div>
+</section>
+
+@if (showUploadModal()) {
+  <app-upload-modal
+    (fileSelected)="onModalFileSelected($event)"
+    (close)="showUploadModal.set(false)"
+  ></app-upload-modal>
+}

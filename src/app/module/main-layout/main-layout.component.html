@@ -1,0 +1,53 @@
+<div class="layout">
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <button class="back-button" (click)="goBackToPreviousPage()">
+        <img src="assets/back-svgrepo-com.svg" alt="Назад"/>
+      </button>
+      <div class="collection-info">
+        <div class="collection-name">{{ sidebarService.title() }}</div>
+        <div class="collection-date">{{ sidebarService.date() | date:'d MMMM yy г.' }}</div>
+      </div>
+    </div>
+
+    <div class="sidebar-content">
+      <div class="cover-image-wrapper">
+        <img class="cover-image" src="assets/cover.png" alt="Обложка"/>
+      </div>
+
+      <app-tabs></app-tabs>
+
+      @if (isDesignRoute()) {
+        <div class="design-sections">
+          <div class="section-header">
+            <h3 class="section-title">{{ designService.sectionTitle() }}</h3>
+          </div>
+
+          <ul class="section-list">
+            @for (section of designService.sections(); track section.id) {
+              <li>
+                <a
+                  (click)="designService.navigateToSection(section.id)"
+                  [class.active]="designService.getActiveSection()?.id === section.id"
+                  class="section-item">
+                <span class="section-icon">
+                  <img [src]="section.icon" [alt]="section.name"/>
+                </span>
+                  <span class="section-name">{{ section.name }}</span>
+                </a>
+              </li>
+            }
+          </ul>
+        </div>
+      }
+
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <router-outlet></router-outlet>
+    @if (isDesignRoute()) {
+      <ng-container *ngComponentOutlet="designService.getActiveSection()?.component"></ng-container>
+    }
+  </main>
+</div>

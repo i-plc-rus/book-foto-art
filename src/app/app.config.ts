@@ -14,6 +14,7 @@ import {
 } from '@angular/common/http';
 import { AuthInterceptor } from './auth.interceptor';
 import { NgxDaterangepickerMd } from 'ngx-daterangepicker-material';
+import { SidebarService } from './core/service/sidebar.service';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -25,6 +26,7 @@ export const appConfig: ApplicationConfig = {
       useClass: AuthInterceptor,
       multi: true,
     },
+    SidebarService,
     importProvidersFrom(
       NgxDaterangepickerMd.forRoot({
         separator: ' – ',

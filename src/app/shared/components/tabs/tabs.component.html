@@ -1,0 +1,23 @@
+<div class="tabs-container">
+  <nav class="tabs">
+    @for (tab of tabs; track tab.tooltip) {
+      <a
+        [routerLink]="tab.link"
+        class="tab-item relative"
+        routerLinkActive="active"
+        (mouseenter)="hoveredTab = tab.tooltip"
+        (mouseleave)="hoveredTab = null">
+        <img
+          [src]="tab.icon"
+          [alt]="tab.tooltip"
+          class="tab-icon transition-opacity duration-200"
+          [class.opacity-100]="hoveredTab === tab.tooltip || isActive(tab.link)"
+          [class.opacity-70]="hoveredTab !== tab.tooltip && !isActive(tab.link)"
+        />
+        @if (hoveredTab === tab.tooltip) {
+          <span class="tooltip">{{ tab.tooltip }}</span>
+        }
+      </a>
+    }
+  </nav>
+</div>

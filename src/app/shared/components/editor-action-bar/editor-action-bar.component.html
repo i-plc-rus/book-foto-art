@@ -1,0 +1,65 @@
+<div class="w-full bg-white border-b border-[#eaeaea]">
+  <div class="flex items-center justify-end px-6 py-4">
+    <div class="relative" #moreMenu>
+      <button
+        (click)="toggleMenu()"
+        class="flex items-center px-4 py-2 text-[#3d3d3d] hover:bg-[#f6f7f7] transition-colors"
+        [disabled]="!menuItems || menuItems.length === 0"
+      >
+        <span class="font-medium mr-1">More</span>
+        <svg
+          class="w-4 h-4 fill-current transition-transform duration-200"
+          [class.rotate-180]="isMenuOpen"
+          viewBox="0 0 20 20"
+        >
+          <path
+            d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+          />
+        </svg>
+      </button>
+      @if (isMenuOpen) {
+        <div class="absolute left-0 mt-1 w-56 bg-white shadow-lg rounded-md border border-[#eaeaea] z-50">
+          <div class="py-1">
+            @for (item of menuItems; track item.id) {
+              @if (item.divider) {
+                <div class="border-t border-[#eaeaea] my-1"></div>
+
+              } @else {
+                <a href="#"
+                   class="block px-4 py-2 text-sm flex items-center"
+                   [class.text-gray-400]="item.disabled"
+                   [class.cursor-not-allowed]="item.disabled"
+                   [class.hover:bg-gray-50]="!item.disabled"
+                   (click)="!item.disabled && onMenuItemClick(item, $event)"
+                >
+                  @if (item.icon) {
+                    <span class="mr-2 w-4 h-4 flex items-center">
+                      <img [src]="item.icon" [alt]="item.label" class="w-full">
+                    </span>
+                  }
+
+                  {{ item.label }}
+                </a>
+              }
+            }
+          </div>
+        </div>
+
+      }
+    </div>
+
+    <div class="flex space-x-3">
+      <button class="flex items-center px-4 py-2 text-[#3d3d3d] hover:bg-[#f6f7f7] transition-colors"
+        [disabled]="previewDisabled"
+        (click)="onButtonClick('preview')">
+        Preview
+      </button>
+
+      <button class="flex items-center px-4 py-2 bg-[#1abc9c] text-white hover:bg-[#008e74] transition-colors"
+        [disabled]="publishDisabled"
+        (click)="onButtonClick('publish')">
+        Publish
+      </button>
+    </div>
+  </div>
+</div>

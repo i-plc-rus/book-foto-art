@@ -19,22 +19,22 @@ export class TabsComponent {
   tabs = [
     {
       icon: 'assets/icons/images.svg',
-      tooltip: 'Картинки',
+      tooltip: 'Photos',
       link: '/upload'
     },
     {
       icon: 'assets/icons/icon-design.svg',
-      tooltip: 'Дизайн',
+      tooltip: 'Design',
       link: '/design/cover'
     },
     {
       icon: 'assets/icons/setting.svg',
-      tooltip: 'Настройка',
+      tooltip: 'Settings',
       link: '/gallery/settings'
     },
     {
       icon: 'assets/icons/wifi.svg',
-      tooltip: 'Активные',
+      tooltip: 'Activities',
       link: '/gallery/active'
     }
   ];

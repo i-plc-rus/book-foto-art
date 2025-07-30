@@ -1,43 +1,46 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpEvent, HttpEventType, HttpHeaders, HttpRequest } from '@angular/common/http';
-import { Observable, catchError, map, of } from 'rxjs';
+import {Observable, catchError, map, throwError} from 'rxjs';
 import { environment as env } from './../../../environment/environment';
 
 @Injectable({ providedIn: 'root' })
 export class UploadService {
   constructor(private http: HttpClient) {}
 
-  uploadFile(file: File): Observable<{ progress: number, loaded: number }> {
-    const formData = new FormData();
-    const collectionId = localStorage.getItem('collectionId');
+  uploadFile(file: File, collectionId: string): Observable<{ progress: number }> {
+    const token = localStorage.getItem('auth_token');
 
-    if (!collectionId) {
-      throw new Error('collectionId is missing');
+    if (!token) {
+      return throwError(() => new Error('Authorization token is missing'));
     }
 
-    formData.append('file', file);
-    formData.append('collectionId', collectionId);
-    formData.append('fileName', file.name);
+    const formData = new FormData();
 
-    return this.http.post<any>('/api/upload', formData, {
+    formData.append('file', file, file.name);
+    formData.append('collectionId', collectionId);
+
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });
+
+    return this.http.post<any>(`${env.apiUrl}/upload/files`, formData, {
       reportProgress: true,
-      observe: 'events'
+      observe: 'events',
+      headers: headers
     }).pipe(
       map((event: HttpEvent<any>) => {
-        if (event.type === HttpEventType.UploadProgress) {
-          const progress = event.total ? Math.round((event.loaded / event.total) * 100) : 0;
-          return { progress, loaded: 0 };
+        if (event.type === HttpEventType.UploadProgress && event.total) {
+          const progress = Math.round((event.loaded / event.total) * 100);
+          return { progress };
         } else if (event.type === HttpEventType.Response) {
-          return { progress: 100, loaded: 1 };
-        } else {
-          return { progress: 0, loaded: 0 };
+          return { progress: 100 };
         }
+        return { progress: 0 };
       }),
       catchError(error => {
         console.error('Upload error:', error);
-        return of({ progress: 0, loaded: 0 });
+        return throwError(() => error);
       })
     );
   }
-
 }

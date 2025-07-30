@@ -48,25 +48,14 @@ export class ClientGalleryComponent implements OnInit {
         if (res) {
           this.collectionId = res.id;
           localStorage.setItem('collectionId', this.collectionId);
-          this.currentStep = 3;
           this.router.navigate(['/upload'], {
-            state: {
-              galleryName: this.galleryName,
-              galleryDate: this.galleryDate,
-              collectionId: res.id
-            }
+            queryParams: { collectionId: this.collectionId }
           });
         }
       });
 
     } else {
       this.currentStep++;
-    }
-  }
-
-  goBack() {
-    if (this.currentStep > 1) {
-      this.currentStep--;
     }
   }
 }

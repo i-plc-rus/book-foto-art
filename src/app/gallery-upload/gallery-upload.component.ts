@@ -255,4 +255,5 @@ export class GalleryUploadComponent implements OnDestroy {
       URL.revokeObjectURL(file.previewUrl);
     });
   }
+  
 }

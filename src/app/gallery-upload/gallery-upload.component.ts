@@ -148,7 +148,6 @@ export class GalleryUploadComponent implements OnDestroy {
 
   private uploadFilesRx(filesToUpload: UploadFile[]) {
     if (!this.collectionId) {
-      console.error('collectionId is null');
       return;
     }
 
@@ -167,26 +166,6 @@ export class GalleryUploadComponent implements OnDestroy {
             );
             this.updateUploadStats();
             return progress;
-          }),
-          catchError(error => {
-            console.error('Upload failed:', error);
-
-            console.error('Error details:', {
-              status: error.status,
-              message: error.message,
-              body: error.error
-            });
-
-            this.files.update(prev =>
-              prev.map(f =>
-                f.id === file.id
-                  ? { ...f, progress: -1, loaded: false }
-                  : f
-              )
-            );
-
-            this.updateUploadStats();
-            return of();
           })
         );
       }),
@@ -196,10 +175,7 @@ export class GalleryUploadComponent implements OnDestroy {
       }),
       takeUntilDestroyed(this.destroyRef)
     );
-
-    uploads$.subscribe({
-      error: (err) => console.error('Global upload error:', err)
-    });
+    uploads$.subscribe();
   }
 
   private updateUploadStats() {

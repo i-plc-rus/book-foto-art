@@ -8,25 +8,17 @@ export class UploadService {
   constructor(private http: HttpClient) {}
 
   uploadFile(file: File, collectionId: string): Observable<{ progress: number }> {
-    const token = localStorage.getItem('auth_token');
-
-    if (!token) {
-      return throwError(() => new Error('Authorization token is missing'));
+    if (!collectionId) {
+      return throwError(() => new Error('collection_id is missing'));
     }
 
     const formData = new FormData();
-
-    formData.append('file', file, file.name);
-    formData.append('collectionId', collectionId);
-
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${token}`
-    });
+    formData.append('files', file, file.name);
+    formData.append('collection_id', collectionId);
 
     return this.http.post<any>(`${env.apiUrl}/upload/files`, formData, {
       reportProgress: true,
-      observe: 'events',
-      headers: headers
+      observe: 'events'
     }).pipe(
       map((event: HttpEvent<any>) => {
         if (event.type === HttpEventType.UploadProgress && event.total) {
@@ -36,10 +28,6 @@ export class UploadService {
           return { progress: 100 };
         }
         return { progress: 0 };
-      }),
-      catchError(error => {
-        console.error('Upload error:', error);
-        return throwError(() => error);
       })
     );
   }

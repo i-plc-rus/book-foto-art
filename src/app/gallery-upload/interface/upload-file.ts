@@ -6,3 +6,11 @@ export interface IUploadFile {
   uploaded?: boolean;
   loaded: boolean;
 }
+
+export interface ISavedGallery {
+  name: string;
+  createDate: string;
+  images: string[];
+}
+
+export const GALLERY_STORAGE_KEY = 'savedGalleries';

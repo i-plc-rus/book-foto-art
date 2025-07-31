@@ -1,0 +1,48 @@
+<div class="collection-card">
+  <div class="collection-card__image">
+    <img [src]="coverImage()" alt="Preview" />
+  </div>
+
+  <div class="collection-card__content">
+    <div class="collection-card__title">{{ collection().name }}</div>
+    <div class="collection-card__meta">
+      <span class="collection-card__dot"></span>
+      <span>{{ itemCount() }} {{ itemWord() }}</span>
+      <span class="collection-card__dot"></span>
+      <span>{{ collection().createDate | date : "d MMM y" }}</span>
+    </div>
+  </div>
+
+  <button
+    class="collection-card__menu-btn"
+    type="button"
+    (click)="toggleMenu()"
+  >
+    <svg
+      class="collection-card__menu-icon"
+      aria-hidden="true"
+      focusable="false"
+      data-prefix="far"
+      data-icon="ellipsis-vertical"
+      role="img"
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 128 512"
+    >
+      <path
+        fill="currentColor"
+        d="M64 368a48 48 0 1 0 0 96 48 48 0 1 0 0-96zm0-160a48 48 0 1 0 0 96 48 48 0 1 0 0-96zM112 96A48 48 0 1 0 16 96a48 48 0 1 0 96 0z"
+      ></path>
+    </svg>
+  </button>
+
+  @if (isMenuOpen()) {
+  <div
+    class="collection-card__menu-dropdown"
+    (clickOutside)="onClickedOutside()"
+  >
+    <button class="collection-card__menu-item" (click)="onDelete()">
+      <span>Удалить</span><span>🗑</span>
+    </button>
+  </div>
+  }
+</div>

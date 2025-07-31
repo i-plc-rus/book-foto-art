@@ -1,0 +1,37 @@
+<div
+  class="filter-date"
+  [class._open]="isOpen()"
+  [class._disabled]="disabled()"
+  (clickOutside)="isOpen.set(false)"
+>
+  <button
+    class="filter-date__btn"
+    type="button"
+    [disabled]="disabled()"
+    [attr.aria-disabled]="disabled()"
+    (click)="toggle()"
+  >
+    {{ summary() }}
+
+    @if (startDate() && endDate()) {
+    <button
+      type="button"
+      class="filter-date__clear"
+      (click)="clear($event)"
+      aria-label="Очистить фильтр"
+    >
+      ✕
+    </button>
+    }
+  </button>
+
+  @if (isOpen()) {
+  <div class="filter-date__menu">
+    <app-range-calendar
+      [(startDate)]="startDate"
+      [(endDate)]="endDate"
+      [(isOpen)]="isOpen"
+    ></app-range-calendar>
+  </div>
+  }
+</div>

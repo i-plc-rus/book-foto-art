@@ -1,14 +1,19 @@
-import { Component, DestroyRef, effect, inject, OnDestroy, signal } from '@angular/core';
+import {
+  Component,
+  DestroyRef,
+  effect,
+  inject,
+  signal,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SortMenuComponent } from '../shared/components/sort-menu/sort-menu.component';
 import { GridSettingsComponent } from '../shared/components/grid-settings/grid-settings.component';
 import { UploadModalComponent } from '../shared/modal/upload-modal/upload-modal.component';
 import { SidebarService } from '../core/service/sidebar.service';
-import { finalize, map, mergeMap, of} from 'rxjs';
+import { catchError, finalize, map, mergeMap, of } from 'rxjs';
 import { UploadService } from '../core/service/upload.service';
-import {ActivatedRoute} from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import {TabsComponent} from '../shared/components/tabs/tabs.component';
 
 interface UploadFile {
   id: string;
@@ -28,22 +33,25 @@ interface UploadFile {
     SortMenuComponent,
     GridSettingsComponent,
     UploadModalComponent,
-    TabsComponent,
   ],
   providers: [SidebarService],
 })
-export class GalleryUploadComponent implements OnDestroy {
+export class GalleryUploadComponent {
+  private readonly destroyRef = inject(DestroyRef);
+  private readonly sidebarService = inject(SidebarService);
+  private readonly uploadService = inject(UploadService);
+  private readonly route = inject(ActivatedRoute);
+
   collectionId: string | null = null;
 
-  private sidebarService = inject(SidebarService);
   readonly files = signal<UploadFile[]>([]);
   readonly showStatus = signal(true);
   readonly sortType = signal('uploaded_new');
   readonly gridSize = signal<'small' | 'large'>('small');
   readonly showFilename = signal(false);
   readonly showUploadModal = signal(false);
-  private uploadService = inject(UploadService);
-  private route = inject(ActivatedRoute);
+
+  private readonly currentlyUploading = new Set<string>();
 
   readonly uploadStats = {
     totalFiles: signal(0),
@@ -63,29 +71,11 @@ export class GalleryUploadComponent implements OnDestroy {
       return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
     },
   };
-  private readonly destroyRef = inject(DestroyRef);
-  private currentlyUploading = new Set<string>();
-  private uploadTimers: { [key: string]: any } = {};
 
   constructor() {
-    this.route.queryParams.subscribe(params => {
-      this.collectionId = params['collectionId'] || null;
-
-      if (!this.collectionId) {
-        this.collectionId = localStorage.getItem('collectionId');
-      }
-
-      if (!this.collectionId) {
-        console.error('collectionId не найден ни в queryParams, ни в localStorage');
-      }
-    });
-
-    this.sidebarService.setTitle('Медиа файлы');
-    this.sidebarService.setDate(new Date());
-
-    effect(() => {
-      this.applySort(this.sortType());
-    }, { allowSignalWrites: true });
+    this.subscribeToRouteParams();
+    this.initSidebar();
+    this.initSortEffect();
   }
 
   onModalFileSelected(files: File[]) {
@@ -123,99 +113,114 @@ export class GalleryUploadComponent implements OnDestroy {
     }
   }
 
+  private subscribeToRouteParams() {
+    this.route.queryParams
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((params) => {
+        this.collectionId = params['collectionId'];
+      });
+  }
+
+  private initSidebar() {
+    this.sidebarService.setTitle('Медиа файлы');
+    this.sidebarService.setDate(new Date());
+  }
+
+  private initSortEffect() {
+    effect(() => {
+      this.applySort(this.sortType());
+    }, { allowSignalWrites: true });
+  }
+
   private async processFiles(files: File[]) {
-    if (files.length === 0) return;
+    if (!files.length) return;
 
     this.showStatus.set(true);
-    const newFiles: UploadFile[] = [];
 
     const existingHashes = await this.getExistingHashes();
+    const newFiles: UploadFile[] = [];
 
     for (const file of files) {
       const hash = await this.getFileHash(file);
       if (!existingHashes.has(hash)) {
-        newFiles.push(this.createUploadFile(file));
+        const uploadFile = this.createUploadFile(file);
+        newFiles.push(uploadFile);
         existingHashes.add(hash);
       }
     }
 
-    if (newFiles.length === 0) return;
+    if (!newFiles.length) return;
 
-    this.currentlyUploading = new Set(newFiles.map(f => f.id));
-
-    this.files.update(prev => [...prev, ...newFiles]);
+    newFiles.forEach((f) => this.currentlyUploading.add(f.id));
+    this.files.update((prev) => [...prev, ...newFiles]);
     this.updateUploadStats();
-    this.uploadFilesRx(newFiles);
+    this.uploadFiles(newFiles);
   }
 
-  private uploadFilesRx(filesToUpload: UploadFile[]) {
-    if (!this.collectionId) {
-      return;
-    }
+  private uploadFiles(filesToUpload: UploadFile[]) {
+    if (!this.collectionId) return;
 
     this.uploadStats.startTime.set(Date.now());
 
-    const uploads$ = of(...filesToUpload).pipe(
-      mergeMap((file) => {
-        return this.uploadService.uploadFile(file.file, this.collectionId!).pipe(
-          map(({ progress }) => {
-            this.files.update(prev =>
-              prev.map(f =>
-                f.id === file.id
-                  ? { ...f, progress, loaded: progress === 100 }
-                  : f
-              )
-            );
-            this.updateUploadStats();
-            return progress;
-          })
-        );
-      }),
-      finalize(() => {
-        this.updateUploadStats();
-        this.currentlyUploading.clear();
-      }),
-      takeUntilDestroyed(this.destroyRef)
-    );
-    uploads$.subscribe();
+    of(...filesToUpload)
+      .pipe(
+        mergeMap((file) =>
+          this.uploadService.uploadFile(file.file, this.collectionId!).pipe(
+            map(({ progress }) => {
+              this.files.update((prev) =>
+                prev.map((f) =>
+                  f.id === file.id
+                    ? { ...f, progress, loaded: progress === 100 }
+                    : f
+                )
+              );
+              this.updateUploadStats();
+              return progress;
+            }),
+            catchError(() => of(null))
+          )
+        ),
+        finalize(() => {
+          this.updateUploadStats();
+          this.currentlyUploading.clear();
+        }),
+        takeUntilDestroyed(this.destroyRef)
+      )
+      .subscribe();
   }
 
   private updateUploadStats() {
-    const files = this.files().filter(f => this.currentlyUploading.has(f.id));
+    const uploading = this.files().filter((f) => this.currentlyUploading.has(f.id));
+    const uploaded = uploading.filter((f) => f.loaded);
 
-    this.uploadStats.totalFiles.set(files.length);
-    this.uploadStats.uploadedFiles.set(files.filter(f => f.loaded).length);
+    const totalSize = uploading.reduce((acc, f) => acc + f.file.size, 0);
+    const uploadedSize = uploading.reduce((acc, f) => acc + (f.file.size * f.progress) / 100, 0);
 
-    const totalSize = files.reduce((sum, f) => sum + f.file.size, 0);
-    const uploadedSize = files.reduce((sum, f) => sum + (f.file.size * f.progress / 100), 0);
-
+    this.uploadStats.totalFiles.set(uploading.length);
+    this.uploadStats.uploadedFiles.set(uploaded.length);
     this.uploadStats.totalSize.set(totalSize);
     this.uploadStats.uploadedSize.set(uploadedSize);
 
     const elapsed = (Date.now() - this.uploadStats.startTime()) / 1000;
     this.uploadStats.uploadSpeed.set(elapsed > 0 ? uploadedSize / elapsed : 0);
-
-    this.uploadStats.allFilesUploaded.set(files.every(f => f.loaded));
+    this.uploadStats.allFilesUploaded.set(uploading.every((f) => f.loaded));
   }
 
   private createUploadFile(file: File): UploadFile {
     return {
+      id: Math.random().toString(36).substring(2),
       file,
       progress: 0,
       previewUrl: URL.createObjectURL(file),
-      id: Math.random().toString(36).substring(2),
-      loaded: false
+      loaded: false,
     };
   }
 
   private async getExistingHashes(): Promise<Set<string>> {
     const hashes = new Set<string>();
-    const files = this.files();
-
-    for (const file of files) {
+    for (const file of this.files()) {
       hashes.add(await this.getFileHash(file.file));
     }
-
     return hashes;
   }
 
@@ -223,14 +228,12 @@ export class GalleryUploadComponent implements OnDestroy {
     const buffer = await file.arrayBuffer();
     const hashBuffer = await crypto.subtle.digest('SHA-256', buffer);
     const hashArray = Array.from(new Uint8Array(hashBuffer));
-    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    return hashArray.map((b) => b.toString(16).padStart(2, '0')).join('');
   }
 
-
   private applySort(sortType: string) {
-    this.files.update(prev => {
+    this.files.update((prev) => {
       const sorted = [...prev];
-
       switch (sortType) {
         case 'uploaded_new':
           return sorted.sort((a, b) => b.file.lastModified - a.file.lastModified);
@@ -245,16 +248,6 @@ export class GalleryUploadComponent implements OnDestroy {
         default:
           return sorted;
       }
-    });
-  }
-
-  ngOnDestroy() {
-    for (const timer of Object.values(this.uploadTimers)) {
-      clearInterval(timer);
-    }
-
-    this.files().forEach(file => {
-      URL.revokeObjectURL(file.previewUrl);
     });
   }
 }

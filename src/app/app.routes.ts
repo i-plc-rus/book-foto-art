@@ -4,7 +4,7 @@ import { HomeComponent } from './home/home.component';
 import { RegisterPageComponent } from './register-page/register-page.component';
 import { ProfileComponent } from './profile/profile.component';
 import { AuthGuard } from './guards/auth.guard';
-import { ClientGalleryComponent } from './client-gallery/client-gallery.component';
+import {ClientGalleryComponent} from './pages/client-gallery-page/client-gallery/client-gallery.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },

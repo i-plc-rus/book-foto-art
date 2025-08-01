@@ -1,4 +1,4 @@
-import { Component, signal, inject, computed } from '@angular/core';
+import {Component, signal, inject, computed, DestroyRef} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { CollectionHeaderComponent } from '../components/collection-header/collection-header.component';
@@ -22,10 +22,14 @@ import { CollectionViewComponent } from '../components/collection-view/collectio
 import { CollectionTableComponent } from '../components/collection-table/collection-table.component';
 import { CollectionCardComponent } from '../components/collection-card/collection-card.component';
 import dayjs from 'dayjs';
+import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
+import {CollectionService} from '../../../core/service/collection.service.service';
 
 @Component({
-  selector: 'app-client-gallery',
   standalone: true,
+  selector: 'app-client-gallery',
+  templateUrl: './client-gallery.component.html',
+  styleUrls: ['./client-gallery.component.css'],
   imports: [
     FormsModule,
     CollectionHeaderComponent,
@@ -37,11 +41,12 @@ import dayjs from 'dayjs';
     CollectionTableComponent,
     NgTemplateOutlet,
   ],
-  templateUrl: './client-gallery.component.html',
-  styleUrls: ['./client-gallery.component.css'],
+  providers: [CollectionService]
 })
 export class ClientGalleryComponent {
-  private readonly router = inject(Router);
+  isLoading = false;
+  errorMessage = '';
+  collectionId: string | undefined;
 
   readonly STATUS = STATUS;
   readonly EVENT_DATE = EVENT_DATE;
@@ -59,6 +64,10 @@ export class ClientGalleryComponent {
   readonly collections = signal<ISavedGallery[]>([]);
   readonly isCreatingNewCollection = signal(false);
   readonly searchTerm = signal('');
+
+  private readonly destroyRef = inject(DestroyRef);
+  private readonly collectionService = inject(CollectionService);
+  private readonly router = inject(Router);
 
   private readonly sortedCollections = computed(() => {
     const list = [...this.collections()];
@@ -119,24 +128,55 @@ export class ClientGalleryComponent {
     }
   }
 
-  nextStep() {
-    this.currentStep.update((step) => {
-      const next = step + 1;
-      if (next >= 3) {
-        this.isCreatingNewCollection.set(false);
+  nextStep(): void {
+    const step = this.currentStep();
+
+    if (step === 2) {
+      this.handleStepTwo();
+      return;
+    }
+
+    const next = step + 1;
+    this.currentStep.set(next);
+
+    if (next >= 3) {
+      this.finalizeWizard();
+    }
+  }
+
+  private handleStepTwo(): void {
+    this.errorMessage = '';
+    this.isLoading = true;
+
+    this.createCollectionRequest();
+  }
+
+  private createCollectionRequest(): void {
+    this.collectionService.createCollection({
+      name: this.galleryName(),
+      date: this.galleryDate()
+    }).pipe(
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe(res => {
+      this.isLoading = false;
+
+      if (res) {
+        this.collectionId = res.id;
         this.router.navigate(['/upload'], {
-          state: {
-            galleryName: this.galleryName(),
-            galleryDate: this.galleryDate(),
-          },
-        });
+          queryParams: { collectionId: this.collectionId }
+        }).catch();
       }
-      return next;
     });
   }
 
-  goBack() {
-    this.currentStep.update((step) => Math.max(1, step - 1));
+  private finalizeWizard(): void {
+    this.isCreatingNewCollection.set(false);
+    this.router.navigate(['/upload'], {
+      state: {
+        galleryName: this.galleryName(),
+        galleryDate: this.galleryDate(),
+      },
+    }).catch();
   }
 
   handleNewCollection(): void {

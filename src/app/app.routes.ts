@@ -1,22 +1,31 @@
-import { Routes } from '@angular/router';
-import { LoginPageComponent } from './login-page/login-page.component';
-import { HomeComponent } from './home/home.component';
-import { RegisterPageComponent } from './register-page/register-page.component';
-import { ProfileComponent } from './profile/profile.component';
-import { AuthGuard } from './guards/auth.guard';
-import {ClientGalleryComponent} from './pages/client-gallery-page/client-gallery/client-gallery.component';
+import {Routes} from '@angular/router';
+import {AuthGuard} from './guards/auth.guard';
 
 export const routes: Routes = [
-  { path: '', component: HomeComponent },
-  { path: 'login', component: LoginPageComponent },
-  { path: 'register', component: RegisterPageComponent },
+  {
+    path: '',
+    loadComponent: (): any => import('./home/home.component').then(m => m.HomeComponent)
+  },
+  {
+    path: 'login',
+    loadComponent: (): any => import('./module/auth/login-page/login-page.component').then(m => m.LoginPageComponent)
+  },
+  {
+    path: 'register',
+    loadComponent: (): any => import('./module/auth/register-page/register-page.component').then(m => m.RegisterPageComponent)
+  },
+  {
+    path: 'reset-password',
+    loadComponent: (): any => import('./module/auth/forgot-password/forgot-password.component').then(m => m.ForgotPasswordComponent)
+  },
   {
     path: 'profile',
-    component: ProfileComponent,
+    loadComponent: (): any => import('./profile/profile.component').then(m => m.ProfileComponent),
     canActivate: [AuthGuard]
   },
-  { path: 'client-gallery',
-    component: ClientGalleryComponent,
+  {
+    path: 'client-gallery',
+    loadComponent: (): any => import('./pages/client-gallery-page/client-gallery/client-gallery.component').then(m => m.ClientGalleryComponent),
     canActivate: [AuthGuard]
   },
   {

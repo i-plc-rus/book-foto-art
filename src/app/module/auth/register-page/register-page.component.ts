@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { AuthserviceService } from '../authservice.service';
+import { AuthserviceService } from '../../../authservice.service';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 
@@ -24,7 +24,7 @@ export class RegisterPageComponent implements OnInit {
   ngOnInit() {
     this.form = this.fb.group({
       username: ['', [Validators.required]],
-      email: ['', [Validators.required, Validators.email]],      
+      email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required]]
     });
   }

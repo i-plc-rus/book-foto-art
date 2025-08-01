@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { environment as env } from './../../../environment/environment';
 import { Observable } from 'rxjs';
-import { CollectionCreateDto, CollectionCreateResponse } from '../interface/collection';
+import { CollectionCreateDto, CollectionCreateResponse } from '../interfaces/collection';
 
 @Injectable()
 export class CollectionService {

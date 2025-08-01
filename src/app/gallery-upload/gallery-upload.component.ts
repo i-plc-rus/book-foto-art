@@ -8,6 +8,7 @@ import {catchError, finalize, map, mergeMap, of} from 'rxjs';
 import { UploadService } from '../core/service/upload.service';
 import { ActivatedRoute } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { GALLERY_STORAGE_KEY, ISavedGallery } from './interface/upload-file';
 
 interface UploadFile {
   id: string;
@@ -42,6 +43,11 @@ export class GalleryUploadComponent implements OnDestroy {
   readonly showUploadModal = signal(false);
   private uploadService = inject(UploadService);
   private route = inject(ActivatedRoute);
+
+  // TODO: удалить, когда подключат бэкенд
+  readonly galleryName = signal('Моя галерея');
+  // TODO: удалить, когда подключат бэкенд
+  readonly galleryDate = signal(new Date());
 
   readonly uploadStats = {
     totalFiles: signal(0),
@@ -144,6 +150,8 @@ export class GalleryUploadComponent implements OnDestroy {
     this.files.update(prev => [...prev, ...newFiles]);
     this.updateUploadStats();
     this.uploadFilesRx(newFiles);
+// TODO: удалить, когда подключат бэкенд
+    this.saveGalleryToLocalStorage();
   }
 
   private uploadFilesRx(filesToUpload: UploadFile[]) {
@@ -253,6 +261,43 @@ export class GalleryUploadComponent implements OnDestroy {
 
     this.files().forEach(file => {
       URL.revokeObjectURL(file.previewUrl);
+    });
+  }
+
+  // TODO: удалить, когда подключат бэкенд
+  private async saveGalleryToLocalStorage() {
+    const name = this.galleryName();
+    const createDate = this.galleryDate().toISOString();
+
+    const base64Images = await Promise.all(
+      this.files().map((f) => this.fileToBase64(f.file))
+    );
+
+    const newGallery: ISavedGallery = {
+      name,
+      createDate,
+      images: base64Images.length ? base64Images : ['assets/cover.png'],
+    };
+
+    const existingRaw = localStorage.getItem(GALLERY_STORAGE_KEY);
+    const existing: ISavedGallery[] = existingRaw
+      ? JSON.parse(existingRaw)
+      : [];
+
+    const filtered = existing.filter((g) => g.name !== name);
+
+    filtered.push(newGallery);
+
+    localStorage.setItem(GALLERY_STORAGE_KEY, JSON.stringify(filtered));
+  }
+
+  // TODO: удалить, когда подключат бэкенд
+  async fileToBase64(file: File): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result as string);
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
     });
   }
   

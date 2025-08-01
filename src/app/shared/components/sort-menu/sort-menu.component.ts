@@ -1,6 +1,7 @@
 import {Component, ElementRef, EventEmitter, HostListener, Output, signal, viewChild} from '@angular/core';
 import {SORT_OPTION} from './sort-menu.constants';
 import {ISortOption} from './interface/sort-option';
+import {SortType} from '../../../core/types/sort-type';
 
 @Component({
   selector: 'app-sort-menu',
@@ -8,7 +9,7 @@ import {ISortOption} from './interface/sort-option';
   templateUrl: './sort-menu.component.html',
 })
 export class SortMenuComponent {
-  @Output() sortChange = new EventEmitter<string>();
+  @Output() sortChange = new EventEmitter<SortType>();
   menuButton = viewChild<ElementRef>('menuButton');
   menuPanel = viewChild<ElementRef>('menuPanel');
 
@@ -32,7 +33,7 @@ export class SortMenuComponent {
     this.isOpen.update(v => !v);
   }
 
-  select(option: string) {
+  select(option: SortType) {
     this.selected.set(option);
     this.sortChange.emit(option);
     this.isOpen.set(false);

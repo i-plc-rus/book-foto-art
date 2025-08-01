@@ -12,10 +12,10 @@
 
     <div class="sidebar-content">
       <div class="cover-image-wrapper">
-        <img class="cover-image" src="assets/cover.png" alt="Обложка"/>
+        <img class="cover-image" [src]="coverUrl()" alt="Обложка"/>
       </div>
 
-      <app-tabs></app-tabs>
+      <app-tabs [collectionId]="collectionId()"></app-tabs>
 
       @if (isDesignRoute()) {
         <div class="design-sections">

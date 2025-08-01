@@ -2,9 +2,9 @@
   <nav class="tabs">
     @for (tab of tabs; track tab.tooltip) {
       <a
-        [routerLink]="tab.link"
+        (click)="navigateToTab(tab)"
         class="tab-item relative"
-        routerLinkActive="active"
+        [class.active]="isActive(tab.link)"
         (mouseenter)="hoveredTab = tab.tooltip"
         (mouseleave)="hoveredTab = null">
         <img

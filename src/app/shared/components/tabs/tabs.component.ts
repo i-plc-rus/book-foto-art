@@ -1,5 +1,6 @@
-import {Component, inject} from '@angular/core';
-import {Router, RouterLink, RouterLinkActive} from '@angular/router';
+import { Component, inject } from '@angular/core';
+import { Router, RouterLink, RouterLinkActive } from '@angular/router';
+import { CollectionStateService } from '../../../gallery-upload/service/collection-state.service';
 
 @Component({
   standalone: true,
@@ -13,8 +14,9 @@ import {Router, RouterLink, RouterLinkActive} from '@angular/router';
 })
 export class TabsComponent {
   hoveredTab: string | null = null;
-
-  private router = inject(Router)
+  private collectionStateService = inject(CollectionStateService);
+  private router = inject(Router);
+  currentCollectionId: string | null = null;
 
   tabs = [
     {
@@ -39,6 +41,12 @@ export class TabsComponent {
     }
   ];
 
+  constructor() {
+    this.collectionStateService.getCurrentCollectionId().subscribe(id => {
+      this.currentCollectionId = id;
+    });
+  }
+
   isActive(link: string): boolean {
     return this.router.isActive(link, {
       paths: 'subset',
@@ -46,5 +54,15 @@ export class TabsComponent {
       fragment: 'ignored',
       matrixParams: 'ignored'
     });
+  }
+
+  navigateToTab(tab: any) {
+    if (tab.link === '/upload' && this.currentCollectionId) {
+      this.router.navigate([tab.link], {
+        queryParams: { collectionId: this.currentCollectionId }
+      });
+    } else {
+      this.router.navigate([tab.link]);
+    }
   }
 }

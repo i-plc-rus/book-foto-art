@@ -25,7 +25,7 @@
       (drop)="handleDrop($event)"
       (dragover)="$event.preventDefault()">
 
-      @if (files().length === 0) {
+      @if (showEmptyState()) {
         <div class="empty-state">
           <p class="drop-text">Перетащите медиафайлы сюда или</p>
           <label for="fileInput" class="file-label">выберите на устройстве</label>
@@ -79,7 +79,7 @@
       }
     </div>
 
-    @if (files().length > 0 && !uploadStats.allFilesUploaded() && showStatus()) {
+    @if (uploadStats.totalFiles() > 0 && !uploadStats.allFilesUploaded() && showStatus()) {
       <div class="upload-status">
         <div class="upload-info">
           <div class="upload-header">

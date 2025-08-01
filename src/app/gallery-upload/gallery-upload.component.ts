@@ -1,19 +1,30 @@
 import {
-  Component,
+  Component, computed,
   DestroyRef,
   effect,
-  inject,
+  inject, OnInit,
   signal,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { SortMenuComponent } from '../shared/components/sort-menu/sort-menu.component';
-import { GridSettingsComponent } from '../shared/components/grid-settings/grid-settings.component';
-import { UploadModalComponent } from '../shared/modal/upload-modal/upload-modal.component';
-import { SidebarService } from '../core/service/sidebar.service';
-import { catchError, finalize, map, mergeMap, of } from 'rxjs';
-import { UploadService } from '../core/service/upload.service';
-import { ActivatedRoute } from '@angular/router';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import {CommonModule} from '@angular/common';
+import {SortMenuComponent} from '../shared/components/sort-menu/sort-menu.component';
+import {GridSettingsComponent} from '../shared/components/grid-settings/grid-settings.component';
+import {UploadModalComponent} from '../shared/modal/upload-modal/upload-modal.component';
+import {SidebarService} from '../core/service/sidebar.service';
+import {
+  catchError,
+  finalize,
+  map,
+  mergeMap,
+  of,
+  switchMap, tap,
+} from 'rxjs';
+import {UploadService} from '../core/service/upload.service';
+import {ActivatedRoute, Router} from '@angular/router';
+import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
+import {CollectionService} from './service/collection.service';
+import {SortType} from '../core/types/sort-type';
+import {environment} from '../../environment/environment';
+import {CollectionStateService} from './service/collection-state.service';
 
 interface UploadFile {
   id: string;
@@ -34,24 +45,32 @@ interface UploadFile {
     GridSettingsComponent,
     UploadModalComponent,
   ],
-  providers: [SidebarService],
+  providers: [SidebarService, CollectionService, UploadService, CollectionStateService],
 })
 export class GalleryUploadComponent {
   private readonly destroyRef = inject(DestroyRef);
   private readonly sidebarService = inject(SidebarService);
   private readonly uploadService = inject(UploadService);
+  private readonly photoService = inject(CollectionService);
   private readonly route = inject(ActivatedRoute);
-
-  collectionId: string | null = null;
-
+  private router = inject(Router);
+  private readonly collectionStateService = inject(CollectionStateService);
+  readonly collectionId = signal<string | null>(null);
   readonly files = signal<UploadFile[]>([]);
   readonly showStatus = signal(true);
-  readonly sortType = signal('uploaded_new');
+  readonly sortType = signal<SortType>('uploaded_new');
   readonly gridSize = signal<'small' | 'large'>('small');
   readonly showFilename = signal(false);
   readonly showUploadModal = signal(false);
 
   private readonly currentlyUploading = new Set<string>();
+  readonly baseApiUrl = environment.apiUrl;
+  readonly showEmptyState = computed(() => {
+    return this.files().length === 0 &&
+      this.currentlyUploading.size === 0 &&
+      !this.isLoading();
+  });
+  readonly isLoading = signal(true);
 
   readonly uploadStats = {
     totalFiles: signal(0),
@@ -73,9 +92,33 @@ export class GalleryUploadComponent {
   };
 
   constructor() {
+    this.route.queryParams
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((params) => {
+        const collectionId = params['collectionId'];
+        this.collectionId.set(collectionId);
+
+        if (collectionId) {
+          this.collectionStateService.setCurrentCollectionId(collectionId);
+        }
+        else {
+          this.collectionStateService.getCurrentCollectionId().subscribe(savedId => {
+            if (savedId) {
+              this.router.navigate([], {
+                relativeTo: this.route,
+                queryParams: { collectionId: savedId },
+                queryParamsHandling: 'merge'
+              });
+            }
+          });
+        }
+      });
+
     this.subscribeToRouteParams();
     this.initSidebar();
     this.initSortEffect();
+    this.initPhotoLoadEffect();
+
   }
 
   onModalFileSelected(files: File[]) {
@@ -83,8 +126,16 @@ export class GalleryUploadComponent {
     this.showUploadModal.set(false);
   }
 
-  onSortChange(sort: string) {
-    this.sortType.set(sort);
+  onSortChange(sort: string): void {
+    if (this.isSortType(sort)) {
+      this.sortType.set(sort);
+    } else {
+      console.warn('Invalid sort type:', sort);
+    }
+  }
+
+  private isSortType(value: string): value is SortType {
+    return ['uploaded_new', 'uploaded_old', 'name_az', 'name_za', 'random'].includes(value);
   }
 
   onGridSizeChange(size: 'small' | 'large') {
@@ -113,11 +164,56 @@ export class GalleryUploadComponent {
     }
   }
 
+  private initPhotoLoadEffect() {
+    effect(() => {
+      const collectionId = this.collectionId();
+      const sort = this.sortType();
+
+      if (!collectionId) return;
+
+      of({collectionId, sort})
+        .pipe(
+          switchMap(({collectionId, sort}) =>
+            this.photoService.getPhotos(collectionId, {sort}).pipe(
+              map((collection: any) => {
+                this.collectionStateService.setCoverUrl(
+                  this.baseApiUrl + collection.cover_url
+                );
+                return {
+                  id: collection.id,
+                  file: new File([], collection.name || 'collection-cover', {
+                    lastModified: new Date(collection.created_at).getTime(),
+                  }),
+                  previewUrl: this.baseApiUrl + collection.cover_thumbnail_url,
+                  progress: 100,
+                  loaded: true,
+                };
+              }),
+              catchError(err => {
+                console.error('Ошибка загрузки фото:', err);
+                return of(null);
+              })
+            )
+          ),
+          takeUntilDestroyed(this.destroyRef)
+        )
+        .subscribe((file) => {
+          if (file) {
+            this.files.set([file]);
+          }
+        });
+    }, {allowSignalWrites: true});
+  }
   private subscribeToRouteParams() {
     this.route.queryParams
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((params) => {
-        this.collectionId = params['collectionId'];
+        const collectionId = params['collectionId'];
+        this.collectionId.set(collectionId);
+
+        if (this.collectionId()) {
+          this.collectionStateService.setCurrentCollectionId(collectionId);
+        }
       });
   }
 
@@ -129,7 +225,7 @@ export class GalleryUploadComponent {
   private initSortEffect() {
     effect(() => {
       this.applySort(this.sortType());
-    }, { allowSignalWrites: true });
+    }, {allowSignalWrites: true});
   }
 
   private async processFiles(files: File[]) {
@@ -158,19 +254,20 @@ export class GalleryUploadComponent {
   }
 
   private uploadFiles(filesToUpload: UploadFile[]) {
-    if (!this.collectionId) return;
+    const collectionId = this.collectionId();
+    if (!collectionId) return;
 
     this.uploadStats.startTime.set(Date.now());
 
     of(...filesToUpload)
       .pipe(
         mergeMap((file) =>
-          this.uploadService.uploadFile(file.file, this.collectionId!).pipe(
-            map(({ progress }) => {
+          this.uploadService.uploadFile(file.file, collectionId).pipe(
+            map(({progress}) => {
               this.files.update((prev) =>
                 prev.map((f) =>
                   f.id === file.id
-                    ? { ...f, progress, loaded: progress === 100 }
+                    ? {...f, progress, loaded: progress === 100}
                     : f
                 )
               );
@@ -190,11 +287,16 @@ export class GalleryUploadComponent {
   }
 
   private updateUploadStats() {
-    const uploading = this.files().filter((f) => this.currentlyUploading.has(f.id));
+    const uploading = this.files().filter((f) =>
+      this.currentlyUploading.has(f.id)
+    );
     const uploaded = uploading.filter((f) => f.loaded);
 
     const totalSize = uploading.reduce((acc, f) => acc + f.file.size, 0);
-    const uploadedSize = uploading.reduce((acc, f) => acc + (f.file.size * f.progress) / 100, 0);
+    const uploadedSize = uploading.reduce(
+      (acc, f) => acc + (f.file.size * f.progress) / 100,
+      0
+    );
 
     this.uploadStats.totalFiles.set(uploading.length);
     this.uploadStats.uploadedFiles.set(uploaded.length);
@@ -236,12 +338,16 @@ export class GalleryUploadComponent {
       const sorted = [...prev];
       switch (sortType) {
         case 'uploaded_new':
-          return sorted.sort((a, b) => b.file.lastModified - a.file.lastModified);
+          return sorted.sort(
+            (a, b) => b.file.lastModified - a.file.lastModified
+          );
         case 'uploaded_old':
-          return sorted.sort((a, b) => a.file.lastModified - b.file.lastModified);
-        case 'az':
+          return sorted.sort(
+            (a, b) => a.file.lastModified - b.file.lastModified
+          );
+        case 'name_az':
           return sorted.sort((a, b) => a.file.name.localeCompare(b.file.name));
-        case 'za':
+        case 'name_za':
           return sorted.sort((a, b) => b.file.name.localeCompare(a.file.name));
         case 'random':
           return sorted.sort(() => Math.random() - 0.5);

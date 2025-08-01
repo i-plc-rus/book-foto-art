@@ -1,10 +1,20 @@
-import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
+import {
+  ApplicationConfig,
+  importProvidersFrom,
+  LOCALE_ID,
+  provideZoneChangeDetection,
+} from '@angular/core';
 import { provideRouter } from '@angular/router';
 
 import { routes } from './app.routes';
-import { HTTP_INTERCEPTORS, provideHttpClient , withInterceptorsFromDi} from '@angular/common/http';
+import {
+  HTTP_INTERCEPTORS,
+  provideHttpClient,
+  withInterceptorsFromDi,
+} from '@angular/common/http';
 import { AuthInterceptor } from './auth.interceptor';
-import {SidebarService} from './core/service/sidebar.service';
+import { NgxDaterangepickerMd } from 'ngx-daterangepicker-material';
+import { SidebarService } from './core/service/sidebar.service';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -14,8 +24,15 @@ export const appConfig: ApplicationConfig = {
     {
       provide: HTTP_INTERCEPTORS,
       useClass: AuthInterceptor,
-      multi: true
+      multi: true,
     },
-    SidebarService
-  ]
+    SidebarService,
+    importProvidersFrom(
+      NgxDaterangepickerMd.forRoot({
+        separator: ' – ',
+        format: 'DD.MM.YYYY',
+      })
+    ),
+    { provide: LOCALE_ID, useValue: 'ru' },
+  ],
 };

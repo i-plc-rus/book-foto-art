@@ -4,10 +4,11 @@ import { SortMenuComponent } from '../shared/components/sort-menu/sort-menu.comp
 import { GridSettingsComponent } from '../shared/components/grid-settings/grid-settings.component';
 import { UploadModalComponent } from '../shared/modal/upload-modal/upload-modal.component';
 import { SidebarService } from '../core/service/sidebar.service';
-import {catchError, finalize, map, mergeMap, of} from 'rxjs';
+import { finalize, map, mergeMap, of} from 'rxjs';
 import { UploadService } from '../core/service/upload.service';
-import { ActivatedRoute } from '@angular/router';
+import {ActivatedRoute} from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import {TabsComponent} from '../shared/components/tabs/tabs.component';
 
 interface UploadFile {
   id: string;
@@ -26,9 +27,10 @@ interface UploadFile {
     CommonModule,
     SortMenuComponent,
     GridSettingsComponent,
-    UploadModalComponent
+    UploadModalComponent,
+    TabsComponent,
   ],
-  providers: [SidebarService]
+  providers: [SidebarService],
 })
 export class GalleryUploadComponent implements OnDestroy {
   collectionId: string | null = null;
@@ -59,7 +61,7 @@ export class GalleryUploadComponent implements OnDestroy {
       const sizes = ['Bytes', 'KB', 'MB', 'GB'];
       const i = Math.floor(Math.log(bytes) / Math.log(k));
       return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
-    }
+    },
   };
   private readonly destroyRef = inject(DestroyRef);
   private currentlyUploading = new Set<string>();

@@ -8,14 +8,16 @@
       <div class="collection-site__date">
         {{ gallery().createDate | date : "d MMM y" }}
       </div>
-      <button class="collection-site__down-btn">Посмотреть галерею</button>
+      <button class="collection-site__down-btn" (click)="scrollToGallery()">
+        Посмотреть галерею
+      </button>
       <a [routerLink]="[]" class="collection-site__user-name">
         {{ gallery().userName }}
       </a>
     </div>
   </div>
 
-  <div class="collection-site__control-bar">
+  <div class="collection-site__control-bar" #galleryRef>
     <div class="collection-site__info">
       <a [routerLink]="[]" class="collection-site__info-name">
         {{ gallery().name }}
@@ -46,6 +48,8 @@
     }
   </div>
   <div class="collection-site__flex">
-    <button class="collection-site__up-btn">Вверх</button>
+    <button class="collection-site__up-btn" (click)="scrollToGallery()">
+      Вверх
+    </button>
   </div>
 </section>

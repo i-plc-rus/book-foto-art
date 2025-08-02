@@ -1,5 +1,11 @@
 import { CommonModule, DatePipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  ElementRef,
+  signal,
+  viewChild,
+} from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { GalleryImageCardComponent } from '../../module/collection-site/gallery-image-card/gallery-image-card.component';
 
@@ -91,4 +97,10 @@ export const mockGalleries: ISavedGallery = {
 })
 export class CollectionSiteComponent {
   readonly gallery = signal<ISavedGallery>(mockGalleries);
+
+  private readonly galleryRef = viewChild<ElementRef>('galleryRef');
+
+  scrollToGallery(): void {
+    this.galleryRef()?.nativeElement.scrollIntoView({ behavior: 'smooth' });
+  }
 }

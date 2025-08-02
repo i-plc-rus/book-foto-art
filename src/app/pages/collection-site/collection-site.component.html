@@ -40,7 +40,11 @@
     </div>
   </div>
 
-  <div class="collection-site__gallery"></div>
+  <div class="collection-site__gallery">
+    @for (item of gallery().images; track $index) {
+    <app-gallery-image-card [imageUrl]="item" />
+    }
+  </div>
   <div class="collection-site__flex">
     <button class="collection-site__up-btn">Вверх</button>
   </div>

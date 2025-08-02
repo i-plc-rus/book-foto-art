@@ -13,6 +13,7 @@ import { RouterLink } from '@angular/router';
 import { GalleryImageCardComponent } from '../../module/collection-site/gallery-image-card/gallery-image-card.component';
 import { ModalService } from '../../shared/service/modal/modal.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { switchMap } from 'rxjs';
 
 interface ISavedGallery {
   name: string;
@@ -141,7 +142,17 @@ export class CollectionSiteComponent {
         images: this.images,
         currentIndex: signal(0),
       })
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe();
+      .pipe(
+        switchMap((currentIndex) =>
+          this.modalService.previewImage({
+            images: this.images,
+            currentIndex,
+          })
+        ),
+        takeUntilDestroyed(this.destroyRef)
+      )
+      .subscribe((finalIndex) => {
+        this.toggleFavorite(finalIndex);
+      });
   }
 }

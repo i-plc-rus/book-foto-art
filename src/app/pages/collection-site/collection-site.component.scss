@@ -1,0 +1,90 @@
+.collection-site {
+  &__cover {
+    position: relative;
+
+    &::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(0, 0, 0, 0.5), transparent 50%);
+      z-index: 1;
+    }
+  }
+
+  &__img {
+    height: 100vh;
+    width: 100%;
+    object-fit: cover;
+    position: relative;
+    z-index: 0;
+  }
+
+  &__overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 2rem;
+    color: white;
+  }
+
+  &__name {
+    font-size: 2.5rem;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+  }
+
+  &__date {
+    font-size: 1rem;
+    letter-spacing: 1px;
+    margin-bottom: 1.5rem;
+    opacity: 0.85;
+  }
+
+  &__down-btn {
+    padding: 0.5rem 1.25rem;
+    background: transparent;
+    color: white;
+    border: 1px solid white;
+    border-radius: 4px;
+    font-size: 0.875rem;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: background 0.2s;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    margin-bottom: 2rem;
+  }
+
+  &__user-name {
+    position: absolute;
+    bottom: 2rem;
+    font-size: 0.75rem;
+    letter-spacing: 1px;
+  }
+
+  &__control-bar {
+  }
+
+  &__info {
+  }
+
+  &__actions {
+  }
+
+  &__gallery {
+  }
+
+  &__flex {
+  }
+
+  &__up-btn {
+  }
+}

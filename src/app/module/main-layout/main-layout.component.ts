@@ -1,10 +1,10 @@
 import {Component, inject, signal, OnDestroy, DestroyRef} from '@angular/core';
-import { DatePipe, Location, NgComponentOutlet } from '@angular/common';
+import {DatePipe, Location, NgComponentOutlet} from '@angular/common';
 import {RouterOutlet, Router, NavigationEnd, ActivatedRoute} from '@angular/router';
-import { TabsComponent } from '../../shared/components/tabs/tabs.component';
-import { SidebarService } from '../../core/service/sidebar.service';
-import { DesignService } from '../design-component/service/design.service';
-import { filter, Subscription } from 'rxjs';
+import {TabsComponent} from '../../shared/components/tabs/tabs.component';
+import {SidebarService} from '../../core/service/sidebar.service';
+import {DesignService} from '../design-component/service/design.service';
+import {filter, Subscription} from 'rxjs';
 import {CollectionStateService} from '../../gallery-upload/service/collection-state.service';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 
@@ -50,13 +50,12 @@ export class MainLayoutComponent implements OnDestroy {
 
         if (collectionId) {
           this.collectionStateService.setCurrentCollectionId(collectionId);
-        }
-        else {
+        } else {
           this.collectionStateService.getCurrentCollectionId().subscribe(savedId => {
             if (savedId && this.router.url === '/upload') {
               this.router.navigate([], {
                 relativeTo: this.route,
-                queryParams: { collectionId: savedId },
+                queryParams: {collectionId: savedId},
                 queryParamsHandling: 'merge'
               });
             }

@@ -1,10 +1,6 @@
 import { CommonModule, DatePipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy,
-  Component,
-  OnInit,
-  signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
+import { RouterLink } from '@angular/router';
 
 interface ISavedGallery {
   name: string;
@@ -60,7 +56,7 @@ export const mockGalleries: ISavedGallery = {
   selector: 'app-collection-site',
   templateUrl: './collection-site.component.html',
   styleUrls: ['./collection-site.component.scss'],
-  imports: [DatePipe],
+  imports: [DatePipe, RouterLink],
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
 })

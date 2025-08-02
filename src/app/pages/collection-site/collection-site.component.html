@@ -9,16 +9,35 @@
         {{ gallery().createDate | date : "d MMM y" }}
       </div>
       <button class="collection-site__down-btn">Посмотреть галерею</button>
-      <div class="collection-site__user-name">{{ gallery().userName }}</div>
+      <a [routerLink]="[]" class="collection-site__user-name">
+        {{ gallery().userName }}
+      </a>
     </div>
   </div>
 
   <div class="collection-site__control-bar">
     <div class="collection-site__info">
-      <h2>{{ gallery().name }}</h2>
-      <h3>{{ gallery().userName }}</h3>
+      <a [routerLink]="[]" class="collection-site__info-name">
+        {{ gallery().name }}
+      </a>
+      <a [routerLink]="[]" class="collection-site__info-user">
+        {{ gallery().userName }}
+      </a>
     </div>
-    <div class="collection-site__actions"></div>
+    <div class="collection-site__actions">
+      <button class="collection-site__action-btn">
+        <svg
+          width="24"
+          height="24"
+          fill="none"
+          stroke="black"
+          stroke-width="1.5"
+          viewBox="0 0 24 24"
+        >
+          <path d="M8 5v14l11-7z" />
+        </svg>
+      </button>
+    </div>
   </div>
 
   <div class="collection-site__gallery"></div>

@@ -9,3 +9,13 @@ export type ImagePreviewData = {
   >;
   currentIndex: number;
 };
+
+export type ImageSliderData = {
+  images: Signal<
+    {
+      link: string;
+      isFavorite: boolean;
+    }[]
+  >;
+  currentIndex: Signal<number>;
+};

@@ -134,4 +134,14 @@ export class CollectionSiteComponent {
         this.toggleFavorite(favIndex);
       });
   }
+
+  showSlider(): void {
+    this.modalService
+      .openImageSlider({
+        images: this.images,
+        currentIndex: signal(0),
+      })
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe();
+  }
 }

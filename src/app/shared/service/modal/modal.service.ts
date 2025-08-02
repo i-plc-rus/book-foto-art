@@ -2,10 +2,14 @@ import { Dialog, type DialogRef, type DialogConfig } from '@angular/cdk/dialog';
 import { Overlay } from '@angular/cdk/overlay';
 import type { ComponentType } from '@angular/cdk/portal';
 import { TemplateRef, DestroyRef, Injectable, inject } from '@angular/core';
-import { Observable, take, takeUntil } from 'rxjs';
+import { filter, Observable, take, takeUntil } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ImagePreviewModalComponent } from '../../modal/image-preview-modal/image-preview-modal.component';
-import { ImagePreviewData } from '../../model/image-preview.model';
+import {
+  ImagePreviewData,
+  ImageSliderData,
+} from '../../model/image-preview.model';
+import { ImageSliderModalComponent } from '../../modal/image-slider-modal/image-slider-modal.component';
 
 @Injectable({ providedIn: 'root' })
 export class ModalService {
@@ -53,6 +57,19 @@ export class ModalService {
     });
 
     return dialogRef.componentInstance!.favoriteIndex$.asObservable();
+  }
+
+  openImageSlider(data: ImageSliderData): Observable<number> {
+    const dialogRef = this.open<
+      number,
+      ImageSliderData,
+      ImageSliderModalComponent
+    >(ImageSliderModalComponent, {
+      data,
+      disableClose: true,
+    });
+
+    return dialogRef.closed.pipe(filter((v): v is number => v !== undefined));
   }
 
   closeAll(): void {

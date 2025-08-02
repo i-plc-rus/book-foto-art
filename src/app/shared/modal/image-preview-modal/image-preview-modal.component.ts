@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  DestroyRef,
   inject,
   signal,
 } from '@angular/core';
@@ -9,6 +10,8 @@ import { CommonModule } from '@angular/common';
 import { DialogRef, DIALOG_DATA } from '@angular/cdk/dialog';
 import { Subject } from 'rxjs';
 import { ImagePreviewData } from '../../model/image-preview.model';
+import { ModalService } from '../../service/modal/modal.service';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-image-preview-modal',
@@ -19,8 +22,10 @@ import { ImagePreviewData } from '../../model/image-preview.model';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ImagePreviewModalComponent {
+  private readonly modalService = inject(ModalService);
   private readonly dialogRef = inject(DialogRef);
   private readonly data = inject<ImagePreviewData>(DIALOG_DATA);
+  private readonly destroyRef = inject(DestroyRef);
 
   private readonly images = this.data.images;
   private readonly currentIndex = signal(this.data.currentIndex);
@@ -62,4 +67,16 @@ export class ImagePreviewModalComponent {
     const parts = this.currentImage().link.split('/');
     return parts[parts.length - 1];
   });
+
+  showSlider(): void {
+    this.modalService
+      .openImageSlider({
+        images: this.images,
+        currentIndex: this.currentIndex,
+      })
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((finalIndex) => {
+        this.currentIndex.set(finalIndex);
+      });
+  }
 }

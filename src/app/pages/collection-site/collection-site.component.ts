@@ -103,4 +103,17 @@ export class CollectionSiteComponent {
   scrollToGallery(): void {
     this.galleryRef()?.nativeElement.scrollIntoView({ behavior: 'smooth' });
   }
+
+  toggleFavorite(index: number): void {
+    const current = this.gallery();
+
+    const updatedImages = current.images.map((image, i) =>
+      i === index ? { ...image, isFavorite: !image.isFavorite } : image
+    );
+
+    this.gallery.update((g) => ({
+      ...g,
+      images: updatedImages,
+    }));
+  }
 }

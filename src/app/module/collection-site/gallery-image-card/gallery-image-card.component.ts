@@ -1,4 +1,9 @@
-import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  input,
+  output,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 type Collection = {
@@ -16,6 +21,7 @@ type Collection = {
 })
 export class GalleryImageCardComponent {
   readonly imageUrl = input.required<Collection>();
+  readonly makeFavorite = output<void>();
 
   downloadImage(): void {
     const link = document.createElement('a');
@@ -26,5 +32,9 @@ export class GalleryImageCardComponent {
 
   private extractFileName(url: string): string {
     return url.split('/').pop() || 'image.jpg';
+  }
+
+  handleFavorite(): void {
+    this.makeFavorite.emit();
   }
 }

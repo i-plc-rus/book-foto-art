@@ -2,12 +2,17 @@ import { CommonModule, DatePipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
+  computed,
+  DestroyRef,
   ElementRef,
+  inject,
   signal,
   viewChild,
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { GalleryImageCardComponent } from '../../module/collection-site/gallery-image-card/gallery-image-card.component';
+import { ModalService } from '../../shared/service/modal/modal.service';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 interface ISavedGallery {
   name: string;
@@ -96,7 +101,11 @@ export const mockGalleries: ISavedGallery = {
   standalone: true,
 })
 export class CollectionSiteComponent {
+  private readonly modalService = inject(ModalService);
+  private readonly destroyRef = inject(DestroyRef);
+
   readonly gallery = signal<ISavedGallery>(mockGalleries);
+  readonly images = computed(() => this.gallery().images);
 
   private readonly galleryRef = viewChild<ElementRef>('galleryRef');
 
@@ -115,5 +124,14 @@ export class CollectionSiteComponent {
       ...g,
       images: updatedImages,
     }));
+  }
+
+  showCurrentImage(index: number): void {
+    this.modalService
+      .previewImage({ currentIndex: index, images: this.images })
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((favIndex) => {
+        this.toggleFavorite(favIndex);
+      });
   }
 }

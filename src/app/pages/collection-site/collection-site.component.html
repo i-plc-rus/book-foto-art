@@ -47,6 +47,7 @@
     <app-gallery-image-card
       [imageUrl]="item"
       (makeFavorite)="toggleFavorite($index)"
+      (showCurrentImage)="showCurrentImage($index)"
     />
     }
   </div>

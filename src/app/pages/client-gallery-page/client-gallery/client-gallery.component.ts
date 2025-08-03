@@ -11,7 +11,7 @@ import {
   STATUS,
 } from '../models/filter.model';
 import { FilterDateComponent } from '../components/filter-date/filter-date.component';
-import { DisplayView, SortOption } from '../models/collection-display.model';
+import { CollectionActionPayload, CollectionActionType, DisplayView, SortOption } from '../models/collection-display.model';
 import {
   GALLERY_STORAGE_KEY,
   ISavedGallery,
@@ -24,6 +24,8 @@ import { CollectionCardComponent } from '../components/collection-card/collectio
 import dayjs from 'dayjs';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {CollectionService} from '../../../core/service/collection.service.service';
+import { ShareCollectionModalComponent } from '../modal/share-collection-modal/share-collection-modal.component';
+import { ModalService } from '../../../shared/service/modal/modal.service';
 
 @Component({
   standalone: true,
@@ -68,6 +70,7 @@ export class ClientGalleryComponent {
   private readonly destroyRef = inject(DestroyRef);
   private readonly collectionService = inject(CollectionService);
   private readonly router = inject(Router);
+  private readonly modalService = inject(ModalService)
 
   private readonly sortedCollections = computed(() => {
     const list = [...this.collections()];
@@ -192,13 +195,35 @@ export class ClientGalleryComponent {
     this.displayView.set(view);
   }
 
-  onDelete(name: string): void {
-    const updated = this.collections().filter((item) => item.name !== name);
+  onSelectDate(range: [dayjs.Dayjs, dayjs.Dayjs] | null) {
+    this.dateRange.set(range);
+  }
+
+    onActionClick({actionKey, item}:CollectionActionPayload): void {
+    switch (actionKey) {
+      case CollectionActionType.Publish:
+        this.onPublish();
+        break;
+      case CollectionActionType.Delete:
+        this.onDelete(item);
+        break;
+      default:
+        throw new Error(`Неизвестное действие: ${actionKey}`);
+    }
+  }
+
+
+  onDelete(value: ISavedGallery): void {
+    const updated = this.collections().filter((item) => item.name !== value.name);
     this.collections.set(updated);
     localStorage.setItem(GALLERY_STORAGE_KEY, JSON.stringify(updated));
   }
 
-  onSelectDate(range: [dayjs.Dayjs, dayjs.Dayjs] | null) {
-    this.dateRange.set(range);
+  onPublish():void{
+    this.modalService.open(ShareCollectionModalComponent, {
+      data: {
+        url: 'http://localhost:4200/show',
+      },
+    });
   }
 }

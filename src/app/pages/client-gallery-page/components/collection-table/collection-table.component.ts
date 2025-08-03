@@ -8,6 +8,7 @@ import {
 } from '@angular/core';
 import { ISavedGallery } from '../../../../gallery-upload/interface/upload-file';
 import { CollectionMenuComponent } from '../collection-menu/collection-menu.component';
+import { CollectionActionPayload } from '../../models/collection-display.model';
 
 @Component({
   selector: 'app-collection-table',
@@ -19,7 +20,7 @@ import { CollectionMenuComponent } from '../collection-menu/collection-menu.comp
 })
 export class CollectionTableComponent {
   readonly collections = input.required<ISavedGallery[]>();
-  readonly delete = output<string>();
+  readonly action  = output<CollectionActionPayload>();
 
   readonly collectionWithMeta = computed(() => {
     return this.collections().map((item) => {
@@ -46,7 +47,7 @@ export class CollectionTableComponent {
     });
   });
 
-  onDelete(value: string): void {
-    this.delete.emit(value);
+  onActionClick({actionKey, item}: CollectionActionPayload): void {
+    this.action.emit({ actionKey, item });
   }
 }

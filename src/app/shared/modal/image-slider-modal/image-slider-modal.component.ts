@@ -28,7 +28,7 @@ export class ImageSliderModalComponent {
   private readonly currentIndex = signal(this.data.currentIndex());
   readonly currentImage = computed(() => this.images()[this.currentIndex()]);
 
-  private readonly result$ = new Subject<number>();
+  readonly result$ = new Subject<number>();
 
   constructor() {
     interval(3500)

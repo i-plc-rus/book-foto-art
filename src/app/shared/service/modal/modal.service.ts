@@ -2,7 +2,7 @@ import { Dialog, type DialogRef, type DialogConfig } from '@angular/cdk/dialog';
 import { Overlay } from '@angular/cdk/overlay';
 import type { ComponentType } from '@angular/cdk/portal';
 import { TemplateRef, DestroyRef, Injectable, inject } from '@angular/core';
-import { filter, Observable, take, takeUntil } from 'rxjs';
+import { Observable, take, takeLast, takeUntil } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ImagePreviewModalComponent } from '../../modal/image-preview-modal/image-preview-modal.component';
 import {
@@ -46,6 +46,14 @@ export class ModalService {
     return dialogRef;
   }
 
+  /**
+   * Открывает модальное окно предпросмотра изображения (одиночное изображение).
+   * Пользователь может выделить понравившееся изображение, и этот выбор будет эмитирован через `favoriteIndex$`.
+   *
+   * @param data - Данные для предпросмотра, включая список изображений и текущий индекс
+   * @returns Observable<number> - Индекс изображения, которое пользователь отметил как избранное
+   */
+
   previewImage(data: ImagePreviewData): Observable<number> {
     const dialogRef = this.open<
       null,
@@ -59,6 +67,17 @@ export class ModalService {
     return dialogRef.componentInstance!.favoriteIndex$.asObservable();
   }
 
+  /**
+   * Открывает модальное окно-слайдер с авто-пролистыванием изображений.
+   * Пока модалка открыта, она эмитирует индекс текущего изображения.
+   * После закрытия модального окна, вернётся **последнее активное значение индекса**.
+   *
+   * Используется для передачи результата (последний просмотренный слайд).
+   *
+   * @param data - Данные для слайдера, включая изображения и стартовый индекс
+   * @returns Observable<number> - Последний индекс изображения при закрытии модального окна
+   */
+
   openImageSlider(data: ImageSliderData): Observable<number> {
     const dialogRef = this.open<
       number,
@@ -66,10 +85,9 @@ export class ModalService {
       ImageSliderModalComponent
     >(ImageSliderModalComponent, {
       data,
-      disableClose: true,
     });
 
-    return dialogRef.closed.pipe(filter((v): v is number => v !== undefined));
+    return dialogRef.componentInstance!.result$.pipe(takeLast(1));
   }
 
   closeAll(): void {

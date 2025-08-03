@@ -4,13 +4,12 @@ import {
   computed,
   inject,
   signal,
-  effect,
   DestroyRef,
 } from '@angular/core';
 import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { ImageSliderData } from '../../model/image-preview.model';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { filter, fromEvent, interval, Subject } from 'rxjs';
+import { interval, Subject } from 'rxjs';
 
 @Component({
   selector: 'app-image-slider-modal',
@@ -26,34 +25,27 @@ export class ImageSliderModalComponent {
   private readonly destroyRef = inject(DestroyRef);
 
   readonly images = this.data.images;
-
   private readonly currentIndex = signal(this.data.currentIndex());
-
   readonly currentImage = computed(() => this.images()[this.currentIndex()]);
+
+  private readonly result$ = new Subject<number>();
 
   constructor() {
     interval(3500)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => {
-        const nextIndex = (this.currentIndex() + 1) % this.images().length;
-        this.currentIndex.set(nextIndex);
+        const next = (this.currentIndex() + 1) % this.images().length;
+        this.currentIndex.set(next);
+        this.result$.next(next);
       });
 
-    this.registerEscListener();
+    this.destroyRef.onDestroy(() => {
+      this.result$.complete();
+    });
   }
 
   onClose(): void {
-    this.dialogRef.close(this.currentIndex());
-  }
-
-  private registerEscListener() {
-    fromEvent<KeyboardEvent>(window, 'keydown')
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((event) => {
-        console.log(event);
-        if (event.key === 'Escape') {
-          this.dialogRef.close(this.currentIndex());
-        }
-      });
+    this.result$.complete();
+    this.dialogRef.close();
   }
 }

@@ -1,3 +1,5 @@
+import { ISavedGallery } from "../../../gallery-upload/interface/upload-file";
+
 export type DisplayView = 'grid' | 'list';
 
 export enum SortOption {
@@ -20,3 +22,18 @@ export const SORT_OPTIONS: SortOptionItem[] = [
   { label: 'Название: A–Я', value: SortOption.NameAsc },
   { label: 'Название: Я–A', value: SortOption.NameDesc },
 ];
+
+export enum CollectionActionType {
+  Publish = 'publish',
+  Delete = 'delete',
+}
+
+export interface CollectionAction {
+  key: CollectionActionType;
+  label: string;
+}
+
+export interface CollectionActionPayload {
+  actionKey: CollectionActionType;
+  item: ISavedGallery;
+}

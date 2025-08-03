@@ -12,7 +12,7 @@ import { CollectionViewComponent } from '../module/client-gallery/components/col
 import { FilterDateComponent } from '../module/client-gallery/components/filter-date/filter-date.component';
 import { FilterDropdownComponent } from '../module/client-gallery/components/filter-dropdown/filter-dropdown.component';
 import { STATUS, EVENT_DATE, CATEGORY_TAG, EXPIRY_DATE, STARRED } from '../module/client-gallery/models/filter.model';
-import { DisplayView, SortOption } from '../module/client-gallery/models/collection-display.model';
+import { CollectionActionPayload, CollectionActionType, DisplayView, SortOption } from '../module/client-gallery/models/collection-display.model';
 import dayjs from 'dayjs';
 import { GALLERY_STORAGE_KEY, ISavedGallery } from '../gallery-upload/interface/upload-file';
 
@@ -133,10 +133,28 @@ export class ClientGalleryComponent {
     this.displayView.set(view);
   }
 
-  onDelete(name: string): void {
-    const updated = this.collections().filter((item) => item.name !== name);
+  onActionClick({actionKey, item}:CollectionActionPayload): void {
+    switch (actionKey) {
+      case CollectionActionType.Publish:
+        this.onPublish();
+        break;
+      case CollectionActionType.Delete:
+        this.onDelete(item);
+        break;
+      default:
+        throw new Error(`Неизвестное действие: ${actionKey}`);
+    }
+  }
+
+
+  onDelete(value: ISavedGallery): void {
+    const updated = this.collections().filter((item) => item.name !== value.name);
     this.collections.set(updated);
     localStorage.setItem(GALLERY_STORAGE_KEY, JSON.stringify(updated));
+  }
+
+  onPublish():void{
+    console.log('rere')
   }
 
   onSelectDate(range: [dayjs.Dayjs, dayjs.Dayjs] | null) {

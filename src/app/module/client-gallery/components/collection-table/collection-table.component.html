@@ -28,7 +28,7 @@
       <td>{{ item.createDate | date : "d MMM y" }}</td>
 
       <td>
-        <app-collection-menu (delete)="onDelete(item.name)" />
+        <app-collection-menu [collection]="item" (action)="onActionClick($event)" />
       </td>
     </tr>
     }

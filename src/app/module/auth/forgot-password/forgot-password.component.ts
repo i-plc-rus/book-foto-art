@@ -40,14 +40,14 @@ export class ForgotPasswordComponent {
 
     this.isLoading = true;
 
-    this.resetPasswordService.reset(this.emailControl.value)
-      .subscribe(() => {
-        this.success = true;
-        this.isLoading = false;
-      },
-      () => {
-        this.isLoading = false;
-      }
-    );
+    // this.resetPasswordService.reset(this.emailControl.value)
+    //   .subscribe(() => {
+    //     this.success = true;
+    //     this.isLoading = false;
+    //   },
+    //   () => {
+    //     this.isLoading = false;
+    //   }
+    // );
   }
 }

@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpEvent, HttpEventType, HttpHeaders, HttpRequest } from '@angular/common/http';
-import {Observable, catchError, map, throwError} from 'rxjs';
+import { HttpClient, HttpEvent, HttpEventType } from '@angular/common/http';
+import { Observable, throwError, of } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
 import { environment as env } from './../../../environment/environment';
 
 @Injectable({ providedIn: 'root' })
@@ -20,15 +21,24 @@ export class UploadService {
       reportProgress: true,
       observe: 'events'
     }).pipe(
-      map((event: HttpEvent<any>) => {
-        if (event.type === HttpEventType.UploadProgress && event.total) {
-          const progress = Math.round((event.loaded / event.total) * 100);
-          return { progress };
-        } else if (event.type === HttpEventType.Response) {
-          return { progress: 100 };
-        }
-        return { progress: 0 };
+      map((event: HttpEvent<any>) => this.getUploadProgress(event)),
+      catchError(error => {
+        console.error('Upload failed', error);
+        return throwError(() => new Error('Upload failed'));
       })
     );
+  }
+
+  private getUploadProgress(event: HttpEvent<any>): { progress: number } {
+    switch (event.type) {
+      case HttpEventType.UploadProgress:
+        const total = event.total || 1;
+        const progress = Math.round(100 * (event.loaded / total));
+        return { progress };
+      case HttpEventType.Response:
+        return { progress: 100 };
+      default:
+        return { progress: 0 };
+    }
   }
 }

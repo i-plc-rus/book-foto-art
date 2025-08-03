@@ -44,35 +44,82 @@
           [class.grid-large]="gridSize() === 'large'">
 
           @for (file of files(); track file.id) {
-            <div class="file-tile">
+            <div class="file-tile group relative">
               <div class="media-container">
                 @if (!file.loaded) {
                   <div class="skeleton-loader"></div>
                 }
 
-                <div class="media-content">
+                <div class="media-content relative">
                   <img
                     [src]="file.previewUrl"
                     [alt]="file.file.name"
                     [class.hidden]="!file.loaded"
+                    class="w-full h-full object-cover"
                   />
+
+                  @if (file.loaded) {
+                    <div
+                      class="absolute top-0 right-0 w-7 h-7 flex items-center justify-center bg-white/80 backdrop-blur-sm cursor-pointer transition-opacity duration-200 z-10"
+                      [class.opacity-100]="menuOpenId() === file.id"
+                      [class.opacity-0]="menuOpenId() !== file.id"
+                      [class.group-hover:opacity-100]="menuOpenId() !== file.id"
+                      (click)="toggleMenu(file.id, $event)"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="6" r="1.5" fill="currentColor"/>
+                        <circle cx="12" cy="12" r="1.5" fill="currentColor"/>
+                        <circle cx="12" cy="18" r="1.5" fill="currentColor"/>
+                      </svg>
+                    </div>
+                  }
 
                   @if (showFilename()) {
                     <p class="filename">{{ file.file.name }}</p>
                   }
 
                   @if (!file.loaded) {
-                    <div class="loader-overlay">
-                      <div class="circular-loader">
-                        <svg class="circular" viewBox="0 0 50 50">
-                          <circle class="path" cx="25" cy="25" r="20" fill="none" stroke-width="5"></circle>
-                        </svg>
-                      </div>
-                      <div class="percentage">Progressing</div>
-                    </div>
+                    <div class="loader-overlay"></div>
                   }
                 </div>
               </div>
+
+              @if (menuOpenId() === file.id) {
+                <div class="menu-container absolute top-[28px] right-[-190px] z-50 bg-white shadow-lg min-w-[220px]">
+                  @for (option of menuOptions(); track option.id) {
+                    <div
+                      class="menu-option flex items-center gap-2.5 px-[1.5rem] py-2.5 hover:bg-gray-100 cursor-pointer relative"
+                      (mouseenter)="option.subMenu ? onMenuOptionMouseEnter(option.id) : null"
+                      (mouseleave)="option.subMenu ? onMenuOptionMouseLeave() : null"
+                      (click)="!option.subMenu && handleOptionClick(option.id, file)">
+                      <img
+                        [src]="option.iconUrl"
+                        alt=""
+                        class="w-4 h-4 object-contain"
+                      />
+                      <span class="text-sm font-normal tracking-normal leading-[1.7]">{{ option.name }}</span>
+
+                      @if (menuHoverId() === option.id && option.subMenu) {
+                        <div class="submenu absolute top-0 left-full bg-white shadow-lg min-w-[220px] z-50">
+                          @for (subOption of option.subMenu; track subOption.id) {
+                            <div
+                              class="menu-option flex items-center gap-2.5 px-[1.5rem] py-2.5 hover:bg-gray-100 cursor-pointer"
+                              (click)="handleOptionClick(subOption.id, file)"
+                            >
+                              <img
+                                [src]="subOption.iconUrl"
+                                alt=""
+                                class="w-4 h-4 object-contain"
+                              />
+                              <span class="text-sm font-normal tracking-normal leading-[1.7]">{{ subOption.name }}</span>
+                            </div>
+                          }
+                        </div>
+                      }
+                    </div>
+                  }
+                </div>
+              }
             </div>
           }
         </div>

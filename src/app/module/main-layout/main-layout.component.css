@@ -140,3 +140,17 @@
   color: #333;
   transition: all 0.2s ease;
 }
+
+.cover-image-wrapper {
+  position: relative;
+}
+
+.cover-image {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.cover-image-wrapper .absolute {
+  transition: opacity 0.3s ease-in-out;
+}

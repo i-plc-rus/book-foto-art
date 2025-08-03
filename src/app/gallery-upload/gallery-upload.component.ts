@@ -1,7 +1,7 @@
 import {
   Component, computed,
   DestroyRef,
-  effect,
+  effect, HostListener,
   inject, OnInit,
   signal,
 } from '@angular/core';
@@ -32,6 +32,20 @@ interface UploadFile {
   progress: number;
   previewUrl: string;
   loaded: boolean;
+  error?: boolean;
+}
+
+interface MenuOption {
+  id: string;
+  name: string;
+  iconUrl: string;
+  subMenu?: SubMenuOption[];
+}
+
+interface SubMenuOption {
+  id: string;
+  name: string;
+  iconUrl: string;
 }
 
 @Component({
@@ -62,7 +76,7 @@ export class GalleryUploadComponent {
   readonly gridSize = signal<'small' | 'large'>('small');
   readonly showFilename = signal(false);
   readonly showUploadModal = signal(false);
-
+  readonly baseStaticUrl = environment.staticUrl;
   private readonly currentlyUploading = new Set<string>();
   readonly baseApiUrl = environment.apiUrl;
   readonly showEmptyState = computed(() => {
@@ -70,6 +84,9 @@ export class GalleryUploadComponent {
       this.currentlyUploading.size === 0 &&
       !this.isLoading();
   });
+  readonly menuOpenId = signal<string | null>(null);
+  menuHoverId = signal<string | null>(null);
+
   readonly isLoading = signal(true);
 
   readonly uploadStats = {
@@ -90,6 +107,26 @@ export class GalleryUploadComponent {
       return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
     },
   };
+  readonly menuOptions = signal<MenuOption[]>([
+    { id: 'open', name: 'Open', iconUrl: '/assets/icons/double-arrow.svg' },
+    { id: 'share', name: 'Quick share link', iconUrl: '/assets/icons/link.svg' },
+    { id: 'download', name: 'Download', iconUrl: '/assets/icons/download.svg' },
+    {
+      id: 'move',
+      name: 'Move/Copy',
+      iconUrl: '/assets/icons/move-copy.svg',
+      subMenu: [
+        { id: 'move_to', name: 'Move to', iconUrl: '/assets/icons/double-arrow.svg' },
+        { id: 'copy_to', name: 'Copy to', iconUrl: '/assets/icons/double-arrow.svg' }
+      ]
+    },
+    { id: 'copy', name: 'Copy filenames', iconUrl: '/assets/icons/copy.svg' },
+    { id: 'cover', name: 'Set as cover', iconUrl: '/assets/icons/set-image.svg' },
+    { id: 'rename', name: 'Rename', iconUrl: '/assets/icons/edit.svg' },
+    { id: 'replace', name: 'Replace photo', iconUrl: '/assets/icons/replace.svg' },
+    { id: 'watermark', name: 'Watermark', iconUrl: '/assets/icons/mark.svg' },
+    { id: 'delete', name: 'Delete', iconUrl: '/assets/icons/delete.svg' },
+  ]);
 
   constructor() {
     this.route.queryParams
@@ -124,6 +161,36 @@ export class GalleryUploadComponent {
   onModalFileSelected(files: File[]) {
     this.processFiles(files);
     this.showUploadModal.set(false);
+  }
+
+  @HostListener('document:click', ['$event'])
+  handleDocumentClick(event: MouseEvent) {
+    if (!(event.target as HTMLElement).closest('.menu-container')) {
+      this.menuOpenId.set(null);
+    }
+  }
+
+  toggleMenu(fileId: string, event: MouseEvent) {
+    event.stopPropagation();
+    this.menuOpenId.set(this.menuOpenId() === fileId ? null : fileId);
+  }
+
+  handleOptionClick(optionId: string, file: UploadFile) {
+    console.log(`Option clicked: ${optionId}`, file);
+    this.menuOpenId.set(null);
+    // Так мы можем реализовать действий для каждой опции
+    // switch (optionId) {
+    //   case 'open': this.openFile(file); break;
+    //   case 'delete': this.deleteFile(file); break;
+    // }
+  }
+
+  onMenuOptionMouseEnter(optionId: string) {
+    this.menuHoverId.set(optionId);
+  }
+
+  onMenuOptionMouseLeave() {
+    this.menuHoverId.set(null);
   }
 
   onSortChange(sort: string): void {
@@ -184,7 +251,7 @@ export class GalleryUploadComponent {
                   file: new File([], collection.name || 'collection-cover', {
                     lastModified: new Date(collection.created_at).getTime(),
                   }),
-                  previewUrl: this.baseApiUrl + collection.cover_thumbnail_url,
+                  previewUrl: this.baseStaticUrl + collection.cover_thumbnail_url,
                   progress: 100,
                   loaded: true,
                 };
@@ -204,6 +271,7 @@ export class GalleryUploadComponent {
         });
     }, {allowSignalWrites: true});
   }
+
   private subscribeToRouteParams() {
     this.route.queryParams
       .pipe(takeUntilDestroyed(this.destroyRef))
@@ -259,31 +327,54 @@ export class GalleryUploadComponent {
 
     this.uploadStats.startTime.set(Date.now());
 
-    of(...filesToUpload)
-      .pipe(
-        mergeMap((file) =>
-          this.uploadService.uploadFile(file.file, collectionId).pipe(
-            map(({progress}) => {
-              this.files.update((prev) =>
-                prev.map((f) =>
-                  f.id === file.id
-                    ? {...f, progress, loaded: progress === 100}
-                    : f
-                )
-              );
-              this.updateUploadStats();
-              return progress;
-            }),
-            catchError(() => of(null))
-          )
-        ),
-        finalize(() => {
-          this.updateUploadStats();
-          this.currentlyUploading.clear();
-        }),
-        takeUntilDestroyed(this.destroyRef)
-      )
-      .subscribe();
+    // Константа для ограничения количества одновременных запросов
+    const MAX_CONCURRENT_UPLOADS = 4;
+    let currentUploads = 0;
+    let currentIndex = 0;
+
+    const uploadNext = () => {
+      while (currentIndex < filesToUpload.length && currentUploads < MAX_CONCURRENT_UPLOADS) {
+        const file = filesToUpload[currentIndex];
+        currentIndex++;
+        currentUploads++;
+
+        this.uploadService.uploadFile(file.file, collectionId).pipe(
+          tap(({progress}) => {
+            this.files.update(prev =>
+              prev.map(f =>
+                f.id === file.id
+                  ? {...f, progress, loaded: progress === 100}
+                  : f
+              )
+            );
+            this.updateUploadStats();
+          }),
+          catchError(error => {
+            console.error('Upload error:', error);
+            // Помечаем файл как ошибочный
+            this.files.update(prev =>
+              prev.map(f =>
+                f.id === file.id
+                  ? {...f, error: true, loaded: true}
+                  : f
+              )
+            );
+            return of({ progress: -1 }); // Возвращаем фейковый прогресс для продолжения потока
+          }),
+          finalize(() => {
+            currentUploads--;
+            uploadNext(); // Запустить следующую загрузку
+            this.updateUploadStats();
+
+            if (currentUploads === 0 && currentIndex >= filesToUpload.length) {
+              this.currentlyUploading.clear();
+            }
+          })
+        ).subscribe();
+      }
+    };
+
+    uploadNext(); // Начать процесс загрузки
   }
 
   private updateUploadStats() {

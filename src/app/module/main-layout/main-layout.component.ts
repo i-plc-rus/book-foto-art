@@ -28,11 +28,14 @@ export class MainLayoutComponent implements OnDestroy {
   readonly designService = inject(DesignService);
   private readonly route = inject(ActivatedRoute);
   private readonly destroyRef = inject(DestroyRef);
-
   private readonly collectionStateService = inject(CollectionStateService);
+
   coverUrl = this.collectionStateService.coverUrl;
   collectionId = signal<string | null>(null);
   isDesignRoute = signal(false);
+  isPhotosRoute = signal(false);
+  imageUrl = signal<string | null>(null);
+
   private readonly routerEventsSubscription: Subscription;
 
   constructor() {
@@ -71,11 +74,18 @@ export class MainLayoutComponent implements OnDestroy {
     }
   }
 
+  navigateToPage() {
+    this.router.navigate(['/design/cover']);
+  }
+
   private updateRouteState() {
     const path = this.location.path();
+
     const isDesign = path.includes('/design');
+    const isPhotos = path.startsWith('/upload');
 
     this.isDesignRoute.set(isDesign);
+    this.isPhotosRoute.set(isPhotos);
 
     if (!isDesign) {
       this.designService.setSectionTitle('DESIGN');

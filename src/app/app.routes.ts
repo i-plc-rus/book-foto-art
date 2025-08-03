@@ -13,19 +13,24 @@ export const routes: Routes = [
   {
     path: 'profile',
     component: ProfileComponent,
-    canActivate: [AuthGuard]
+    canActivate: [AuthGuard],
   },
-  { path: 'client-gallery',
+  {
+    path: 'client-gallery',
     component: ClientGalleryComponent,
-    canActivate: [AuthGuard]
+    canActivate: [AuthGuard],
   },
   {
     path: '',
-    loadChildren: (): any => import('./module/main-layout/main.routes').then(m => m.MAIN),
-    canActivate: [AuthGuard]
+    loadChildren: (): any =>
+      import('./module/main-layout/main.routes').then((m) => m.MAIN),
+    canActivate: [AuthGuard],
   },
   {
-    path:'show',
-    loadComponent: () => import('./pages/collection-site/collection-site.component').then((c) => c.CollectionSiteComponent),
-  }
+    path: 'show',
+    loadComponent: () =>
+      import(
+        './pages/collection-site/collection-site/collection-site.component'
+      ).then((c) => c.CollectionSiteComponent),
+  },
 ];

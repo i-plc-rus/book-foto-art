@@ -10,10 +10,10 @@ import {
   viewChild,
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { GalleryImageCardComponent } from '../../module/collection-site/gallery-image-card/gallery-image-card.component';
-import { ModalService } from '../../shared/service/modal/modal.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { switchMap } from 'rxjs';
+import { GalleryImageCardComponent } from '../../../module/collection-site/gallery-image-card/gallery-image-card.component';
+import { ModalService } from '../../../shared/service/modal/modal.service';
 
 interface ISavedGallery {
   name: string;

@@ -10,8 +10,8 @@ import { CommonModule } from '@angular/common';
 import { DialogRef, DIALOG_DATA } from '@angular/cdk/dialog';
 import { Subject } from 'rxjs';
 import { ImagePreviewData } from '../../model/image-preview.model';
-import { ModalService } from '../../service/modal/modal.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ModalService } from '../../../../shared/service/modal/modal.service';
 
 @Component({
   selector: 'app-image-preview-modal',

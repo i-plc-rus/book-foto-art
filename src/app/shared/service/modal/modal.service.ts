@@ -4,13 +4,12 @@ import type { ComponentType } from '@angular/cdk/portal';
 import { TemplateRef, DestroyRef, Injectable, inject } from '@angular/core';
 import { Observable, take, takeLast, takeUntil } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ImagePreviewModalComponent } from '../../modal/image-preview-modal/image-preview-modal.component';
+import { ImageSliderModalComponent } from '../../../pages/collection-site/modal/image-slider-modal/image-slider-modal.component';
 import {
   ImagePreviewData,
   ImageSliderData,
-} from '../../model/image-preview.model';
-import { ImageSliderModalComponent } from '../../modal/image-slider-modal/image-slider-modal.component';
-
+} from '../../../pages/collection-site/model/image-preview.model';
+import { ImagePreviewModalComponent } from '../../../pages/collection-site/modal/image-preview-modal/image-preview-modal.component';
 @Injectable({ providedIn: 'root' })
 export class ModalService {
   private readonly dialog = inject(Dialog);

@@ -37,3 +37,7 @@ export interface CollectionActionPayload {
   actionKey: CollectionActionType;
   item: ISavedGallery;
 }
+
+export interface ShareCollectionData {
+  url: string;
+}

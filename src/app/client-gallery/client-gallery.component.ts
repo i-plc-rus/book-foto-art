@@ -15,6 +15,8 @@ import { STATUS, EVENT_DATE, CATEGORY_TAG, EXPIRY_DATE, STARRED } from '../modul
 import { CollectionActionPayload, CollectionActionType, DisplayView, SortOption } from '../module/client-gallery/models/collection-display.model';
 import dayjs from 'dayjs';
 import { GALLERY_STORAGE_KEY, ISavedGallery } from '../gallery-upload/interface/upload-file';
+import { ModalService } from '../shared/service/modal/modal.service';
+import { ShareCollectionModalComponent } from '../module/client-gallery/modal/share-collection-modal/share-collection-modal.component';
 
 @Component({
   standalone: true,
@@ -38,6 +40,7 @@ export class ClientGalleryComponent {
   private readonly destroyRef = inject(DestroyRef);
   private readonly router = inject(Router);
   private readonly collectionService = inject(CollectionService);
+  private readonly modalService = inject(ModalService)
 
   readonly STATUS = STATUS;
   readonly EVENT_DATE = EVENT_DATE;
@@ -154,7 +157,11 @@ export class ClientGalleryComponent {
   }
 
   onPublish():void{
-    console.log('rere')
+    this.modalService.open(ShareCollectionModalComponent, {
+      data: {
+        url: 'http://localhost:4200/show',
+      },
+    });
   }
 
   onSelectDate(range: [dayjs.Dayjs, dayjs.Dayjs] | null) {

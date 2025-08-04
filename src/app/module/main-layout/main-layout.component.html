@@ -15,7 +15,7 @@
         class="cover-image-wrapper relative group cursor-pointer"
         (click)="navigateToPage()">
         <img class="cover-image w-full h-auto object-cover"
-          [src]="coverUrl()"
+          [src]="coverUrl() || 'assets/cover.png'"
           alt="Обложка"/>
 
         <div class="sidebar-content">

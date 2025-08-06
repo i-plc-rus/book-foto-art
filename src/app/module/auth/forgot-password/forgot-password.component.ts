@@ -1,8 +1,9 @@
-import {Component, inject} from '@angular/core';
+import {Component, DestroyRef, inject} from '@angular/core';
 import {Router} from '@angular/router';
 import {FormControl, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import {NgClass} from '@angular/common';
 import {ResetPasswordService} from '../services/reset-password.service';
+import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 
 @Component({
   standalone: true,
@@ -23,31 +24,36 @@ export class ForgotPasswordComponent {
   isLoading = false;
   success = false;
 
+  private readonly destroyRef = inject(DestroyRef);
   private router = inject(Router);
   private resetPasswordService = inject(ResetPasswordService);
-  goHome() {
+
+  goHome(): void {
     this.router.navigate(['/']).catch();
   }
 
-  goToLogin() {
+  goToLogin(): void {
     this.router.navigate(['/login']).catch();
   }
 
-  sendEmail() {
+  sendEmail(): void {
     if (this.emailControl.invalid) {
       return;
     }
 
     this.isLoading = true;
 
-    // this.resetPasswordService.reset(this.emailControl.value)
-    //   .subscribe(() => {
-    //     this.success = true;
-    //     this.isLoading = false;
-    //   },
-    //   () => {
-    //     this.isLoading = false;
-    //   }
-    // );
+    this.resetPasswordService.reset(this.emailControl.value)
+      .pipe(
+        takeUntilDestroyed(this.destroyRef)
+      )
+      .subscribe(() => {
+        this.success = true;
+        this.isLoading = false;
+      },
+      () => {
+        this.isLoading = false;
+      }
+    );
   }
 }

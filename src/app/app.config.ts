@@ -12,7 +12,7 @@ import {
   provideHttpClient,
   withInterceptorsFromDi,
 } from '@angular/common/http';
-import { AuthInterceptor } from './auth.interceptor';
+import { AuthInterceptor } from './core/interceptor/auth.interceptor';
 import { NgxDaterangepickerMd } from 'ngx-daterangepicker-material';
 import { SidebarService } from './core/service/sidebar.service';
 

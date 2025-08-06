@@ -1,18 +1,19 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule  } from '@angular/forms';
-import { AuthserviceService } from '../../../authservice.service';
+import { AuthService } from '../../../core/service/auth.service';
 import { RouterModule } from '@angular/router';
 import { Router } from '@angular/router';
 
 @Component({
+  standalone: true,
   selector: 'app-login-page',
-  imports: [ReactiveFormsModule, RouterModule, ],
   templateUrl: './login-page.component.html',
-  styleUrl: './login-page.component.css'
+  styleUrl: './login-page.component.css',
+  imports: [ReactiveFormsModule, RouterModule,]
 })
 export class LoginPageComponent implements OnInit {
   form!: FormGroup;
-  constructor(private fb: FormBuilder, private authService: AuthserviceService, private router: Router) {}
+  constructor(private fb: FormBuilder, private authService: AuthService, private router: Router) {}
 
   ngOnInit() {
     this.form = this.fb.group({

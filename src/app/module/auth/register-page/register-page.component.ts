@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { AuthserviceService } from '../../../authservice.service';
+import { AuthService } from '../../../core/service/auth.service';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 
@@ -17,7 +17,7 @@ export class RegisterPageComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private authService: AuthserviceService,
+    private authService: AuthService,
     private router: Router
   ) {}
 
@@ -40,9 +40,18 @@ export class RegisterPageComponent implements OnInit {
   onSubmit() {
     if (this.form.valid) {
       this.authService.register(this.form.value).subscribe({
-        next: () => this.router.navigate(['/client-gallery']),
-        error: err => alert('Регистрация не удалась')
+        next: (res) => {
+          console.log('Регистрация успешна', res);
+          this.router.navigate(['/client-gallery']).then(success => {
+            console.log('Навигация успешна?', success);
+          });
+        },
+        error: (err) => {
+          console.error('Ошибка при регистрации:', err);
+          alert('Регистрация не удалась');
+        }
       });
     }
   }
+
 }

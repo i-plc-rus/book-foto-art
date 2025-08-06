@@ -17,7 +17,7 @@
   </aside>
 
   <main class="main-content">
-    @if(true){
+    @if(isGalleryEmpty() && !isCreatingNewCollection()){
     <div class="collection-top">
       <app-collection-header
         [(searchTerm)]="searchTerm"

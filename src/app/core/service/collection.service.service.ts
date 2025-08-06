@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import {HttpClient, HttpHeaders, HttpParams} from '@angular/common/http';
 import { environment as env } from './../../../environment/environment';
-import { Observable } from 'rxjs';
+import {map, Observable} from 'rxjs';
 import { CollectionCreateDto, CollectionCreateResponse } from '../interfaces/collection';
 
 @Injectable()
@@ -16,5 +16,30 @@ export class CollectionService {
     });
 
     return this.http.post<CollectionCreateResponse>(`${env.apiUrl}/collection/create`, data, { headers });
+  }
+
+  // getCollection(): Observable<any[]> {
+  //   return this.http.get<any[]>(`${env.apiUrl}/collection/list`);
+  // }
+
+  getCollectionDelete(collectionId: string, queryParams: { [key: string]: string } = {}): Observable<any[]> {
+    const params = new HttpParams({ fromObject: queryParams });
+    return this.http.delete<any[]>(`${env.apiUrl}/collection/${collectionId}`, { params });
+  }
+
+  getCollection(): Observable<any> {
+    return this.http.get(`${env.apiUrl}/collection/list`).pipe(
+      map(response => {
+        if (typeof response === 'string') {
+          try {
+            return JSON.parse(response);
+          } catch (e) {
+            console.error('Error parsing response', e);
+            return { collections: [] };
+          }
+        }
+        return response;
+      })
+    );
   }
 }

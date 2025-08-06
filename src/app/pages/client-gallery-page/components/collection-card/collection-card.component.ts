@@ -22,10 +22,10 @@ import { CollectionActionPayload, CollectionActionType } from '../../models/coll
 export class CollectionCardComponent {
   readonly collection = input.required<ISavedGallery>();
   readonly action  = output<CollectionActionPayload>();
-
+  readonly navigate = output<string>();
   readonly isMenuOpen = signal(false);
 
-  readonly itemCount = computed(() => this.collection().images.length);
+  readonly itemCount = computed(() => this.collection().imagesCount ?? this.collection().images?.length ?? 0);
 
   readonly actionType = CollectionActionType
 
@@ -46,16 +46,15 @@ export class CollectionCardComponent {
   });
 
   readonly coverImage = computed(() => {
-    const images = this.collection().images;
-    if (!images || images.length === 0) return 'assets/cover.png';
-
-    const first = images[0];
-
-    return first.startsWith('data:') ? first : 'assets/cover.png';
+    return this.collection().preview || 'assets/cover.png';
   });
 
   onClickedOutside(): void {
     this.isMenuOpen.set(false);
+  }
+
+  onCardClick(): void {
+    this.navigate.emit(this.collection().id);
   }
 
   onActionClick(actionKey: CollectionActionType): void {

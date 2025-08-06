@@ -17,42 +17,47 @@
   </aside>
 
   <main class="main-content">
-    @if(isGalleryEmpty() && !isCreatingNewCollection()){
-    <div class="collection-top">
-      <app-collection-header
-        [(searchTerm)]="searchTerm"
-        (newCollection)="handleNewCollection()"
-      />
-      <div class="collection-top__header">
-        <div class="collection-top__filter">
-          <app-filter-dropdown [config]="STATUS" [disabled]="true" />
-          <app-filter-dropdown [config]="CATEGORY_TAG" [disabled]="true" />
-
-          <app-filter-date
-            [config]="EVENT_DATE"
-            (onSelect)="onSelectDate($event)"
+    @if (isLoading) {
+      <div class="loading">Загрузка коллекций...</div>
+    } @else if (errorMessage) {
+      <div class="error">{{ errorMessage }}</div>
+    } @else {
+      @if (isGalleryEmpty() && !isCreatingNewCollection()) {
+        <div class="collection-top">
+          <app-collection-header
+            [(searchTerm)]="searchTerm"
+            (newCollection)="handleNewCollection()"
           />
-          <app-filter-dropdown [config]="EXPIRY_DATE" [disabled]="true" />
-          <app-filter-dropdown [config]="STARRED" [disabled]="true" />
+          <div class="collection-top__header">
+            <div class="collection-top__filter">
+              <app-filter-dropdown [config]="STATUS" [disabled]="true" />
+              <app-filter-dropdown [config]="CATEGORY_TAG" [disabled]="true" />
+
+              <app-filter-date
+                [config]="EVENT_DATE"
+                (onSelect)="onSelectDate($event)"
+              />
+              <app-filter-dropdown [config]="EXPIRY_DATE" [disabled]="true" />
+              <app-filter-dropdown [config]="STARRED" [disabled]="true" />
+            </div>
+
+            <div class="collection-top__filter">
+              <app-sort-dropdown
+                [sort]="sortOption()"
+                (sortChange)="onSortChange($event)"
+              />
+              <app-collection-view
+                [view]="displayView()"
+                (chooseView)="changeDisplayView($event)"
+              />
+            </div>
+          </div>
         </div>
 
-        <div class="collection-top__filter">
-          <app-sort-dropdown
-            [sort]="sortOption()"
-            (sortChange)="onSortChange($event)"
-          />
-          <app-collection-view
-            [view]="displayView()"
-            (chooseView)="changeDisplayView($event)"
-          />
-        </div>
-      </div>
-    </div>
-
-    <ng-container [ngTemplateOutlet]="view"></ng-container>
-
-    }@else {
-    <ng-container [ngTemplateOutlet]="steps"></ng-container>
+        <ng-container [ngTemplateOutlet]="view"></ng-container>
+      } @else {
+        <ng-container [ngTemplateOutlet]="steps"></ng-container>
+      }
     }
   </main>
 </div>
@@ -60,53 +65,53 @@
 <ng-template #steps>
   <!-- Шаг 1 -->
   @if(currentStep() === 1){
-  <section class="welcome centered">
-    <p class="subtitle">Начало работы</p>
-    <h1 class="headline">Опубликовать свою первую галерею всего за 3 шага</h1>
-    <button class="upload-button" (click)="nextStep()">Загрузить фото</button>
-    <div class="promo-image">
-      <img src="assets/promo.png" alt="Promo Image" />
-    </div>
-  </section>
+    <section class="welcome centered">
+      <p class="subtitle">Начало работы</p>
+      <h1 class="headline">Опубликовать свою первую галерею всего за 3 шага</h1>
+      <button class="upload-button" (click)="nextStep()">Загрузить фото</button>
+      <div class="promo-image">
+        <img src="assets/promo.png" alt="Promo Image" />
+      </div>
+    </section>
   }@else {
-  <!-- Шаг 2 -->
-  <section class="welcome centered">
-    <p class="subtitle">Шаг 2 из 3</p>
-    <h1 class="headline">Введите наименование коллекции</h1>
+    <!-- Шаг 2 -->
+    <section class="welcome centered">
+      <p class="subtitle">Шаг 2 из 3</p>
+      <h1 class="headline">Введите наименование коллекции</h1>
 
-    <div class="form-group">
-      <label for="galleryName">Имя коллекции</label>
-      <input
-        id="galleryName"
-        type="text"
-        placeholder="например: Псков - Свадьба"
-        [(ngModel)]="galleryName"
-        name="galleryName"
-      />
-    </div>
+      <div class="form-group">
+        <label for="galleryName">Имя коллекции</label>
+        <input
+          id="galleryName"
+          type="text"
+          placeholder="например: Псков - Свадьба"
+          [(ngModel)]="galleryName"
+          name="galleryName"
+        />
+      </div>
 
-    <div class="form-group">
-      <label for="galleryDate">Дата события</label>
-      <input
-        id="galleryDate"
-        type="date"
-        [(ngModel)]="galleryDate"
-        name="galleryDate"
-      />
-    </div>
-    <div class="form-group">
-      <button class="upload-button" (click)="nextStep()">
-        Создать коллекцию
-      </button>
-    </div>
-  </section>
+      <div class="form-group">
+        <label for="galleryDate">Дата события</label>
+        <input
+          id="galleryDate"
+          type="date"
+          [(ngModel)]="galleryDate"
+          name="galleryDate"
+        />
+      </div>
+      <div class="form-group">
+        <button class="upload-button" (click)="nextStep()">
+          Создать коллекцию
+        </button>
+      </div>
+    </section>
   }
 </ng-template>
 
 <ng-template #gridView>
   <div class="grid-view">
     @for (item of filteredCollections(); track $index) {
-    <app-collection-card [collection]="item" (action)="onActionClick($event)" />
+      <app-collection-card [collection]="item" (action)="onActionClick($event)" (navigate)="onNavigate($event)"/>
     }
   </div>
 </ng-template>
@@ -127,10 +132,10 @@
 
 <ng-template #view>
   @if (filteredCollections().length === 0) {
-  <ng-container [ngTemplateOutlet]="emptyView"></ng-container>
+    <ng-container [ngTemplateOutlet]="emptyView"></ng-container>
   } @else { @if (displayView() === 'grid') {
-  <ng-container [ngTemplateOutlet]="gridView"></ng-container>
+    <ng-container [ngTemplateOutlet]="gridView"></ng-container>
   } @else {
-  <ng-container [ngTemplateOutlet]="tableView"></ng-container>
+    <ng-container [ngTemplateOutlet]="tableView"></ng-container>
   } }
 </ng-template>

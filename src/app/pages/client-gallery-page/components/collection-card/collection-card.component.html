@@ -1,15 +1,15 @@
 <div class="collection-card">
   <div class="collection-card__image">
-    <img [src]="coverImage()" alt="Preview" />
+    <img [src]="coverImage()" alt="Preview" (click)="onCardClick()"/>
   </div>
 
   <div class="collection-card__content">
-    <div class="collection-card__title">{{ collection().name }}</div>
+    <div class="collection-card__title" (click)="onCardClick()">{{ collection().name }}</div>
     <div class="collection-card__meta">
       <span class="collection-card__dot"></span>
       <span>{{ itemCount() }} {{ itemWord() }}</span>
       <span class="collection-card__dot"></span>
-      <span>{{ collection().createDate | date : "d MMM y" }}</span>
+      <span>{{ collection().date | date : "d MMM y" }}</span>
     </div>
   </div>
 
@@ -36,23 +36,22 @@
   </button>
 
   @if (isMenuOpen()) {
-  <div
-    class="collection-card__menu-dropdown"
-    (clickOutside)="onClickedOutside()"
-  >
-  <button
-    class="collection-card__menu-item"
-    (click)="onActionClick(actionType.Publish)"
-  >
-    Опубликовать
-  </button>
-  <button
-    class="collection-card__menu-item"
-    (click)="onActionClick(actionType.Delete)"
-  >
-    Удалить
-  </button>
-</div>
-
+    <div
+      class="collection-card__menu-dropdown"
+      (clickOutside)="onClickedOutside()"
+    >
+      <button
+        class="collection-card__menu-item"
+        (click)="onActionClick(actionType.Publish)"
+      >
+        Опубликовать
+      </button>
+      <button
+        class="collection-card__menu-item"
+        (click)="onActionClick(actionType.Delete)"
+      >
+        Удалить
+      </button>
+    </div>
   }
 </div>

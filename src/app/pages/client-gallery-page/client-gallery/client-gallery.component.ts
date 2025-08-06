@@ -1,4 +1,4 @@
-import {Component, signal, inject, computed, DestroyRef} from '@angular/core';
+import { Component, signal, inject, computed, DestroyRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { CollectionHeaderComponent } from '../components/collection-header/collection-header.component';
@@ -12,10 +12,7 @@ import {
 } from '../models/filter.model';
 import { FilterDateComponent } from '../components/filter-date/filter-date.component';
 import { CollectionActionPayload, CollectionActionType, DisplayView, SortOption } from '../models/collection-display.model';
-import {
-  GALLERY_STORAGE_KEY,
-  ISavedGallery,
-} from '../../../gallery-upload/interface/upload-file';
+import { ISavedGallery } from '../../../gallery-upload/interface/upload-file';
 import { NgTemplateOutlet } from '@angular/common';
 import { CollectionSortComponent } from '../components/collection-sort/collection-sort.component';
 import { CollectionViewComponent } from '../components/collection-view/collection-view.component';
@@ -26,6 +23,7 @@ import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {CollectionService} from '../../../core/service/collection.service.service';
 import { ShareCollectionModalComponent } from '../modal/share-collection-modal/share-collection-modal.component';
 import { ModalService } from '../../../shared/service/modal/modal.service';
+import {environment as env} from '../../../../environment/environment';
 
 @Component({
   standalone: true,
@@ -55,6 +53,7 @@ export class ClientGalleryComponent {
   readonly CATEGORY_TAG = CATEGORY_TAG;
   readonly EXPIRY_DATE = EXPIRY_DATE;
   readonly STARRED = STARRED;
+  readonly baseStaticUrl = env.apiUrl;
 
   readonly currentStep = signal(1);
   readonly galleryName = signal('');
@@ -79,11 +78,11 @@ export class ClientGalleryComponent {
     switch (sort) {
       case SortOption.CreatedNew:
         return list.sort(
-          (a, b) => +new Date(b.createDate) - +new Date(a.createDate)
+          (a, b) => +new Date(b.created_at) - +new Date(a.created_at)
         );
       case SortOption.CreatedOld:
         return list.sort(
-          (a, b) => +new Date(a.createDate) - +new Date(b.createDate)
+          (a, b) => +new Date(a.created_at) - +new Date(b.created_at)
         );
       case SortOption.NameAsc:
         return list.sort((a, b) => a.name.localeCompare(b.name));
@@ -104,31 +103,17 @@ export class ClientGalleryComponent {
 
       const dateMatch =
         !range ||
-        (dayjs(item.createDate).isAfter(range[0].subtract(1, 'day')) &&
-          dayjs(item.createDate).isBefore(range[1].add(1, 'day')));
+        (dayjs(item.date).isAfter(range[0].subtract(1, 'day')) &&
+          dayjs(item.date).isBefore(range[1].add(1, 'day')));
 
       return nameMatch && dateMatch;
     });
   });
 
-  readonly isGalleryEmpty = computed(() => !!this.collections().length);
+  readonly isGalleryEmpty = computed(() => this.collections().length > 0);
 
   constructor() {
-    this.loadCollectionsFromStorage();
-  }
-
-  private loadCollectionsFromStorage(): void {
-    const raw = localStorage.getItem(GALLERY_STORAGE_KEY);
-    if (!raw) return;
-
-    try {
-      const parsed = JSON.parse(raw) as ISavedGallery[];
-      if (Array.isArray(parsed)) {
-        this.collections.set(parsed);
-      }
-    } catch (error) {
-      console.error('Invalid JSON in localStorage for savedGalleries:', error);
-    }
+    this.loadCollectionsFromAPI();
   }
 
   nextStep(): void {
@@ -145,6 +130,93 @@ export class ClientGalleryComponent {
     if (next >= 3) {
       this.finalizeWizard();
     }
+  }
+
+  onNavigate(collectionId: string): void {
+    this.router.navigate(['/upload'], {
+      queryParams: { collectionId }
+    }).catch();
+  }
+
+  handleNewCollection(): void {
+    this.isCreatingNewCollection.set(true);
+    this.currentStep.set(2);
+  }
+
+  onSortChange(option: SortOption) {
+    this.sortOption.set(option);
+  }
+
+  changeDisplayView(view: DisplayView): void {
+    this.displayView.set(view);
+  }
+
+  onSelectDate(range: [dayjs.Dayjs, dayjs.Dayjs] | null) {
+    this.dateRange.set(range);
+  }
+
+  onActionClick({actionKey, item}: CollectionActionPayload): void {
+    switch (actionKey) {
+      case CollectionActionType.Publish:
+        this.onPublish(item);
+        break;
+      case CollectionActionType.Delete:
+        this.onDelete(item);
+        break;
+      default:
+        throw new Error(`Неизвестное действие: ${actionKey}`);
+    }
+  }
+
+  onDelete(item: ISavedGallery): void {
+    if (!item.id) return;
+
+    this.collectionService.getCollectionDelete(item.id)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => {
+          this.collections.update(list => list.filter(col => col.id !== item.id));
+        },
+        error: (error) => {
+          this.errorMessage = 'Ошибка при удалении коллекции';
+          console.error('Ошибка удаления:', error);
+        }
+      });
+  }
+
+  onPublish(item: ISavedGallery): void {
+    this.modalService.open(ShareCollectionModalComponent, {
+      data: {
+        url: `http://localhost:4200/show/${item.id}`,
+      },
+    });
+  }
+
+  private loadCollectionsFromAPI(): void {
+    this.isLoading = true;
+    this.collectionService.getCollection()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (apiResponse) => {
+          const collectionsArray = apiResponse.collections || [];
+
+          const transformedCollections = collectionsArray.map((c: any) => ({
+            ...c,
+            images: [],
+            imagesCount: 0,
+            preview: this.baseStaticUrl + c.cover_thumbnail_url,
+            createDate: c.created_at
+          }));
+
+          this.collections.set(transformedCollections);
+          this.isLoading = false;
+        },
+        error: (error) => {
+          this.errorMessage = 'Ошибка загрузки коллекций';
+          this.isLoading = false;
+          console.error('Ошибка при загрузке коллекций:', error);
+        }
+      });
   }
 
   private handleStepTwo(): void {
@@ -182,48 +254,4 @@ export class ClientGalleryComponent {
     }).catch();
   }
 
-  handleNewCollection(): void {
-    this.isCreatingNewCollection.set(true);
-    this.currentStep.set(2);
-  }
-
-  onSortChange(option: SortOption) {
-    this.sortOption.set(option);
-  }
-
-  changeDisplayView(view: DisplayView): void {
-    this.displayView.set(view);
-  }
-
-  onSelectDate(range: [dayjs.Dayjs, dayjs.Dayjs] | null) {
-    this.dateRange.set(range);
-  }
-
-    onActionClick({actionKey, item}:CollectionActionPayload): void {
-    switch (actionKey) {
-      case CollectionActionType.Publish:
-        this.onPublish();
-        break;
-      case CollectionActionType.Delete:
-        this.onDelete(item);
-        break;
-      default:
-        throw new Error(`Неизвестное действие: ${actionKey}`);
-    }
-  }
-
-
-  onDelete(value: ISavedGallery): void {
-    const updated = this.collections().filter((item) => item.name !== value.name);
-    this.collections.set(updated);
-    localStorage.setItem(GALLERY_STORAGE_KEY, JSON.stringify(updated));
-  }
-
-  onPublish():void{
-    this.modalService.open(ShareCollectionModalComponent, {
-      data: {
-        url: 'http://localhost:4200/show',
-      },
-    });
-  }
 }

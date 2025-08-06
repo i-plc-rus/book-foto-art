@@ -1,10 +1,13 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  input,
   output,
   signal,
 } from '@angular/core';
 import { NgClickOutsideDirective } from 'ng-click-outside2';
+import { CollectionActionPayload, CollectionActionType } from '../../models/collection-display.model';
+import { ISavedGallery } from '../../../../gallery-upload/interface/upload-file';
 
 @Component({
   selector: 'app-collection-menu',
@@ -15,7 +18,10 @@ import { NgClickOutsideDirective } from 'ng-click-outside2';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CollectionMenuComponent {
-  readonly delete = output<void>();
+  readonly collection = input.required<ISavedGallery>()
+  readonly action  = output<CollectionActionPayload>();
+
+  readonly actionType = CollectionActionType
 
   readonly isMenuOpen = signal(false);
 
@@ -27,8 +33,8 @@ export class CollectionMenuComponent {
     this.isMenuOpen.set(false);
   }
 
-  onDeleteClick() {
-    this.delete.emit();
+  onActionClick(actionKey: CollectionActionType): void {
     this.closeMenu();
+    this.action.emit({ actionKey, item: this.collection() });
   }
 }

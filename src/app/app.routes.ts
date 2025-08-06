@@ -32,5 +32,12 @@ export const routes: Routes = [
     path: '',
     loadChildren: (): any => import('./module/main-layout/main.routes').then(m => m.MAIN),
     canActivate: [AuthGuard]
-  }
+  },
+  {
+    path: 'show',
+    loadComponent: () =>
+      import(
+        './pages/collection-site/collection-site/collection-site.component'
+      ).then((c) => c.CollectionSiteComponent),
+  },
 ];

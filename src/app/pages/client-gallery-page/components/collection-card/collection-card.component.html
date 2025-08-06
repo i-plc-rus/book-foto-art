@@ -40,9 +40,19 @@
     class="collection-card__menu-dropdown"
     (clickOutside)="onClickedOutside()"
   >
-    <button class="collection-card__menu-item" (click)="onDelete()">
-      <span>Удалить</span><span>🗑</span>
-    </button>
-  </div>
+  <button
+    class="collection-card__menu-item"
+    (click)="onActionClick(actionType.Publish)"
+  >
+    Опубликовать
+  </button>
+  <button
+    class="collection-card__menu-item"
+    (click)="onActionClick(actionType.Delete)"
+  >
+    Удалить
+  </button>
+</div>
+
   }
 </div>

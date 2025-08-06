@@ -106,7 +106,7 @@
 <ng-template #gridView>
   <div class="grid-view">
     @for (item of filteredCollections(); track $index) {
-    <app-collection-card [collection]="item" (delete)="onDelete(item.name)" />
+    <app-collection-card [collection]="item" (action)="onActionClick($event)" />
     }
   </div>
 </ng-template>
@@ -114,7 +114,7 @@
 <ng-template #tableView>
   <app-collection-table
     [collections]="filteredCollections()"
-    (delete)="onDelete($event)"
+    (action)="onActionClick($event)"
   />
 </ng-template>
 

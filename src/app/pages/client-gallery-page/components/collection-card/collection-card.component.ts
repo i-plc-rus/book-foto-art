@@ -9,6 +9,7 @@ import {
 import { ISavedGallery } from '../../../../gallery-upload/interface/upload-file';
 import { DatePipe } from '@angular/common';
 import { NgClickOutsideDirective } from 'ng-click-outside2';
+import { CollectionActionPayload, CollectionActionType } from '../../models/collection-display.model';
 
 @Component({
   selector: 'app-collection-card',
@@ -20,11 +21,13 @@ import { NgClickOutsideDirective } from 'ng-click-outside2';
 })
 export class CollectionCardComponent {
   readonly collection = input.required<ISavedGallery>();
-  readonly delete = output<void>();
+  readonly action  = output<CollectionActionPayload>();
 
   readonly isMenuOpen = signal(false);
 
   readonly itemCount = computed(() => this.collection().images.length);
+
+  readonly actionType = CollectionActionType
 
   toggleMenu() {
     this.isMenuOpen.update((open) => !open);
@@ -55,8 +58,8 @@ export class CollectionCardComponent {
     this.isMenuOpen.set(false);
   }
 
-  onDelete(): void {
+  onActionClick(actionKey: CollectionActionType): void {
     this.isMenuOpen.set(false);
-    this.delete.emit();
+    this.action.emit({ actionKey, item: this.collection() });
   }
 }

@@ -5,8 +5,10 @@
         <img src="assets/back-svgrepo-com.svg" alt="Назад"/>
       </button>
       <div class="collection-info">
-        <div class="collection-name">{{ sidebarService.title() }}</div>
-        <div class="collection-date">{{ sidebarService.date() | date:'d MMMM yy г.' }}</div>
+        <div class="collection-name">{{ collectionStateService.title() }}</div>
+        <div class="collection-date">
+          {{ collectionStateService.date() | date:'d MMMM yy г.' }}
+        </div>
       </div>
     </div>
 
@@ -15,8 +17,8 @@
         class="cover-image-wrapper relative group cursor-pointer"
         (click)="navigateToPage()">
         <img class="cover-image w-full h-auto object-cover"
-          [src]="coverUrl() || 'assets/cover.png'"
-          alt="Обложка"/>
+             [src]="collectionStateService.coverUrl()"
+             alt="Обложка"/>
 
         <div class="sidebar-content">
           @if (isPhotosRoute()) {
@@ -26,8 +28,7 @@
                   <img
                     src="assets/icons/white-edit.svg"
                     alt="Edit"
-                    class="w-[14px] h-[14px] filter invert"
-                  />
+                    class="w-[14px] h-[14px] filter invert"/>
                   <span class="text-[16px]">Change Cover</span>
                 </div>
               </div>

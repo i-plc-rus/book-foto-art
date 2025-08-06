@@ -19,22 +19,19 @@ import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
     DatePipe,
     NgComponentOutlet
   ],
-  providers: [SidebarService, DesignService, CollectionStateService]
+  providers: [DesignService]
 })
 export class MainLayoutComponent implements OnDestroy {
   private readonly location = inject(Location);
   private readonly router = inject(Router);
-  readonly sidebarService = inject(SidebarService);
   readonly designService = inject(DesignService);
   private readonly route = inject(ActivatedRoute);
   private readonly destroyRef = inject(DestroyRef);
-  private readonly collectionStateService = inject(CollectionStateService);
+  readonly collectionStateService = inject(CollectionStateService);
 
-  coverUrl = this.collectionStateService.coverUrl;
   collectionId = signal<string | null>(null);
   isDesignRoute = signal(false);
   isPhotosRoute = signal(false);
-  imageUrl = signal<string | null>(null);
 
   private readonly routerEventsSubscription: Subscription;
 
@@ -86,10 +83,6 @@ export class MainLayoutComponent implements OnDestroy {
 
     this.isDesignRoute.set(isDesign);
     this.isPhotosRoute.set(isPhotos);
-
-    if (!isDesign) {
-      this.designService.setSectionTitle('DESIGN');
-    }
   }
 
   goBackToPreviousPage() {

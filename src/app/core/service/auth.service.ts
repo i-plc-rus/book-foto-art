@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { tap, map } from 'rxjs/operators';
-import { Observable } from 'rxjs';
+import { tap, map, switchMap, filter, take } from 'rxjs/operators';
+import {Observable, BehaviorSubject, of, throwError, catchError} from 'rxjs';
 import { Router } from '@angular/router';
 import { environment as env } from '../../../environment/environment';
 
@@ -9,6 +9,9 @@ import { environment as env } from '../../../environment/environment';
   providedIn: 'root'
 })
 export class AuthService {
+  private isRefreshing = false;
+  private refreshTokenSubject = new BehaviorSubject<string | null>(null);
+
   constructor(private http: HttpClient, private router: Router) {}
 
   get accessToken(): string | null {
@@ -41,28 +44,45 @@ export class AuthService {
       data
     ).pipe(
       tap(response => {
-        console.log('Ответ сервера:', response);
         this.saveTokens(response.access_token, response.refresh_token);
       })
     );
   }
 
-
   refreshToken(): Observable<string> {
-    const refreshToken = this.refreshTokenValue;
-    if (!refreshToken) {
-      throw new Error('No refresh token available');
-    }
+    if (this.isRefreshing) {
+      return this.refreshTokenSubject.pipe(
+        filter(token => token !== null),
+        take(1),
+        switchMap(token => of(token!))
+      );
+    } else {
+      this.isRefreshing = true;
+      this.refreshTokenSubject.next(null);
 
-    return this.http.post<{ access_token: string; refresh_token?: string }>(
-      `${env.apiUrl}/auth/refresh`,
-      { refresh_token: refreshToken }
-    ).pipe(
-      tap(response => {
-        this.saveTokens(response.access_token, response.refresh_token ?? refreshToken);
-      }),
-      map(response => response.access_token) // возвращаем новый access_token
-    );
+      const refreshToken = this.refreshTokenValue;
+      if (!refreshToken) {
+        this.isRefreshing = false;
+        return throwError(() => new Error('No refresh token available'));
+      }
+
+      return this.http.post<{ access_token: string; refresh_token?: string }>(
+        `${env.apiUrl}/auth/refresh`,
+        { refresh_token: refreshToken }
+      ).pipe(
+        tap(response => {
+          this.saveTokens(response.access_token, response.refresh_token ?? refreshToken);
+          this.isRefreshing = false;
+          this.refreshTokenSubject.next(response.access_token);
+        }),
+        map(response => response.access_token),
+        catchError(err => {
+          this.isRefreshing = false;
+          this.logout();
+          return throwError(() => err);
+        })
+      );
+    }
   }
 
   logout(): void {

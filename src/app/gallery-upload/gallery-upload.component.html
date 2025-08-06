@@ -58,14 +58,19 @@
                     class="w-full h-full object-cover"
                   />
 
+                  @if (!file.loaded && !file.error) {
+                    <div class="loader-overlay">
+                      <div class="percentage">Processing</div>
+                    </div>
+                  }
+
                   @if (file.loaded) {
                     <div
                       class="absolute top-0 right-0 w-7 h-7 flex items-center justify-center bg-white/80 backdrop-blur-sm cursor-pointer transition-opacity duration-200 z-10"
                       [class.opacity-100]="menuOpenId() === file.id"
                       [class.opacity-0]="menuOpenId() !== file.id"
                       [class.group-hover:opacity-100]="menuOpenId() !== file.id"
-                      (click)="toggleMenu(file.id, $event)"
-                    >
+                      (click)="toggleMenu(file.id, $event)">
                       <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <circle cx="12" cy="6" r="1.5" fill="currentColor"/>
                         <circle cx="12" cy="12" r="1.5" fill="currentColor"/>
@@ -76,10 +81,6 @@
 
                   @if (showFilename()) {
                     <p class="filename">{{ file.file.name }}</p>
-                  }
-
-                  @if (!file.loaded) {
-                    <div class="loader-overlay"></div>
                   }
                 </div>
               </div>

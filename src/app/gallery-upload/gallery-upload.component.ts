@@ -59,7 +59,7 @@ interface SubMenuOption {
     GridSettingsComponent,
     UploadModalComponent,
   ],
-  providers: [SidebarService, CollectionService, UploadService, CollectionStateService],
+  providers: [SidebarService, CollectionService, UploadService],
 })
 export class GalleryUploadComponent {
   private readonly destroyRef = inject(DestroyRef);
@@ -238,38 +238,32 @@ export class GalleryUploadComponent {
 
       if (!collectionId) return;
 
-      of({collectionId, sort})
-        .pipe(
-          switchMap(({collectionId, sort}) =>
-            this.photoService.getPhotos(collectionId, {sort}).pipe(
-              map((collection: any) => {
-                this.collectionStateService.setCoverUrl(
-                  this.baseApiUrl + collection.cover_url
-                );
-                return {
-                  id: collection.id,
-                  file: new File([], collection.name || 'collection-cover', {
-                    lastModified: new Date(collection.created_at).getTime(),
-                  }),
-                  previewUrl: this.baseStaticUrl + collection.cover_thumbnail_url,
-                  progress: 100,
-                  loaded: true,
-                };
-              }),
-              catchError(err => {
-                console.error('Ошибка загрузки фото:', err);
-                return of(null);
-              })
-            )
-          ),
-          takeUntilDestroyed(this.destroyRef)
-        )
-        .subscribe((file) => {
-          if (file) {
-            this.files.set([file]);
-          }
-        });
-    }, {allowSignalWrites: true});
+      this.photoService.getPhotos(collectionId, { sort }).pipe(
+        tap((collection: any) => {
+          this.collectionStateService.setCollectionData({
+            title: collection.name,
+            date: new Date(collection.date),
+            coverUrl: this.baseApiUrl + collection.cover_url
+          });
+
+          const file = {
+            id: collection.id,
+            file: new File([], collection.name || 'collection-cover', {
+              lastModified: new Date(collection.created_at).getTime(),
+            }),
+            previewUrl: this.baseStaticUrl + collection.cover_thumbnail_url,
+            progress: 100,
+            loaded: true,
+          };
+          this.files.set([file]);
+        }),
+        catchError(err => {
+          console.error('Ошибка загрузки фото:', err);
+          return of(null);
+        }),
+        takeUntilDestroyed(this.destroyRef)
+      ).subscribe();
+    }, { allowSignalWrites: true });
   }
 
   private subscribeToRouteParams() {

@@ -55,6 +55,7 @@
                     [src]="file.previewUrl"
                     [alt]="file.file.name"
                     [class.hidden]="!file.loaded"
+                    (error)="handleImageError($event, file)"
                     class="w-full h-full object-cover"
                   />
 

@@ -24,19 +24,17 @@
       <span class="line"></span>
     </div>
 
-    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <form [formGroup]="form" (submit)="onSubmit()">
       <input
         type="email"
         formControlName="email"
         placeholder="Email"
-        required
       />
 
       <input
         type="password"
         formControlName="password"
         placeholder="Пароль"
-        required
       />
 
       <div class="login-options">
@@ -47,8 +45,10 @@
         <a routerLink="/reset-password">Забыли пароль?</a>
       </div>
 
-      <button type="submit" class="submit-btn">Войти</button>
-    </form>
+      <button type="submit" class="submit-btn" [disabled]="loading">
+        <span *ngIf="!loading">Войти</span>
+        <span *ngIf="loading">Загрузка...</span>
+      </button>    </form>
 
   </main>
 </div>

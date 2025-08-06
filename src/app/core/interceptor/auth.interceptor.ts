@@ -26,12 +26,14 @@ export class AuthInterceptor implements HttpInterceptor {
     }
 
     return next.handle(authReq).pipe(
-      catchError((error: HttpErrorResponse) => {
-        if (error.status === 401 && !authReq.url.includes('/refresh')) {
-          return this.handle401Error(authReq, next);
-        }
-        return throwError(() => error);
-      })
+        catchError((error: HttpErrorResponse) => {
+          if (error.status === 401
+              && !req.url.includes('/login')
+              && !req.url.includes('/refresh')) {
+            return this.handle401Error(authReq, next);
+          }
+          return throwError(() => error);
+        })
     );
   }
 

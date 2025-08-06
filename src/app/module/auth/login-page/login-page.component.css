@@ -113,15 +113,7 @@ form input[type="password"] {
 }
 
 .submit-btn {
-  /*width: 100%;
-  padding: 0.75rem;
-  background-color: #28a745;
-  color: white;
-  font-weight: bold;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 1rem;*/
+
   margin-top: 1.5rem;
   background-color: #1abc9c;
   color: white;
@@ -137,4 +129,14 @@ form input[type="password"] {
   align-items: center;
   justify-content: center;
   transition: background-color 0.2s ease;
+}
+
+.error {
+  color: #ff3b30;
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+input.invalid {
+  border-color: #ff3b30;
 }

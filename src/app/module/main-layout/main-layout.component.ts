@@ -1,12 +1,18 @@
-import {Component, inject, signal, OnDestroy, DestroyRef} from '@angular/core';
+import {Component, inject, signal, DestroyRef} from '@angular/core';
 import {DatePipe, Location, NgComponentOutlet} from '@angular/common';
 import {RouterOutlet, Router, NavigationEnd, ActivatedRoute} from '@angular/router';
 import {TabsComponent} from '../../shared/components/tabs/tabs.component';
-import {SidebarService} from '../../core/service/sidebar.service';
 import {DesignService} from '../design-component/service/design.service';
-import {filter, Subscription} from 'rxjs';
-import {CollectionStateService} from '../../gallery-upload/service/collection-state.service';
+import {filter} from 'rxjs';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
+import {CollectionService} from '../../gallery-upload/service/collection.service';
+import {environment as env} from '../../../environment/environment';
+
+interface CollectionData {
+  name: string;
+  date: string;
+  cover_url: string;
+}
 
 @Component({
   standalone: true,
@@ -19,73 +25,66 @@ import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
     DatePipe,
     NgComponentOutlet
   ],
-  providers: [DesignService]
+  providers: [DesignService, CollectionService]
 })
-export class MainLayoutComponent implements OnDestroy {
+export class MainLayoutComponent {
   private readonly location = inject(Location);
   private readonly router = inject(Router);
   readonly designService = inject(DesignService);
   private readonly route = inject(ActivatedRoute);
   private readonly destroyRef = inject(DestroyRef);
-  readonly collectionStateService = inject(CollectionStateService);
+  private readonly photoService = inject(CollectionService);
 
+  collectionData = signal<CollectionData | null>(null);
   collectionId = signal<string | null>(null);
   isDesignRoute = signal(false);
   isPhotosRoute = signal(false);
 
-  private readonly routerEventsSubscription: Subscription;
-
   constructor() {
-    this.routerEventsSubscription = this.router.events
-      .pipe(filter(event => event instanceof NavigationEnd))
-      .subscribe(() => {
-        this.updateRouteState();
-      });
+    this.router.events.pipe(
+      filter(event => event instanceof NavigationEnd),
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe(() => this.updateRouteState());
 
-    this.route.queryParams
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(params => {
-        const collectionId = params['collectionId'] || null;
-        this.collectionId.set(collectionId);
+    this.route.queryParams.pipe(
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe(params => {
+      const collectionId = params['collectionId'] || null;
+      this.collectionId.set(collectionId);
+      if (collectionId) {
+        this.loadCollectionData(collectionId);
+      }
+    });
 
-        if (collectionId) {
-          this.collectionStateService.setCurrentCollectionId(collectionId);
-        } else {
-          this.collectionStateService.getCurrentCollectionId().subscribe(savedId => {
-            if (savedId && this.router.url === '/upload') {
-              this.router.navigate([], {
-                relativeTo: this.route,
-                queryParams: {collectionId: savedId},
-                queryParamsHandling: 'merge'
-              });
-            }
-          });
-        }
-      });
     this.updateRouteState();
   }
 
-  ngOnDestroy() {
-    if (this.routerEventsSubscription) {
-      this.routerEventsSubscription.unsubscribe();
-    }
+  private loadCollectionData(collectionId: string): void {
+    this.photoService.getPhotosIngo(collectionId)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((res: any) => {
+        this.collectionData.set(res);
+      });
+  }
+
+  private updateRouteState() {
+    const path = this.location.path();
+    this.isDesignRoute.set(path.includes('/design'));
+    this.isPhotosRoute.set(path.startsWith('/upload'));
   }
 
   navigateToPage() {
     this.router.navigate(['/design/cover']);
   }
 
-  private updateRouteState() {
-    const path = this.location.path();
-
-    const isDesign = path.includes('/design');
-    const isPhotos = path.startsWith('/upload');
-
-    this.isDesignRoute.set(isDesign);
-    this.isPhotosRoute.set(isPhotos);
-  }
-
   goBackToPreviousPage() {
     this.location.back();
+  }
+
+  get coverImageUrl(): string | null {
+    const cover = this.collectionData()?.cover_url ?? null;
+    if (!cover) return null;
+    if (cover.startsWith('http')) return cover;
+    return env.apiUrl + cover;
   }
 }

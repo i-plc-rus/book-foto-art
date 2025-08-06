@@ -10,8 +10,13 @@ export class CollectionService {
   private apiUrl = `${env.apiUrl}/collection`;
 
 
-  getPhotos(collectionId: string, queryParams: { [key: string]: string } = {}): Observable<any[]> {
+  getPhotosIngo(collectionId: string, queryParams: { [key: string]: string } = {}): Observable<any[]> {
     const params = new HttpParams({ fromObject: queryParams });
     return this.http.get<any[]>(`${this.apiUrl}/${collectionId}`, { params });
+  }
+
+  getPhotos(collectionId: string, queryParams: { [key: string]: string } = {}): Observable<any[]> {
+    const params = new HttpParams({ fromObject: queryParams });
+    return this.http.get<any[]>(`${this.apiUrl}/${collectionId}/photos`, { params });
   }
 }

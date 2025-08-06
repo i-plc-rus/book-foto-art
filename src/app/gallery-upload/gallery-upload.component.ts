@@ -28,11 +28,18 @@ import {CollectionStateService} from './service/collection-state.service';
 
 interface UploadFile {
   id: string;
-  file: File;
+  file: File | ServerFile | any;
   progress: number;
   previewUrl: string;
   loaded: boolean;
   error?: boolean;
+}
+
+interface ServerFile {
+  name: string;
+  lastModified: number;
+  size: number;
+  type: string;
 }
 
 interface MenuOption {
@@ -238,32 +245,38 @@ export class GalleryUploadComponent {
 
       if (!collectionId) return;
 
+      this.isLoading.set(true);
       this.photoService.getPhotos(collectionId, { sort }).pipe(
-        tap((collection: any) => {
-          this.collectionStateService.setCollectionData({
-            title: collection.name,
-            date: new Date(collection.date),
-            coverUrl: this.baseApiUrl + collection.cover_url
-          });
-
-          const file = {
-            id: collection.id,
-            file: new File([], collection.name || 'collection-cover', {
-              lastModified: new Date(collection.created_at).getTime(),
-            }),
-            previewUrl: this.baseStaticUrl + collection.cover_thumbnail_url,
+        tap((response: any) => {
+          const uploadedFiles = response.files.map((photo: any) => ({
+            id: photo.id,
+            file: { // Это ServerFile, а не File
+              name: photo.file_name,
+              lastModified: new Date(photo.uploaded_at).getTime(),
+              size: 0,
+              type: `image/${photo.file_ext.slice(1)}`
+            } as ServerFile,
             progress: 100,
-            loaded: true,
-          };
-          this.files.set([file]);
+            previewUrl: this.baseStaticUrl + photo.original_url,
+            loaded: true
+          }));
+
+          this.files.set(uploadedFiles);
         }),
-        catchError(err => {
-          console.error('Ошибка загрузки фото:', err);
-          return of(null);
-        }),
+        finalize(() => this.isLoading.set(false)),
         takeUntilDestroyed(this.destroyRef)
       ).subscribe();
     }, { allowSignalWrites: true });
+  }
+
+  handleImageError(event: Event, file: UploadFile) {
+    const img = event.target as HTMLImageElement;
+    console.error('Error loading image:', file.previewUrl);
+
+    if (file.loaded) {
+      const originalUrl = file.previewUrl.replace('/thumbs/', '/');
+      img.src = originalUrl;
+    }
   }
 
   private subscribeToRouteParams() {
@@ -321,7 +334,6 @@ export class GalleryUploadComponent {
 
     this.uploadStats.startTime.set(Date.now());
 
-    // Константа для ограничения количества одновременных запросов
     const MAX_CONCURRENT_UPLOADS = 4;
     let currentUploads = 0;
     let currentIndex = 0;
@@ -353,11 +365,11 @@ export class GalleryUploadComponent {
                   : f
               )
             );
-            return of({ progress: -1 }); // Возвращаем фейковый прогресс для продолжения потока
+            return of({ progress: -1 });
           }),
           finalize(() => {
             currentUploads--;
-            uploadNext(); // Запустить следующую загрузку
+            uploadNext();
             this.updateUploadStats();
 
             if (currentUploads === 0 && currentIndex >= filesToUpload.length) {
@@ -368,7 +380,7 @@ export class GalleryUploadComponent {
       }
     };
 
-    uploadNext(); // Начать процесс загрузки
+    uploadNext();
   }
 
   private updateUploadStats() {
@@ -411,11 +423,15 @@ export class GalleryUploadComponent {
     return hashes;
   }
 
-  private async getFileHash(file: File): Promise<string> {
-    const buffer = await file.arrayBuffer();
-    const hashBuffer = await crypto.subtle.digest('SHA-256', buffer);
-    const hashArray = Array.from(new Uint8Array(hashBuffer));
-    return hashArray.map((b) => b.toString(16).padStart(2, '0')).join('');
+  private async getFileHash(file: File | ServerFile): Promise<string> {
+    if (file instanceof File) {
+      const buffer = await file.arrayBuffer();
+      const hashBuffer = await crypto.subtle.digest('SHA-256', buffer);
+      const hashArray = Array.from(new Uint8Array(hashBuffer));
+      return hashArray.map((b) => b.toString(16).padStart(2, '0')).join('');
+    } else {
+      return `${file.name}-${file.lastModified}-${file.size}`;
+    }
   }
 
   private applySort(sortType: string) {

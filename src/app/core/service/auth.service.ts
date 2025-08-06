@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { tap, map, switchMap, filter, take } from 'rxjs/operators';
-import {Observable, BehaviorSubject, of, throwError, catchError} from 'rxjs';
+import {Observable, BehaviorSubject, of, throwError, catchError, finalize} from 'rxjs';
 import { Router } from '@angular/router';
 import { environment as env } from '../../../environment/environment';
 
@@ -22,19 +22,27 @@ export class AuthService {
     return localStorage.getItem('refresh_token');
   }
 
-  saveTokens(access: string, refresh: string): void {
-    localStorage.setItem('access_token', access);
-    localStorage.setItem('refresh_token', refresh);
+  saveTokens(access: string, refresh: string) {
+    try {
+      localStorage.setItem('access_token', access);
+      localStorage.setItem('refresh_token', refresh);
+    } catch (e) {
+      console.error('Token save failed', e);
+    }
   }
 
   login(credentials: { email: string; password: string }) {
     return this.http.post<{ access_token: string; refresh_token: string }>(
-      `${env.apiUrl}/auth/login`,
-      credentials
+        `${env.apiUrl}/auth/login`,
+        credentials
     ).pipe(
-      tap(response => {
-        this.saveTokens(response.access_token, response.refresh_token);
-      })
+        tap(response => {
+          this.saveTokens(response.access_token, response.refresh_token);
+        }),
+        catchError(error => {
+          console.error('Login failed:', error);
+          return throwError(() => error);
+        })
     );
   }
 
@@ -49,40 +57,42 @@ export class AuthService {
     );
   }
 
+  // auth.service.ts
   refreshToken(): Observable<string> {
     if (this.isRefreshing) {
       return this.refreshTokenSubject.pipe(
-        filter(token => token !== null),
-        take(1),
-        switchMap(token => of(token!))
+          filter(token => token !== null),
+          take(1),
+          switchMap(token => of(token!))
       );
-    } else {
-      this.isRefreshing = true;
-      this.refreshTokenSubject.next(null);
+    }
 
-      const refreshToken = this.refreshTokenValue;
-      if (!refreshToken) {
-        this.isRefreshing = false;
-        return throwError(() => new Error('No refresh token available'));
-      }
+    const refreshToken = this.refreshTokenValue;
+    if (!refreshToken) {
+      return throwError(() => new Error('No refresh token available'));
+    }
 
-      return this.http.post<{ access_token: string; refresh_token?: string }>(
+    this.isRefreshing = true;
+    this.refreshTokenSubject.next(null);
+
+    return this.http.post<{ access_token: string }>(
         `${env.apiUrl}/auth/refresh`,
         { refresh_token: refreshToken }
-      ).pipe(
+    ).pipe(
         tap(response => {
-          this.saveTokens(response.access_token, response.refresh_token ?? refreshToken);
-          this.isRefreshing = false;
+          this.saveTokens(response.access_token, refreshToken);
           this.refreshTokenSubject.next(response.access_token);
         }),
         map(response => response.access_token),
         catchError(err => {
-          this.isRefreshing = false;
+          this.refreshTokenSubject.next(null);
           this.logout();
           return throwError(() => err);
+        }),
+        finalize(() => {
+          this.isRefreshing = false;
         })
-      );
-    }
+    );
   }
 
   logout(): void {

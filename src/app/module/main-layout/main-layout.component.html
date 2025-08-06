@@ -5,9 +5,9 @@
         <img src="assets/back-svgrepo-com.svg" alt="Назад"/>
       </button>
       <div class="collection-info">
-        <div class="collection-name">{{ collectionStateService.title() }}</div>
+        <div class="collection-name">{{ collectionData()?.name }}</div>
         <div class="collection-date">
-          {{ collectionStateService.date() | date:'d MMMM yy г.' }}
+          {{ collectionData()?.date | date:'d MMMM yy г.' }}
         </div>
       </div>
     </div>
@@ -16,9 +16,12 @@
       <div
         class="cover-image-wrapper relative group cursor-pointer"
         (click)="navigateToPage()">
-        <img class="cover-image w-full h-auto object-cover"
-             [src]="collectionStateService.coverUrl()"
-             alt="Обложка"/>
+        <img
+          class="cover-image w-full h-auto object-cover"
+          [src]="coverImageUrl"
+          alt="Обложка"
+        />
+
 
         <div class="sidebar-content">
           @if (isPhotosRoute()) {

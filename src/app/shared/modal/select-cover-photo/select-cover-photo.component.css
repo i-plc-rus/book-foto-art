@@ -1,0 +1,12 @@
+/* select-cover-photo.component.css */
+.file-grid {
+  display: grid;
+}
+
+.grid-small {
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+}
+
+.grid-large {
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+}

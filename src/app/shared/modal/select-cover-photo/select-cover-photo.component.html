@@ -1,0 +1,55 @@
+<div class="fixed inset-0 bg-[#0000002e] bg-opacity-50 flex items-center justify-center z-50">
+  <div class="bg-white p-8 w-[100vw] h-[100vh] overflow-y-auto">
+    <!-- Header -->
+    <div class="flex items-center justify-between mb-6">
+      <button (click)="close.emit()" class="text-gray-500 hover:text-gray-700">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+      <h3 class="text-xl font-semibold flex-1 text-center">Select Cover Photo</h3>
+      <div class="flex gap-2">
+        <button (click)="uploadPhoto.emit()"
+                class="bg-gray-200 hover:bg-gray-300 py-2 px-4 rounded">
+          Upload Photo
+        </button>
+        <button (click)="selectPhoto.emit()"
+                [disabled]="!selectedPhotoId"
+                [class.opacity-50]="!selectedPhotoId"
+                [class.cursor-not-allowed]="!selectedPhotoId"
+                class="bg-[#1abc9c] hover:bg-[#16a085] text-white py-2 px-4 rounded">
+          Select
+        </button>
+      </div>
+    </div>
+
+    <!-- Collection Heading -->
+    <h4 class="font-medium mb-4 text-lg">Collection Photos</h4>
+
+    <!-- Loading -->
+    <div *ngIf="isLoading" class="text-center py-8">
+      <p class="text-gray-500">Loading photos...</p>
+    </div>
+
+    <!-- Empty -->
+    <div *ngIf="!isLoading && (!collectionPhotos || collectionPhotos.length === 0)" class="text-center py-8">
+      <p class="text-gray-500">You have no photos in your collection</p>
+    </div>
+
+    <!-- Grid -->
+
+    <div *ngIf="!isLoading && collectionPhotos.length > 0"
+         class="file-grid gap-4"
+         [class.grid-small]="gridSize === 'small'"
+         [class.grid-large]="gridSize === 'large'">
+      <div *ngFor="let photo of collectionPhotos"
+           (click)="selectPhotoId(photo.id)"
+           [class.border-2]="selectedPhotoId === photo.id"
+           [style.borderColor]="selectedPhotoId === photo.id ? '#00c951' : 'transparent'"
+           class="border border-gray-200 rounded-lg cursor-pointer overflow-hidden transition-transform hover:scale-105">
+        <img [src]="photo.url" alt="Collection photo"
+             class="w-full h-full object-cover">
+      </div>
+    </div>
+  </div>
+</div>

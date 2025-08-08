@@ -1,66 +1,47 @@
-<div class="layout">
-  <aside class="sidebar">
-    <div class="sidebar-header">
-      <h2>Галереи</h2>
-      <div class="icons">
-        <img src="assets/question-circle-svgrepo-com.svg" class="icon" />
-        <img src="assets/bell-alt-svgrepo-com.svg" class="icon" />
-        <img src="assets/profile-svgrepo-com.svg" class="icon" />
-      </div>
-    </div>
-    <nav class="menu">
-      <a class="menu-item active">Коллекции</a>
-      <a class="menu-item">Избранное</a>
-      <a class="menu-item">Домашняя страница</a>
-      <a class="menu-item">Настройки</a>
-    </nav>
-  </aside>
+<app-gallery-layout>
+  @if (isLoading) {
+    <div class="loading">Загрузка коллекций...</div>
+  } @else if (errorMessage) {
+    <div class="error">{{ errorMessage }}</div>
+  } @else {
+    @if (!isGalleryEmpty() && !isCreatingNewCollection()) {
+      <div class="collection-top">
+        <app-collection-header
+          [(searchTerm)]="searchTerm"
+          (newCollection)="handleNewCollection()"
+        />
+        <div class="collection-top__header">
+          <div class="collection-top__filter">
+            <app-filter-dropdown [config]="STATUS" [disabled]="true" />
+            <app-filter-dropdown [config]="CATEGORY_TAG" [disabled]="true" />
 
-  <main class="main-content">
-    @if (isLoading) {
-      <div class="loading">Загрузка коллекций...</div>
-    } @else if (errorMessage) {
-      <div class="error">{{ errorMessage }}</div>
-    } @else {
-      @if (isGalleryEmpty() && !isCreatingNewCollection()) {
-        <div class="collection-top">
-          <app-collection-header
-            [(searchTerm)]="searchTerm"
-            (newCollection)="handleNewCollection()"
-          />
-          <div class="collection-top__header">
-            <div class="collection-top__filter">
-              <app-filter-dropdown [config]="STATUS" [disabled]="true" />
-              <app-filter-dropdown [config]="CATEGORY_TAG" [disabled]="true" />
+            <app-filter-date
+              [config]="EVENT_DATE"
+              (onSelect)="onSelectDate($event)"
+            />
+            <app-filter-dropdown [config]="EXPIRY_DATE" [disabled]="true" />
+            <app-filter-dropdown [config]="STARRED" [disabled]="true" />
+          </div>
 
-              <app-filter-date
-                [config]="EVENT_DATE"
-                (onSelect)="onSelectDate($event)"
-              />
-              <app-filter-dropdown [config]="EXPIRY_DATE" [disabled]="true" />
-              <app-filter-dropdown [config]="STARRED" [disabled]="true" />
-            </div>
-
-            <div class="collection-top__filter">
-              <app-sort-dropdown
-                [sort]="sortOption()"
-                (sortChange)="onSortChange($event)"
-              />
-              <app-collection-view
-                [view]="displayView()"
-                (chooseView)="changeDisplayView($event)"
-              />
-            </div>
+          <div class="collection-top__filter">
+            <app-sort-dropdown
+              [sort]="sortOption()"
+              (sortChange)="onSortChange($event)"
+            />
+            <app-collection-view
+              [view]="displayView()"
+              (chooseView)="changeDisplayView($event)"
+            />
           </div>
         </div>
+      </div>
 
-        <ng-container [ngTemplateOutlet]="view"></ng-container>
-      } @else {
-        <ng-container [ngTemplateOutlet]="steps"></ng-container>
-      }
+      <ng-container [ngTemplateOutlet]="view"></ng-container>
+    } @else {
+      <ng-container [ngTemplateOutlet]="steps"></ng-container>
     }
-  </main>
-</div>
+  }
+</app-gallery-layout>
 
 <ng-template #steps>
   <!-- Шаг 1 -->
@@ -74,7 +55,6 @@
       </div>
     </section>
   }@else {
-    <!-- Шаг 2 -->
     <section class="welcome centered">
       <p class="subtitle">Шаг 2 из 3</p>
       <h1 class="headline">Введите наименование коллекции</h1>
@@ -127,6 +107,9 @@
   <div class="empty-container">
     <img class="cover-image" src="assets/icons/empty.svg" alt="Пусто" />
     <p>Ничего не найдено</p>
+    <button (click)="handleNewCollection()" class="create-button">
+      Создать первую коллекцию
+    </button>
   </div>
 </ng-template>
 

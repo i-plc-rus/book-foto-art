@@ -24,6 +24,7 @@ import {CollectionService} from '../../../core/service/collection.service.servic
 import { ShareCollectionModalComponent } from '../modal/share-collection-modal/share-collection-modal.component';
 import { ModalService } from '../../../shared/service/modal/modal.service';
 import {environment as env} from '../../../../environment/environment';
+import {GalleryLayoutComponent} from '../gallery-layout/gallery-layout.component';
 
 @Component({
   standalone: true,
@@ -40,6 +41,7 @@ import {environment as env} from '../../../../environment/environment';
     CollectionCardComponent,
     CollectionTableComponent,
     NgTemplateOutlet,
+    GalleryLayoutComponent
   ],
   providers: [CollectionService]
 })
@@ -110,7 +112,7 @@ export class ClientGalleryComponent {
     });
   });
 
-  readonly isGalleryEmpty = computed(() => this.collections().length > 0);
+  readonly isGalleryEmpty = computed(() => this.collections().length === 0);
 
   constructor() {
     this.loadCollectionsFromAPI();
@@ -198,7 +200,9 @@ export class ClientGalleryComponent {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (apiResponse) => {
+          console.log('API Response:', apiResponse); // Логируем ответ
           const collectionsArray = apiResponse.collections || [];
+          console.log('Collections array:', collectionsArray); // Логируем массив
 
           const transformedCollections = collectionsArray.map((c: any) => ({
             ...c,
@@ -208,13 +212,14 @@ export class ClientGalleryComponent {
             createDate: c.created_at
           }));
 
+          console.log('Transformed collections:', transformedCollections); // Логируем преобразованные данные
           this.collections.set(transformedCollections);
           this.isLoading = false;
         },
         error: (error) => {
+          console.error('Error loading collections:', error); // Логируем ошибку
           this.errorMessage = 'Ошибка загрузки коллекций';
           this.isLoading = false;
-          console.error('Ошибка при загрузке коллекций:', error);
         }
       });
   }
@@ -232,14 +237,19 @@ export class ClientGalleryComponent {
       date: this.galleryDate()
     }).pipe(
       takeUntilDestroyed(this.destroyRef)
-    ).subscribe(res => {
-      this.isLoading = false;
-
-      if (res) {
-        this.collectionId = res.id;
-        this.router.navigate(['/upload'], {
-          queryParams: { collectionId: this.collectionId }
-        }).catch();
+    ).subscribe({
+      next: (res) => {
+        this.isLoading = false;
+        if (res) {
+          this.router.navigate(['/upload'], {
+            queryParams: { collectionId: res.id }
+          }).catch();
+        }
+      },
+      error: (err) => {
+        this.isLoading = false;
+        this.errorMessage = 'Ошибка при создании коллекции';
+        console.error('Create collection error:', err);
       }
     });
   }
@@ -247,11 +257,10 @@ export class ClientGalleryComponent {
   private finalizeWizard(): void {
     this.isCreatingNewCollection.set(false);
     this.router.navigate(['/upload'], {
-      state: {
+      queryParams: {
         galleryName: this.galleryName(),
-        galleryDate: this.galleryDate(),
-      },
+        galleryDate: this.galleryDate()
+      }
     }).catch();
   }
-
 }

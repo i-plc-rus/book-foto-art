@@ -1,0 +1,37 @@
+<div class="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4"
+     (click)="close.emit()">
+  <div class="bg-white shadow-2xl w-full max-w-[720px] flex flex-col overflow-hidden p-12"
+       (click)="$event.stopPropagation()">
+    <div class="pb-5">
+      <div class="flex items-center justify-between">
+        <div>
+          <h3 class="text-base font-semibold tracking-[.11875em] leading-[1.429]">SET FOCAL POINT</h3>
+        </div>
+        <button (click)="close.emit()"
+                class="text-gray-400 hover:text-gray-500 text-2xl focus:outline-none">
+          &times;
+        </button>
+      </div>
+    </div>
+
+    <div class="flex-1 overflow-hidden flex flex-col max-h-[70vh]">
+      <div class="flex-1 min-h-0 flex items-center justify-center">
+        <app-focal-point
+          [imageUrl]="imageUrl"
+          [initialPosition]="currentPosition"
+          (positionChanged)="handlePositionChange($event)"
+          class="w-full h-full">
+        </app-focal-point>
+      </div>
+    </div>
+  </div>
+</div>
+@if (showSuccessMessage()) {
+  <div class="fixed bottom-4 right-4 bg-black bg-opacity-70 text-white text-[14px] p-4 shadow-lg z-50"
+    style="min-width: 150px; text-align: center;"
+  >
+    Collection update
+  </div>
+}
+
+

@@ -2,12 +2,12 @@
   <aside class="sidebar">
     <div class="sidebar-header">
       <button class="back-button" (click)="goBackToPreviousPage()">
-        <img src="assets/back-svgrepo-com.svg" alt="Назад"/>
+        <img src="assets/back-svgrepo-com.svg" alt="Назад" />
       </button>
       <div class="collection-info">
         <div class="collection-name">{{ collectionData()?.name }}</div>
         <div class="collection-date">
-          {{ collectionData()?.date | date:'d MMMM yy г.' }}
+          {{ collectionData()?.date | date: 'd MMMM yy г.' }}
         </div>
       </div>
     </div>
@@ -55,7 +55,7 @@
                   [class.active]="designService.getActiveSection()?.id === section.id"
                   class="section-item">
                 <span class="section-icon">
-                  <img [src]="section.icon" [alt]="section.name"/>
+                  <img [src]="section.icon" [alt]="section.name" />
                 </span>
                   <span class="section-name">{{ section.name }}</span>
                 </a>

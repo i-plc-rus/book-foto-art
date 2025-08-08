@@ -13,21 +13,45 @@
 
                 <div class="flex gap-2 ml-4">
                     <button type="button"
+                            (click)="openChangeCoverModal()"
                             class="cursor-pointer flex items-center justify-center py-1 h-8 bg-transparent text-[#1abc9c] text-[0.875rem] font-medium tracking-normal leading-none transition-colors rounded disabled:text-gray-300 hover:text-[#008e74]">
                         <img src="assets/icons/images.svg" alt="preview"
                              class="w-[14px] h-full filter-green transition-filter hover:filter-green-hover mr-1"/>
                         Cover Photo
                     </button>
-
-                    <button type="button"
-                            class="cursor-pointer flex items-center justify-center py-1 h-8 bg-transparent text-[#1abc9c] text-[0.875rem] font-medium tracking-normal leading-none transition-colors rounded disabled:text-gray-300 hover:text-[#008e74]">
-                        <img src="assets/icons/dots.svg" alt="preview"
-                             class="w-[14px] h-full filter-green transition-filter hover:filter-green-hover mr-1"/>
-                        Focal
-                    </button>
+                  <button type="button"
+                          class="cursor-pointer flex items-center justify-center py-1 h-8 bg-transparent text-[#1abc9c] text-[0.875rem] font-medium tracking-normal leading-none transition-colors rounded disabled:text-gray-300 hover:text-[#008e74]"
+                          [disabled]="!selectedTemplate() || selectedTemplate()?.id === 'none'"
+                          (click)="openFocalPointModal()">
+                    <img src="assets/icons/dots.svg" alt="focal point"
+                         class="w-[14px] h-full filter-green transition-filter hover:filter-green-hover mr-1"/>
+                    Focal
+                  </button>
                 </div>
             </div>
         </div>
+
+      @if (showChangeCoverModal()) {
+        <app-change-cover
+          (close)="closeChangeCoverModal()"
+          (selectFromCollection)="openSelectCoverPhotoModal()"
+          (browseFiles)="triggerFileInput()">
+        </app-change-cover>
+      }
+
+      @if (showSelectCoverPhotoModal()) {
+        <app-select-cover-photo
+          [collectionPhotos]="collectionPhotos()"
+          [isLoading]="isLoading()"
+          [previewImageUrl]="previewImageUrl"
+          (close)="closeSelectCoverPhotoModal()"
+          (uploadPhoto)="triggerFileInput()"
+          (selectPhoto)="confirmCoverSelection()"
+          (photoSelected)="handlePhotoSelected($event)">
+        </app-select-cover-photo>
+      }
+
+      <input type="file" accept="image/*" hidden #fileInput (change)="onFileSelected($event)">
 
         <div class="scroll p-[32px] pt-0 overflow-y-auto bg-[#fff] flex-1">
             <div class="grid gap-4">
@@ -70,6 +94,11 @@
                 [viewMode]="viewMode()"
                 (viewModeChange)="setViewMode($event)"
         ></app-device-preview>
-
     </div>
 </div>
+@if (showFocalModal()) {
+  <app-focal-point-modal
+    (save)="handleFocalPointSave($event)"
+    (close)="showFocalModal.set(false)">
+  </app-focal-point-modal>
+}

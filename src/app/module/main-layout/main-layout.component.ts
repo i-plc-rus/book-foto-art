@@ -1,4 +1,4 @@
-import {Component, inject, signal, DestroyRef} from '@angular/core';
+import {Component, inject, signal, DestroyRef, computed, effect} from '@angular/core';
 import {DatePipe, Location, NgComponentOutlet} from '@angular/common';
 import {RouterOutlet, Router, NavigationEnd, ActivatedRoute} from '@angular/router';
 import {TabsComponent} from '../../shared/components/tabs/tabs.component';
@@ -7,11 +7,13 @@ import {filter} from 'rxjs';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {CollectionService} from '../../gallery-upload/service/collection.service';
 import {environment as env} from '../../../environment/environment';
+import {GalleryUploadComponent} from '../../gallery-upload/gallery-upload.component';
 
 interface CollectionData {
   name: string;
   date: string;
   cover_url: string;
+  focal_point?: { x: number; y: number };
 }
 
 @Component({
@@ -23,7 +25,8 @@ interface CollectionData {
     RouterOutlet,
     TabsComponent,
     DatePipe,
-    NgComponentOutlet
+    NgComponentOutlet,
+    GalleryUploadComponent
   ],
   providers: [DesignService, CollectionService]
 })
@@ -63,6 +66,9 @@ export class MainLayoutComponent {
     this.photoService.getPhotosIngo(collectionId)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((res: any) => {
+        if (!res.focal_point) {
+          res.focal_point = {x: 50, y: 50};
+        }
         this.collectionData.set(res);
       });
   }
@@ -86,5 +92,15 @@ export class MainLayoutComponent {
     if (!cover) return null;
     if (cover.startsWith('http')) return cover;
     return env.apiUrl + cover;
+  }
+
+  updateFocalPoint(position: { x: number; y: number }) {
+    const currentData = this.collectionData();
+    if (currentData) {
+      this.collectionData.set({
+        ...currentData,
+        focal_point: position
+      });
+    }
   }
 }

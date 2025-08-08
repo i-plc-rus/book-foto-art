@@ -21,3 +21,33 @@ export interface ISavedGallery {
 }
 
 export const GALLERY_STORAGE_KEY = 'savedGalleries';
+
+export interface UploadFile {
+  id: string;
+  file: File | ServerFile;
+  progress: number;
+  previewUrl: string;
+  loaded: boolean;
+  error?: boolean;
+}
+
+export interface ServerFile {
+  name: string;
+  lastModified: number;
+  size: number;
+  type: string;
+  hash: string;
+}
+
+export interface MenuOption {
+  id: string;
+  name: string;
+  iconUrl: string;
+  subMenu?: SubMenuOption[];
+}
+
+export interface SubMenuOption {
+  id: string;
+  name: string;
+  iconUrl: string;
+}

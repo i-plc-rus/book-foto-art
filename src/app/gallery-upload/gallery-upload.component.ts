@@ -25,6 +25,7 @@ import {CollectionService} from './service/collection.service';
 import {SortType} from '../core/types/sort-type';
 import {environment} from '../../environment/environment';
 import {CollectionStateService} from './service/collection-state.service';
+import {FileGridComponent} from '../shared/components/cover-image/file-grid.component';
 
 interface UploadFile {
   id: string;
@@ -65,6 +66,7 @@ interface SubMenuOption {
     SortMenuComponent,
     GridSettingsComponent,
     UploadModalComponent,
+    FileGridComponent,
   ],
   providers: [SidebarService, CollectionService, UploadService],
 })
@@ -85,7 +87,6 @@ export class GalleryUploadComponent {
   readonly showUploadModal = signal(false);
   readonly baseStaticUrl = environment.staticUrl;
   private readonly currentlyUploading = new Set<string>();
-  readonly baseApiUrl = environment.apiUrl;
   readonly showEmptyState = computed(() => {
     return this.files().length === 0 &&
       this.currentlyUploading.size === 0 &&
@@ -115,24 +116,24 @@ export class GalleryUploadComponent {
     },
   };
   readonly menuOptions = signal<MenuOption[]>([
-    { id: 'open', name: 'Open', iconUrl: '/assets/icons/double-arrow.svg' },
-    { id: 'share', name: 'Quick share link', iconUrl: '/assets/icons/link.svg' },
-    { id: 'download', name: 'Download', iconUrl: '/assets/icons/download.svg' },
+    {id: 'open', name: 'Open', iconUrl: '/assets/icons/double-arrow.svg'},
+    {id: 'share', name: 'Quick share link', iconUrl: '/assets/icons/link.svg'},
+    {id: 'download', name: 'Download', iconUrl: '/assets/icons/download.svg'},
     {
       id: 'move',
       name: 'Move/Copy',
       iconUrl: '/assets/icons/move-copy.svg',
       subMenu: [
-        { id: 'move_to', name: 'Move to', iconUrl: '/assets/icons/double-arrow.svg' },
-        { id: 'copy_to', name: 'Copy to', iconUrl: '/assets/icons/double-arrow.svg' }
+        {id: 'move_to', name: 'Move to', iconUrl: '/assets/icons/double-arrow.svg'},
+        {id: 'copy_to', name: 'Copy to', iconUrl: '/assets/icons/double-arrow.svg'}
       ]
     },
-    { id: 'copy', name: 'Copy filenames', iconUrl: '/assets/icons/copy.svg' },
-    { id: 'cover', name: 'Set as cover', iconUrl: '/assets/icons/set-image.svg' },
-    { id: 'rename', name: 'Rename', iconUrl: '/assets/icons/edit.svg' },
-    { id: 'replace', name: 'Replace photo', iconUrl: '/assets/icons/replace.svg' },
-    { id: 'watermark', name: 'Watermark', iconUrl: '/assets/icons/mark.svg' },
-    { id: 'delete', name: 'Delete', iconUrl: '/assets/icons/delete.svg' },
+    {id: 'copy', name: 'Copy filenames', iconUrl: '/assets/icons/copy.svg'},
+    {id: 'cover', name: 'Set as cover', iconUrl: '/assets/icons/set-image.svg'},
+    {id: 'rename', name: 'Rename', iconUrl: '/assets/icons/edit.svg'},
+    {id: 'replace', name: 'Replace photo', iconUrl: '/assets/icons/replace.svg'},
+    {id: 'watermark', name: 'Watermark', iconUrl: '/assets/icons/mark.svg'},
+    {id: 'delete', name: 'Delete', iconUrl: '/assets/icons/delete.svg'},
   ]);
 
   constructor() {
@@ -144,13 +145,12 @@ export class GalleryUploadComponent {
 
         if (collectionId) {
           this.collectionStateService.setCurrentCollectionId(collectionId);
-        }
-        else {
+        } else {
           this.collectionStateService.getCurrentCollectionId().subscribe(savedId => {
             if (savedId) {
               this.router.navigate([], {
                 relativeTo: this.route,
-                queryParams: { collectionId: savedId },
+                queryParams: {collectionId: savedId},
                 queryParamsHandling: 'merge'
               });
             }
@@ -175,29 +175,6 @@ export class GalleryUploadComponent {
     if (!(event.target as HTMLElement).closest('.menu-container')) {
       this.menuOpenId.set(null);
     }
-  }
-
-  toggleMenu(fileId: string, event: MouseEvent) {
-    event.stopPropagation();
-    this.menuOpenId.set(this.menuOpenId() === fileId ? null : fileId);
-  }
-
-  handleOptionClick(optionId: string, file: UploadFile) {
-    console.log(`Option clicked: ${optionId}`, file);
-    this.menuOpenId.set(null);
-    // Так мы можем реализовать действий для каждой опции
-    // switch (optionId) {
-    //   case 'open': this.openFile(file); break;
-    //   case 'delete': this.deleteFile(file); break;
-    // }
-  }
-
-  onMenuOptionMouseEnter(optionId: string) {
-    this.menuHoverId.set(optionId);
-  }
-
-  onMenuOptionMouseLeave() {
-    this.menuHoverId.set(null);
   }
 
   onSortChange(sort: string): void {
@@ -231,13 +208,6 @@ export class GalleryUploadComponent {
     }
   }
 
-  handleDrop(event: DragEvent) {
-    event.preventDefault();
-    if (event.dataTransfer?.files.length) {
-      this.processFiles([...event.dataTransfer.files]);
-    }
-  }
-
   private initPhotoLoadEffect() {
     effect(() => {
       const collectionId = this.collectionId();
@@ -246,7 +216,7 @@ export class GalleryUploadComponent {
       if (!collectionId) return;
 
       this.isLoading.set(true);
-      this.photoService.getPhotos(collectionId, { sort }).pipe(
+      this.photoService.getPhotos(collectionId, {sort}).pipe(
         tap((response: any) => {
           const uploadedFiles = response.files.map((photo: any) => ({
             id: photo.id,
@@ -266,7 +236,7 @@ export class GalleryUploadComponent {
         finalize(() => this.isLoading.set(false)),
         takeUntilDestroyed(this.destroyRef)
       ).subscribe();
-    }, { allowSignalWrites: true });
+    }, {allowSignalWrites: true});
   }
 
   handleImageError(event: Event, file: UploadFile) {
@@ -303,7 +273,7 @@ export class GalleryUploadComponent {
     }, {allowSignalWrites: true});
   }
 
-  private async processFiles(files: File[]) {
+  async processFiles(files: File[]) {
     if (!files.length) return;
 
     this.showStatus.set(true);
@@ -365,7 +335,7 @@ export class GalleryUploadComponent {
                   : f
               )
             );
-            return of({ progress: -1 });
+            return of({progress: -1});
           }),
           finalize(() => {
             currentUploads--;

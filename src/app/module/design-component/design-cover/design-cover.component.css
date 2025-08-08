@@ -1,0 +1,17 @@
+/* design-cover.component.css */
+.filter-green {
+  filter: invert(69%) sepia(51%) saturate(397%) hue-rotate(123deg) brightness(92%) contrast(87%);
+}
+
+.filter-green:hover {
+  filter: invert(44%) sepia(65%) saturate(999%) hue-rotate(125deg) brightness(94%) contrast(86%);
+}
+
+/* Стили для модальных окон */
+.bg-opacity-50 {
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.z-50 {
+  z-index: 50;
+}

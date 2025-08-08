@@ -1,166 +1,69 @@
-  <section class="welcome full-width">
-    <div class="w-full py-3 flex items-center justify-between">
-      <h1 class="headline">Медиа файлы</h1>
-      <div class="flex justify-end gap-2">
-        <app-sort-menu (sortChange)="onSortChange($event)"></app-sort-menu>
-        <app-grid-settings
-          (gridSizeChange)="onGridSizeChange($event)"
-          (showFilenameChange)="onShowFilenameChange($event)">
-        </app-grid-settings>
+<section class="welcome full-width">
+  <div class="w-full py-3 flex items-center justify-between">
+    <h1 class="headline">Медиа файлы</h1>
+    <div class="flex justify-end gap-2">
+      <app-sort-menu (sortChange)="onSortChange($event)"></app-sort-menu>
+      <app-grid-settings
+        (gridSizeChange)="onGridSizeChange($event)"
+        (showFilenameChange)="onShowFilenameChange($event)">
+      </app-grid-settings>
+      <div
+        (click)="showUploadModal.set(true)"
+        class="flex items-center gap-1 px-3 py-1.5 cursor-pointer text-[#1ac2c4] relative">
+        <svg xmlns="http://www.w3.org/2000/svg" class="border border-[#1ac2c4] rounded-full w-4 h-4" viewBox="0 0 24 24"
+             fill="none"
+             stroke="currentColor" stroke-width="2">
+          <path d="M12 5v14M5 12h14"/>
+        </svg>
+        <span>Add Media</span>
+      </div>
+    </div>
+  </div>
+
+  <app-file-grid
+    [files]="files()"
+    [gridSize]="gridSize()"
+    [showFilename]="showFilename()"
+    [showEmptyState]="showEmptyState()"
+    [menuOptions]="menuOptions()"
+    (filesDropped)="processFiles($event)"
+    (fileSelected)="handleFileSelect($event)"
+    (imageError)="handleImageError($event.event, $event.file)"
+    class="w-full h-[-webkit-fill-available]"></app-file-grid>
+
+  @if (uploadStats.totalFiles() > 0 && !uploadStats.allFilesUploaded() && showStatus()) {
+    <div class="upload-status">
+      <div class="upload-info">
+        <div class="upload-header">
+          <div class="upload-text">
+            Uploading {{ uploadStats.uploadedFiles() }} of {{ uploadStats.totalFiles() }} items
+          </div>
+          <button class="close-button" (click)="closeStatus()">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M13 1L1 13M1 1L13 13" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round"/>
+            </svg>
+          </button>
+        </div>
+        <div class="upload-stats">
+          {{ uploadStats.formatBytes(uploadStats.uploadedSize()) }} /
+          {{ uploadStats.formatBytes(uploadStats.totalSize()) }} •
+          {{ uploadStats.formatBytes(uploadStats.uploadSpeed()) }}/s
+        </div>
+      </div>
+      <div class="progress-container">
         <div
-          (click)="showUploadModal.set(true)"
-          class="flex items-center gap-1 px-3 py-1.5 cursor-pointer text-[#1ac2c4] relative">
-          <svg xmlns="http://www.w3.org/2000/svg" class="border border-[#1ac2c4] rounded-full w-4 h-4" viewBox="0 0 24 24" fill="none"
-               stroke="currentColor" stroke-width="2">
-            <path d="M12 5v14M5 12h14"/>
-          </svg>
-          <span>Add Media</span>
+          class="progress-bar"
+          [style.width.%]="(uploadStats.uploadedSize() / uploadStats.totalSize()) * 100">
         </div>
       </div>
     </div>
-
-    <div
-      class="upload-area"
-      [class.centered]="files().length === 0"
-      (drop)="handleDrop($event)"
-      (dragover)="$event.preventDefault()">
-
-      @if (showEmptyState()) {
-        <div class="empty-state">
-          <p class="drop-text">Перетащите медиафайлы сюда или</p>
-          <label for="fileInput" class="file-label">выберите на устройстве</label>
-          <input
-            type="file"
-            multiple
-            hidden
-            id="fileInput"
-            (change)="handleFileSelect($event)"
-          />
-        </div>
-      } @else {
-        <div
-          class="file-grid"
-          [class.grid-small]="gridSize() === 'small'"
-          [class.grid-large]="gridSize() === 'large'">
-
-          @for (file of files(); track file.id) {
-            <div class="file-tile group relative">
-              <div class="media-container">
-                @if (!file.loaded) {
-                  <div class="skeleton-loader"></div>
-                }
-
-                <div class="media-content relative">
-                  <img
-                    [src]="file.previewUrl"
-                    [alt]="file.file.name"
-                    [class.hidden]="!file.loaded"
-                    (error)="handleImageError($event, file)"
-                    class="w-full h-full object-cover"
-                  />
-
-                  @if (!file.loaded && !file.error) {
-                    <div class="loader-overlay">
-                      <div class="percentage">Processing</div>
-                    </div>
-                  }
-
-                  @if (file.loaded) {
-                    <div
-                      class="absolute top-0 right-0 w-7 h-7 flex items-center justify-center bg-white/80 backdrop-blur-sm cursor-pointer transition-opacity duration-200 z-10"
-                      [class.opacity-100]="menuOpenId() === file.id"
-                      [class.opacity-0]="menuOpenId() !== file.id"
-                      [class.group-hover:opacity-100]="menuOpenId() !== file.id"
-                      (click)="toggleMenu(file.id, $event)">
-                      <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <circle cx="12" cy="6" r="1.5" fill="currentColor"/>
-                        <circle cx="12" cy="12" r="1.5" fill="currentColor"/>
-                        <circle cx="12" cy="18" r="1.5" fill="currentColor"/>
-                      </svg>
-                    </div>
-                  }
-
-                  @if (showFilename()) {
-                    <p class="filename">{{ file.file.name }}</p>
-                  }
-                </div>
-              </div>
-
-              @if (menuOpenId() === file.id) {
-                <div class="menu-container absolute top-[28px] right-[-190px] z-50 bg-white shadow-lg min-w-[220px]">
-                  @for (option of menuOptions(); track option.id) {
-                    <div
-                      class="menu-option flex items-center gap-2.5 px-[1.5rem] py-2.5 hover:bg-gray-100 cursor-pointer relative"
-                      (mouseenter)="option.subMenu ? onMenuOptionMouseEnter(option.id) : null"
-                      (mouseleave)="option.subMenu ? onMenuOptionMouseLeave() : null"
-                      (click)="!option.subMenu && handleOptionClick(option.id, file)">
-                      <img
-                        [src]="option.iconUrl"
-                        alt=""
-                        class="w-4 h-4 object-contain"
-                      />
-                      <span class="text-sm font-normal tracking-normal leading-[1.7]">{{ option.name }}</span>
-
-                      @if (menuHoverId() === option.id && option.subMenu) {
-                        <div class="submenu absolute top-0 left-full bg-white shadow-lg min-w-[220px] z-50">
-                          @for (subOption of option.subMenu; track subOption.id) {
-                            <div
-                              class="menu-option flex items-center gap-2.5 px-[1.5rem] py-2.5 hover:bg-gray-100 cursor-pointer"
-                              (click)="handleOptionClick(subOption.id, file)"
-                            >
-                              <img
-                                [src]="subOption.iconUrl"
-                                alt=""
-                                class="w-4 h-4 object-contain"
-                              />
-                              <span class="text-sm font-normal tracking-normal leading-[1.7]">{{ subOption.name }}</span>
-                            </div>
-                          }
-                        </div>
-                      }
-                    </div>
-                  }
-                </div>
-              }
-            </div>
-          }
-        </div>
-      }
-    </div>
-
-    @if (uploadStats.totalFiles() > 0 && !uploadStats.allFilesUploaded() && showStatus()) {
-      <div class="upload-status">
-        <div class="upload-info">
-          <div class="upload-header">
-            <div class="upload-text">
-              Uploading {{ uploadStats.uploadedFiles() }} of {{ uploadStats.totalFiles() }} items
-            </div>
-            <button class="close-button" (click)="closeStatus()">
-              <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M13 1L1 13M1 1L13 13" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                      stroke-linejoin="round"/>
-              </svg>
-            </button>
-          </div>
-          <div class="upload-stats">
-            {{ uploadStats.formatBytes(uploadStats.uploadedSize()) }} /
-            {{ uploadStats.formatBytes(uploadStats.totalSize()) }} •
-            {{ uploadStats.formatBytes(uploadStats.uploadSpeed()) }}/s
-          </div>
-        </div>
-        <div class="progress-container">
-          <div
-            class="progress-bar"
-            [style.width.%]="(uploadStats.uploadedSize() / uploadStats.totalSize()) * 100">
-          </div>
-        </div>
-      </div>
-    }
-  </section>
-
-  @if (showUploadModal()) {
-    <app-upload-modal
-      (fileSelected)="onModalFileSelected($event)"
-      (close)="showUploadModal.set(false)"
-    ></app-upload-modal>
   }
+</section>
+
+@if (showUploadModal()) {
+  <app-upload-modal
+    (fileSelected)="onModalFileSelected($event)"
+    (close)="showUploadModal.set(false)"
+  ></app-upload-modal>
+}

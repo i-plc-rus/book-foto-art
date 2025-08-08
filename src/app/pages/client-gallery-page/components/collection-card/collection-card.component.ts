@@ -1,7 +1,7 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  computed,
+  computed, inject,
   input,
   output,
   signal,
@@ -10,6 +10,8 @@ import { ISavedGallery } from '../../../../gallery-upload/interface/upload-file'
 import { DatePipe } from '@angular/common';
 import { NgClickOutsideDirective } from 'ng-click-outside2';
 import { CollectionActionPayload, CollectionActionType } from '../../models/collection-display.model';
+import {CollectionListService} from '../../service/collection-list.service';
+import {catchError, EMPTY, tap} from 'rxjs';
 
 @Component({
   selector: 'app-collection-card',
@@ -28,6 +30,7 @@ export class CollectionCardComponent {
   readonly itemCount = computed(() => this.collection().imagesCount ?? this.collection().images?.length ?? 0);
 
   readonly actionType = CollectionActionType
+  private collectionService = inject(CollectionListService);
 
   toggleMenu() {
     this.isMenuOpen.update((open) => !open);
@@ -59,6 +62,21 @@ export class CollectionCardComponent {
 
   onActionClick(actionKey: CollectionActionType): void {
     this.isMenuOpen.set(false);
-    this.action.emit({ actionKey, item: this.collection() });
+
+    if (actionKey === CollectionActionType.Delete) {
+      this.collectionService.deleteCollection(this.collection().id)
+        .pipe(
+          tap(() => {
+            this.action.emit({ actionKey, item: this.collection() });
+          }),
+          catchError(err => {
+            console.error('Ошибка при удалении коллекции', err);
+            return EMPTY;
+          })
+        )
+        .subscribe();
+    } else {
+      this.action.emit({ actionKey, item: this.collection() });
+    }
   }
 }

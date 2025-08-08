@@ -1,7 +1,7 @@
 import {inject, Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {Observable} from 'rxjs';
-import {environment as env} from './../../../../environment/environment';
+import {environment as env} from '../../../../environments/environment';
 import {IHttpResponse} from '../../../core/interfaces/http-response.interface';
 
 @Injectable()

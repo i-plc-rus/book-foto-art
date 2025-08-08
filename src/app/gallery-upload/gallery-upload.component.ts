@@ -23,7 +23,7 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {CollectionService} from './service/collection.service';
 import {SortType} from '../core/types/sort-type';
-import {environment} from '../../environment/environment';
+import {environment} from '../../environments/environment';
 import {CollectionStateService} from './service/collection-state.service';
 import {FileGridComponent} from '../shared/components/cover-image/file-grid.component';
 

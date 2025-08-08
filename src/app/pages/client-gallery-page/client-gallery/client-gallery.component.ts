@@ -23,7 +23,7 @@ import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {CollectionService} from '../../../core/service/collection.service.service';
 import { ShareCollectionModalComponent } from '../modal/share-collection-modal/share-collection-modal.component';
 import { ModalService } from '../../../shared/service/modal/modal.service';
-import {environment as env} from '../../../../environment/environment';
+import {environment as env} from '../../../../environments/environment';
 
 @Component({
   standalone: true,

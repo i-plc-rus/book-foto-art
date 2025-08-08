@@ -1,5 +1,5 @@
 import {Component, inject, signal, DestroyRef, computed, effect} from '@angular/core';
-import {DatePipe, Location, NgComponentOutlet} from '@angular/common';
+import {DatePipe, Location, NgComponentOutlet, NgIf, NgTemplateOutlet} from '@angular/common';
 import {RouterOutlet, Router, NavigationEnd, ActivatedRoute} from '@angular/router';
 import {TabsComponent} from '../../shared/components/tabs/tabs.component';
 import {DesignService} from '../design-component/service/design.service';
@@ -26,7 +26,9 @@ interface CollectionData {
     TabsComponent,
     DatePipe,
     NgComponentOutlet,
-    GalleryUploadComponent
+    GalleryUploadComponent,
+    NgTemplateOutlet,
+    NgIf
   ],
   providers: [DesignService, CollectionService]
 })
@@ -80,8 +82,14 @@ export class MainLayoutComponent {
   }
 
   navigateToPage() {
-    this.router.navigate(['/design/cover']);
+    const id = this.collectionId();
+    if (id) {
+      this.router.navigate(['/design/cover'], {
+        queryParams: { collectionId: id }
+      }).catch();
+    }
   }
+
 
   goBackToPreviousPage() {
     this.location.back();

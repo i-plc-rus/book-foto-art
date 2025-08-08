@@ -1,5 +1,5 @@
 import {Component, EventEmitter, Input, Output} from '@angular/core';
-import {NgForOf, NgIf} from '@angular/common';
+import {CommonModule} from '@angular/common';
 
 @Component({
   standalone: true,
@@ -7,8 +7,7 @@ import {NgForOf, NgIf} from '@angular/common';
   templateUrl: './select-cover-photo.component.html',
   styleUrl: './select-cover-photo.component.css',
   imports: [
-    NgForOf,
-    NgIf
+    CommonModule
   ]
 })
 export class SelectCoverPhotoComponent {
@@ -21,16 +20,16 @@ export class SelectCoverPhotoComponent {
   @Output() photoSelected = new EventEmitter<any>();
 
   selectedPhotoId: string | null = null;
-  gridSize: 'small' | 'large' = 'small'; // По умолчанию маленькая сетка
+  gridSize: 'small' | 'large' = 'small';
 
 
   selectPhotoId(id: string) {
-    this.selectedPhotoId = this.selectedPhotoId === id ? null : id;
-    this.photoSelected.emit(id);
+    this.selectedPhotoId = id;
+
+    const selectedPhoto = this.collectionPhotos.find(photo => photo.id === id);
+    if (selectedPhoto) {
+      this.photoSelected.emit(selectedPhoto);
+    }
   }
 
-  selectPhotoFromCollection(photo: any) {
-    this.selectedPhotoId = photo.id;
-    this.photoSelected.emit(photo);
-  }
 }

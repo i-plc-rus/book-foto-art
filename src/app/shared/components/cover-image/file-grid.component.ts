@@ -10,11 +10,11 @@ import { CommonModule } from '@angular/common';
 import {MenuOption, UploadFile} from '../../../gallery-upload/interface/upload-file';
 
 @Component({
-  selector: 'app-file-grid',
   standalone: true,
-  imports: [CommonModule],
+  selector: 'app-file-grid',
   templateUrl: './file-grid.component.html',
   styleUrls: ['./file-grid.component.css'],
+  imports: [CommonModule],
 })
 export class FileGridComponent {
   @Input() files: UploadFile[] = [];

@@ -1,45 +1,67 @@
 <section class="collections-header">
-  <div class="collections-header__inner">
-    <h2 class="collections-header__title">Коллекции</h2>
-    <label class="collections-header__search-label">
-      <span class="collections-header__search-icon" aria-hidden="true">
-        <svg
-          class="svg-inline--fa fa-magnifying-glass"
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 512 512"
-        >
-          <path
-            fill="currentColor"
-            d="M368 208A160 160 0 1 0 48 208a160 160 0 1 0 320 0zM337.1 371.1
-                 C301.7 399.2 256.8 416 208 416C93.1 416 0 322.9 0 208S93.1 0
-                 208 0S416 93.1 416 208c0 48.8-16.8 93.7-44.9
-                 129.1L505 471c9.4 9.4 9.4 24.6 0 33.9s-24.6
-                 9.4-33.9 0L337.1 371.1z"
-          />
-        </svg>
-      </span>
-      <input
-        id="search-bar"
-        enterkeyhint="done"
-        class="collections-header__search-input"
-        type="text"
-        placeholder="Поиск..."
-        [(ngModel)]="searchTerm"
-      />
-      @if(searchTerm()){
+  <div class="w-full pb-[1rem]">
+    <div class="collections-header__inner flex justify-between" [class.search-active]="isMobileSearchActive">
+      <!-- Заголовок -->
+      <h2 class="collections-header__title" *ngIf="!isMobileSearchActive">Коллекции</h2>
+
+      <!-- Лупа (видна по умолчанию на мобильном) -->
       <button
-        class="collections-header__clear-button"
+        *ngIf="!isMobileSearchActive"
         type="button"
-        (click)="searchTerm.set('')"
-        aria-label="Очистить поиск"
-      >
-        ×
+        class="collections-header__icon-button text-[#1abc9c]"
+        (click)="activateMobileSearch()"
+        aria-label="Открыть поиск">
+        <!-- Лупа -->
+        <svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" fill="#1abc9c" role="img" aria-hidden="true">
+          <path fill="currentColor" d="M368 208A160 160 0 1 0 48 208a160 160 0 1 0 320 0zM337.1 371.1C301.7 399.2 256.8 416 208 416C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208c0 48.8-16.8 93.7-44.9 129.1L505 471c9.4 9.4 9.4 24.6 0 33.9s-24.6 9.4-33.9 0L337.1 371.1z"/>
+        </svg>
       </button>
-      }
-    </label>
+
+      <!-- Поле поиска + стрелка назад (появляется при активации) -->
+      <label class="collections-header__search-label" *ngIf="isMobileSearchActive">
+        <button
+          type="button"
+          class="collections-header__icon-button"
+          (click)="closeMobileSearch()"
+          aria-label="Закрыть поиск">
+          <!-- Стрелка назад -->
+          <svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" role="img" aria-hidden="true">
+            <path fill="currentColor" d="M328.5 439c-9.4 9.4-24.6 9.4-33.9 0L119 263.5c-9.4-9.4-9.4-24.6 0-33.9L294.6 54.9c9.4-9.4 24.6-9.4 33.9 0s9.4 24.6 0 33.9L186.4 256l142.1 167.2c9.4 9.4 9.4 24.6 0 33.8z"/>
+          </svg>
+        </button>
+
+        <input
+          id="search-bar"
+          class="collections-header__search-input"
+          type="text"
+          placeholder="Поиск..."
+          [(ngModel)]="searchTerm"
+        />
+
+        <!-- Очистка: только если есть текст -->
+        <button
+          *ngIf="searchTerm"
+          class="collections-header__clear-button"
+          type="button"
+          (click)="searchTerm = ''"
+          aria-label="Очистить поиск">×</button>
+      </label>
+    </div>
+
+
+
+
+
+
+    <div class="md:hidden mt-2 float-right md:float-none">
+      <app-sort-dropdown
+        [sort]="sort()"
+        (sortChange)="onSortChange($event)"
+      ></app-sort-dropdown>
+    </div>
   </div>
 
-  <div class="collections-header__controls">
+  <div class="flex items-center gap-4 hidden md:block">
     <a
       class="collections-header__control-link"
       [class.collections-header__control-link_disabled]="isPresetsDisabled"

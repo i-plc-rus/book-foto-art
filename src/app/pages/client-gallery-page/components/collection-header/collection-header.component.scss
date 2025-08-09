@@ -111,3 +111,46 @@
     }
   }
 }
+
+.collections-header__inner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Кнопка-иконка: задаём color чтобы fill="currentColor" был виден */
+.collections-header__icon-button {
+  background: none;
+  border: none;
+  color: #222; /* Важно: задаём цвет иконки */
+  padding: 6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.collections-header__icon-button svg {
+  width: 20px;
+  height: 20px;
+  display: block;
+}
+
+.collections-header__search-label {
+  display: flex;
+  align-items: center;
+  flex: 1;
+}
+
+.collections-header__search-input {
+  flex: 1;
+  min-width: 0;
+  padding: 6px 8px;
+}
+
+/* Мобильное поведение — опционально */
+@media (max-width: 768px) {
+  .collections-header__inner.search-active {
+    width: 100%;
+  }
+}

@@ -8,9 +8,11 @@
       <div class="collection-top">
         <app-collection-header
           [(searchTerm)]="searchTerm"
+          [(sort)]="sortOption"
           (newCollection)="handleNewCollection()"
         />
-        <div class="collection-top__header">
+
+        <div class="hidden md:flex justify-between items-center mb-[1rem] md:mt-0">
           <div class="collection-top__filter">
             <app-filter-dropdown [config]="STATUS" [disabled]="true" />
             <app-filter-dropdown [config]="CATEGORY_TAG" [disabled]="true" />

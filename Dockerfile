@@ -13,7 +13,8 @@ RUN npm run build -- --configuration production
 # 2. Production stage — nginx
 FROM nginx:alpine
 
-COPY --from=build /app/dist/book-foto-art/browser /usr/share/nginx/html
+COPY --from=build /app/dist/book-foto-art /usr/share/nginx/html
+
 
 # Копируем кастомный конфиг nginx (если нужно)
 COPY nginx.conf /etc/nginx/conf.d/default.conf

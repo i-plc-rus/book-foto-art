@@ -1,0 +1,24 @@
+<header class="fixed top-0 left-0 right-0 z-50 bg-white md:hidden">
+  <div class="flex item-center justify-between px-4 py-3 bg-[#F3F3F3]">
+    <h1 class="font-semibold text-sm leading-6 text-center">Галереи</h1>
+    <div class="icons flex gap-3">
+      <img src="assets/question-circle-svgrepo-com.svg" class="w-6 h-6" />
+      <img src="assets/bell-alt-svgrepo-com.svg" class="w-6 h-6" />
+      <img src="assets/profile-svgrepo-com.svg" class="w-6 h-6" />
+    </div>
+  </div>
+
+  <div class="bg-[#fafafa] gap-4 flex overflow-x-auto hide-scrollbar px-4">
+    @for (tab of tabs; track tab.id) {
+      <button
+        class="flex-shrink-0 text-sm font-normal leading-9 border-b-2"
+        [ngClass]="{
+        'border-[#1abc9c] text-[#111111]': activeTab() === tab.id,
+        'border-transparent text-[#888]': activeTab() !== tab.id
+      }"
+        (click)="selectTab(tab.id)">
+        {{ tab.title }}
+      </button>
+    }
+  </div>
+</header>

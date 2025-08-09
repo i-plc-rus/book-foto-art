@@ -1,4 +1,5 @@
-import {Component, EventEmitter, Output, signal} from '@angular/core';
+import { Component, EventEmitter, Output, signal } from '@angular/core';
+import {NgForOf, NgSwitch, NgSwitchCase} from '@angular/common';
 
 export type SidebarMenu = 'collections' | 'favorites' | 'home' | 'settings';
 
@@ -6,16 +7,18 @@ export type SidebarMenu = 'collections' | 'favorites' | 'home' | 'settings';
   standalone: true,
   selector: 'app-sidebar',
   templateUrl: './sidebar.component.html',
-  styleUrl: './sidebar.component.css',
-  imports: []
+  imports: [
+    NgSwitch,
+    NgForOf,
+    NgSwitchCase
+  ],
+  styleUrls: ['./sidebar.component.css']
 })
 export class SidebarComponent {
-  activeMenu = signal<SidebarMenu>('collections');
-
-  @Output() menuChange = new EventEmitter<SidebarMenu>();
-
-  selectMenu(menu: SidebarMenu) {
-    this.activeMenu.set(menu);
-    this.menuChange.emit(menu);
-  }
+  menuItems = [
+    { id: 'collections', title: 'Коллекции', icon: 'collections' },
+    { id: 'favorites', title: 'Избранное', icon: 'favorites' },
+    { id: 'home', title: 'Домашняя страница', icon: 'home' },
+    { id: 'settings', title: 'Настройки', icon: 'settings' }
+  ];
 }

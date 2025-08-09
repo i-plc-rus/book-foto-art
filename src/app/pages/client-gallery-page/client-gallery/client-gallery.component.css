@@ -33,7 +33,6 @@
 }
 
 .welcome.centered {
-  /*margin-top: 1rem;*/
   text-align: center;
   display: flex;
   flex-direction: column;
@@ -47,18 +46,12 @@
 }
 
 .headline {
-  font-size: 1.8rem;
-  font-weight: 500;
-  margin-bottom: 1.5rem;
-  color: #111;
-  line-height: 1.2;
-  letter-spacing: 0.02em;
   margin-top: 0px;
 }
 
-.welcome h1 {
-  font-size: 24px;
-}
+/*.welcome h1 {*/
+/*  font-size: 24px;*/
+/*}*/
 
 .upload-button {
   margin-top: 0px;
@@ -70,8 +63,6 @@
   font-weight: 600;
   border-radius: 2px;
   cursor: pointer;
-  width: 250px;
-  height: 50px;
   display: inline-flex;
   align-items: center;
   justify-content: center;

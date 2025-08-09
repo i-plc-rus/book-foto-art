@@ -1,73 +1,55 @@
-import {Component, DestroyRef, inject, OnInit, signal} from '@angular/core';
-import {ActivatedRoute, Router, RouterLink, RouterLinkActive} from '@angular/router';
+import {Component, DestroyRef, EventEmitter, inject, Input, Output, signal} from '@angular/core';
+import { ActivatedRoute, Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { CollectionStateService } from '../../../gallery-upload/service/collection-state.service';
-import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
-import {CollectionService} from '../../../gallery-upload/service/collection.service';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { CollectionService } from '../../../gallery-upload/service/collection.service';
+import {NgForOf, NgIf} from '@angular/common';
 
 @Component({
   standalone: true,
   selector: 'app-tabs',
   templateUrl: './tabs.component.html',
-  styleUrl: './tabs.component.css',
-  imports: [
-    RouterLink,
-    RouterLinkActive
-  ],
-  providers: [CollectionService]
+  styleUrls: ['./tabs.component.css'],
+  imports: [RouterLink, RouterLinkActive, NgIf, NgForOf],
+  providers: [CollectionService],
 })
-export class TabsComponent implements OnInit{
-  hoveredTab: string | null = null;
+export class TabsComponent {
+  @Input() isMobileMenu = false;
+  @Output() designTabClick = new EventEmitter<void>();
+  @Output() tabSelected = new EventEmitter<void>();
+
+  hoveredTab = signal<string | null>(null);
+
   private collectionStateService = inject(CollectionStateService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
   private destroyRef = inject(DestroyRef);
   private designService = inject(CollectionService);
 
-  currentCollectionId: string | null = null;
+  currentCollectionId = signal<string | null>(null);
+
   tabs = [
-    {
-      icon: 'assets/icons/images.svg',
-      tooltip: 'Photos',
-      link: '/upload'
-    },
-    {
-      icon: 'assets/icons/icon-design.svg',
-      tooltip: 'Design',
-      link: '/design/cover'
-    },
-    {
-      icon: 'assets/icons/setting.svg',
-      tooltip: 'Settings',
-      link: '/gallery/settings'
-    },
-    {
-      icon: 'assets/icons/wifi.svg',
-      tooltip: 'Activities',
-      link: '/gallery/active'
-    }
+    { icon: 'assets/icons/images.svg', tooltip: 'Photos', link: '/upload' },
+    { icon: 'assets/icons/icon-design.svg', tooltip: 'Design', link: '/design/cover' },
+    { icon: 'assets/icons/setting.svg', tooltip: 'Settings', link: '/gallery/settings' },
+    { icon: 'assets/icons/wifi.svg', tooltip: 'Activities', link: '/gallery/active' },
   ];
 
   constructor() {
     this.collectionStateService.getCurrentCollectionId().subscribe(id => {
-      this.currentCollectionId = id;
+      this.currentCollectionId.set(id);
     });
-  }
 
-  ngOnInit(): void {
-    this.route.queryParams
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(params => {
-        const collectionId = params['collectionId'] || null;
-        this.currentCollectionId = collectionId;
+    this.route.queryParams.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(params => {
+      const collectionId = params['collectionId'] || null;
+      this.currentCollectionId.set(collectionId);
 
-
-        const currentUrl = this.router.url;
-        const isMatchingTab = this.tabs.some(tab => currentUrl.startsWith(tab.link));
-
-        if (collectionId && isMatchingTab) {
-          this.loadCollectionData(collectionId);
-        }
-      });
+      const currentUrl = this.router.url;
+      const isMatchingTab = this.tabs.some(tab => currentUrl.startsWith(tab.link));
+      if (collectionId && isMatchingTab) {
+        this.loadCollectionData(collectionId);
+      }
+    });
   }
 
   loadCollectionData(collectionId: string) {
@@ -79,18 +61,24 @@ export class TabsComponent implements OnInit{
       paths: 'subset',
       queryParams: 'subset',
       fragment: 'ignored',
-      matrixParams: 'ignored'
+      matrixParams: 'ignored',
     });
   }
 
   navigateToTab(tab: any) {
-    if (this.currentCollectionId) {
-      this.router.navigate([tab.link], {
-        queryParams: { collectionId: this.currentCollectionId }
-      });
-    } else {
-      this.router.navigate([tab.link]);
+    if (this.isMobileMenu && tab.tooltip === 'Design') {
+      this.designTabClick.emit();
+      return;
     }
-  }
 
+    if (this.currentCollectionId()) {
+      this.router.navigate([tab.link], {
+        queryParams: { collectionId: this.currentCollectionId() },
+      }).catch();
+    } else {
+      this.router.navigate([tab.link]).catch();
+    }
+
+    this.tabSelected.emit();
+  }
 }

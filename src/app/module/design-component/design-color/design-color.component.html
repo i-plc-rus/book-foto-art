@@ -7,13 +7,13 @@
 ></app-editor-action-bar>
 <div class="flex bg-[#fff] max-h">
     <div class="template flex flex-col w-1/2">
-        <div class="bg-white z-10 p-[32px]">
+        <div class="bg-white z-10 p-[1rem] md:p-[1.5rem]">
             <div class="flex items-center justify-between">
                 <h2 class="font-medium text-[1.375rem] leading-[1.18]">Color</h2>
             </div>
         </div>
 
-        <div class="scroll p-[32px] pt-0 overflow-y-auto bg-[#fff] flex-1">
+        <div class="scroll p-[1rem] md:p-[1.5rem] pt-0 md:pt-0  overflow-y-auto bg-[#fff] flex-1">
             <div class="grid gap-4">
                 @for (template of visibleTemplates(); track template.id) {
                     <div class="flex justify-center flex-col items-center">

@@ -189,11 +189,9 @@
   flex-direction: column;
   width: 100%;
   max-width: 100%;
-  height: 100%;
   border: 2px dashed #ccc;
   border-radius: 6px;
   background-color: #ffffff;
-  overflow: hidden;
   padding: 1rem;
 }
 

@@ -1,17 +1,16 @@
 <div class="fixed inset-0 bg-[#0000002e] bg-opacity-50 flex items-center justify-center z-50">
-  <div class="bg-white p-8 w-[580px]">
+  <div class="bg-white p-5 w-[90%] md:p-8 md:w-[580px]">
     <div class="flex items-center justify-between mb-5">
       <h3 class="text-sm font-semibold tracking-widest leading-[1.429]">Change Cover</h3>
-      <button (click)="close.emit()" class="text-gray-500 hover:text-[#008e74]">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-        </svg>
+      <button (click)="close.emit()"
+              class="text-gray-400 hover:text-gray-500 text-2xl focus:outline-none">
+        &times;
       </button>
 
     </div>
     <div
-      class="flex flex-col items-center gap-3 border border-dashed border-gray-300 rounded p-[6rem] text-center mb-4">
-      <p class="text-[1.125rem] font-medium leading-[1.429]">Drag photo here to upload or</p>
+      class="flex flex-col items-center gap-3 border border-dashed border-gray-300 rounded p-[3rem] md:p-[6rem] text-center mb-4">
+      <p class="md:text-[1rem] md:font-medium md:leading-[1.429] text-[0.8rem] font-medium tracking-normal leading-[1.25]">Drag photo here to upload or</p>
       <div class="flex flex-col items-center gap-2">
         <button (click)="selectFromCollection.emit()"
                 class="w-[fit-content] cursor-pointer text-sm font-medium tracking-normal leading-none bg-[#1abc9c] text-white p-3">

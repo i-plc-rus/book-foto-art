@@ -1,11 +1,4 @@
-.drop-text {
-  font-size: 1.1rem;
-  color: #777777;
-  margin: 3px;
-}
-
 .file-label {
   color: #1abc9c;
-  cursor: pointer;
   text-decoration: underline;
 }

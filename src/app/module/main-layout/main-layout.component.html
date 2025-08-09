@@ -1,5 +1,5 @@
 <div class="layout">
-  <aside class="sidebar">
+  <aside class="sidebar hidden md:block">
     <div class="sidebar-header">
       <button class="back-button" (click)="goBackToPreviousPage()">
         <img src="assets/back-svgrepo-com.svg" alt="Назад" />
@@ -46,31 +46,12 @@
       <app-tabs></app-tabs>
 
       @if (isDesignRoute()) {
-        <div class="design-sections">
-          <div class="section-header">
-            <h3 class="section-title">{{ designService.sectionTitle() }}</h3>
-          </div>
-          <ul class="section-list">
-            @for (section of designService.sections(); track section.id) {
-              <li>
-                <a
-                  (click)="designService.navigateToSection(section.id)"
-                  [class.active]="designService.getActiveSection()?.id === section.id"
-                  class="section-item">
-                  <span class="section-icon">
-                    <img [src]="section.icon" [alt]="section.name" />
-                  </span>
-                  <span class="section-name">{{ section.name }}</span>
-                </a>
-              </li>
-            }
-          </ul>
-        </div>
+        <app-design-sections class="hidden md:block"></app-design-sections>
       }
     </div>
   </aside>
-
   <main class="main-content">
+    <app-mobile-header [titleSignal]="collectionData" class="block md:hidden"></app-mobile-header>
     <router-outlet></router-outlet>
   </main>
 </div>

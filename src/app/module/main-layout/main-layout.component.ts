@@ -8,6 +8,8 @@ import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {CollectionService} from '../../gallery-upload/service/collection.service';
 import {environment as env} from '../../../environments/environment';
 import {GalleryUploadComponent} from '../../gallery-upload/gallery-upload.component';
+import {MobileHeaderComponent} from '../../shared/components/mobile-header/mobile-header.component';
+import {DesignSectionsComponent} from '../../shared/components/design-sections/design-sections.component';
 
 interface CollectionData {
   name: string;
@@ -28,7 +30,8 @@ interface CollectionData {
     NgComponentOutlet,
     GalleryUploadComponent,
     NgTemplateOutlet,
-    NgIf
+    MobileHeaderComponent,
+    DesignSectionsComponent
   ],
   providers: [DesignService, CollectionService]
 })
@@ -89,7 +92,6 @@ export class MainLayoutComponent {
       }).catch();
     }
   }
-
 
   goBackToPreviousPage() {
     this.location.back();

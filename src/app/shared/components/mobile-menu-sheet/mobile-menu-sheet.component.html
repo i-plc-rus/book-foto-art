@@ -1,0 +1,30 @@
+<div class="mobile-menu-container">
+    <app-tabs
+      [isMobileMenu]="true"
+      (designTabClick)="showDesignSections()"
+      (tabSelected)="closeMenu()"
+    ></app-tabs>
+
+  <ng-container *ngIf="activeView() === 'design-sections'">
+    <div class="design-sections bg-white">
+      <div class="design-sections-header">
+        <h3 class="section-title py-5 px-6">{{ designService.sectionTitle() }}</h3>
+      </div>
+      <ul class="section-list">
+        @for (section of designService.sections(); track section.id) {
+          <li>
+            <a
+              (click)="selectSection(section.id)"
+            [class.active]="designService.getActiveSection()?.id === section.id"
+            class="section-item">
+            <span class="section-icon">
+                <img [src]="section.icon" [alt]="section.name" />
+              </span>
+            <span class="section-name">{{ section.name }}</span>
+            </a>
+          </li>
+        }
+      </ul>
+    </div>
+  </ng-container>
+</div>

@@ -68,7 +68,7 @@
 }
 
 .design-sections {
-  margin-top: 8px;
+  background: white;
 }
 
 .section-header {
@@ -152,4 +152,12 @@
 
 .cover-image-wrapper .absolute {
   transition: opacity 0.3s ease-in-out;
+}
+
+
+@media screen and (max-width: 768px) {
+  .section-name {
+    font-size: 0.8rem;
+  }
+
 }

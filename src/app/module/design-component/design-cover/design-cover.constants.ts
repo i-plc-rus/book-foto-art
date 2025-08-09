@@ -18,7 +18,7 @@ export const COVER_TEMPLATES: CoverTemplate[] = [
   { id: 'extra6', name: 'Extra 6', image: 'assets/images/covers/divider.png' },
   { id: 'extra7', name: 'Extra 7', image: 'assets/images/covers/divider.png' },
   { id: 'extra8', name: 'Extra 8', image: 'assets/images/covers/divider.png' },
-  { id: 'none', name: 'None', image: 'assets/images/covers/none.png' }, // всегда последним
+  { id: 'none', name: 'None', image: 'assets/images/covers/none.png' },
 ];
 
 export const ACTION_BAR_ITEMS: IActionBarItem[] = [

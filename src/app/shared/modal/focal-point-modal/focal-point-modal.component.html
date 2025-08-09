@@ -1,11 +1,11 @@
-<div class="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4"
+<div class="fixed inset-0 bg-[#0000002e] z-50 flex items-center justify-center p-4"
      (click)="close.emit()">
-  <div class="bg-white shadow-2xl w-full max-w-[720px] flex flex-col overflow-hidden p-12"
+  <div class="bg-white shadow-2xl w-full max-w-[720px] flex flex-col overflow-hidden p-5 md:p-7"
        (click)="$event.stopPropagation()">
-    <div class="pb-5">
+    <div class="pb-2 md:pb-5">
       <div class="flex items-center justify-between">
         <div>
-          <h3 class="text-base font-semibold tracking-[.11875em] leading-[1.429]">SET FOCAL POINT</h3>
+          <h3 class="text-sm font-semibold tracking-widest leading-[1.429]">Set focal point</h3>
         </div>
         <button (click)="close.emit()"
                 class="text-gray-400 hover:text-gray-500 text-2xl focus:outline-none">

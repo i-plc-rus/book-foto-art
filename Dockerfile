@@ -8,6 +8,8 @@ RUN npm install
 
 COPY . .
 
+RUN ls -l src/environments
+
 RUN npm run build -- --configuration production
 
 # 2. Production stage — nginx

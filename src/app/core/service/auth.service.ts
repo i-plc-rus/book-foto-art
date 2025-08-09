@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { tap, map, switchMap, filter, take } from 'rxjs/operators';
 import {Observable, BehaviorSubject, of, throwError, catchError, finalize} from 'rxjs';
 import { Router } from '@angular/router';
-import { environment as env } from '../../../environment/environment';
+import { environment as env } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'

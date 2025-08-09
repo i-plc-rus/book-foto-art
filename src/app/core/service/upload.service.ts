@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpEvent, HttpEventType } from '@angular/common/http';
 import { Observable, throwError, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
-import { environment as env } from './../../../environment/environment';
+import { environment as env } from '../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class UploadService {

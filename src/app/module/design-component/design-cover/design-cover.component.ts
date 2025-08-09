@@ -9,7 +9,7 @@ import { MainLayoutComponent } from '../../main-layout/main-layout.component';
 import {FocalPointModalComponent} from '../../../shared/modal/focal-point-modal/focal-point-modal.component';
 import {ChangeCoverComponent} from '../../../shared/modal/change-cover/change-cover.component';
 import {SelectCoverPhotoComponent} from '../../../shared/modal/select-cover-photo/select-cover-photo.component';
-import {environment} from '../../../../environment/environment';
+import {environment} from '../../../../environments/environment';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {finalize} from 'rxjs';
 import {CollectionService} from '../../../gallery-upload/service/collection.service';

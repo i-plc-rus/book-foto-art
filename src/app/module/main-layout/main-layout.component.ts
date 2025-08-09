@@ -6,7 +6,7 @@ import {DesignService} from '../design-component/service/design.service';
 import {filter} from 'rxjs';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {CollectionService} from '../../gallery-upload/service/collection.service';
-import {environment as env} from '../../../environment/environment';
+import {environment as env} from '../../../environments/environment';
 import {GalleryUploadComponent} from '../../gallery-upload/gallery-upload.component';
 
 interface CollectionData {

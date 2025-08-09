@@ -1,5 +1,5 @@
-import {Component, inject, signal, DestroyRef, computed, effect} from '@angular/core';
-import {DatePipe, Location, NgComponentOutlet, NgIf, NgTemplateOutlet} from '@angular/common';
+import {Component, inject, signal, DestroyRef} from '@angular/core';
+import {DatePipe, Location, NgComponentOutlet, NgTemplateOutlet} from '@angular/common';
 import {RouterOutlet, Router, NavigationEnd, ActivatedRoute} from '@angular/router';
 import {TabsComponent} from '../../shared/components/tabs/tabs.component';
 import {DesignService} from '../design-component/service/design.service';
@@ -10,6 +10,7 @@ import {environment as env} from '../../../environments/environment';
 import {GalleryUploadComponent} from '../../gallery-upload/gallery-upload.component';
 import {MobileHeaderComponent} from '../../shared/components/mobile-header/mobile-header.component';
 import {DesignSectionsComponent} from '../../shared/components/design-sections/design-sections.component';
+import {CollectionStateService} from '../../gallery-upload/service/collection-state.service';
 
 interface CollectionData {
   name: string;
@@ -38,10 +39,10 @@ interface CollectionData {
 export class MainLayoutComponent {
   private readonly location = inject(Location);
   private readonly router = inject(Router);
-  readonly designService = inject(DesignService);
   private readonly route = inject(ActivatedRoute);
   private readonly destroyRef = inject(DestroyRef);
   private readonly photoService = inject(CollectionService);
+  private readonly collectionStateService = inject(CollectionStateService);
 
   collectionData = signal<CollectionData | null>(null);
   collectionId = signal<string | null>(null);
@@ -75,6 +76,8 @@ export class MainLayoutComponent {
           res.focal_point = {x: 50, y: 50};
         }
         this.collectionData.set(res);
+        this.collectionStateService.setCurrentCollectionId(collectionId);
+
       });
   }
 

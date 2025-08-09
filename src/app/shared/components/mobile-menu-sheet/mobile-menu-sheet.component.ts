@@ -6,6 +6,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { DesignService } from '../../../module/design-component/service/design.service';
 import { TabsComponent } from '../tabs/tabs.component';
 import { NgIf } from '@angular/common';
+import { CollectionStateService } from '../../../gallery-upload/service/collection-state.service';
 
 @Component({
   standalone: true,
@@ -24,13 +25,14 @@ export class MobileMenuSheetComponent {
   private bottomSheetRef = inject(MatBottomSheetRef<MobileMenuSheetComponent>);
   private destroyRef = inject(DestroyRef);
   designService = inject(DesignService);
+  private collectionStateService = inject(CollectionStateService);
 
   constructor() {
     this.determineInitialView();
 
     this.router.events.pipe(
-      filter(event => event instanceof NavigationEnd),
-      takeUntilDestroyed(this.destroyRef)
+        filter(event => event instanceof NavigationEnd),
+        takeUntilDestroyed(this.destroyRef)
     ).subscribe(() => {
       this.determineInitialView();
     });
@@ -45,20 +47,34 @@ export class MobileMenuSheetComponent {
   }
 
   showDesignSections() {
-    this.activeView.set('design-sections');
-  }
+    const collectionId = this.collectionStateService.getCurrentCollectionIdValue();
 
-  showTabs() {
-    this.activeView.set('tabs');
+    if (collectionId) {
+      this.router.navigate(['/design', 'cover'], {
+        queryParams: { collectionId }
+      });
+    } else {
+      this.router.navigate(['/design', 'cover']);
+    }
+
+    this.activeView.set('design-sections');
   }
 
   closeMenu() {
     this.bottomSheetRef.dismiss();
   }
 
-  // Новый метод для обработки выбора раздела
   selectSection(sectionId: string) {
-    this.designService.navigateToSection(sectionId);
-    this.closeMenu(); // Закрываем меню после выбора
+    const collectionId = this.collectionStateService.getCurrentCollectionIdValue();
+
+    if (collectionId) {
+      this.router.navigate(['/design', sectionId], {
+        queryParams: { collectionId }
+      });
+    } else {
+      this.router.navigate(['/design', sectionId]);
+    }
+
+    this.closeMenu();
   }
 }

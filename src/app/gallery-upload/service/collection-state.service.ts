@@ -32,4 +32,8 @@ export class CollectionStateService {
   getCurrentCollectionId() {
     return this.currentCollectionId.asObservable();
   }
+
+  getCurrentCollectionIdValue(): string | null {
+    return this.currentCollectionId.value;
+  }
 }

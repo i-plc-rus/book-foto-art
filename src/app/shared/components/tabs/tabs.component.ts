@@ -57,6 +57,11 @@ export class TabsComponent {
   }
 
   isActive(link: string): boolean {
+    // Для вкладки Design проверяем префикс
+    if (link === '/design/cover') {
+      return this.router.url.startsWith('/design');
+    }
+
     return this.router.isActive(link, {
       paths: 'subset',
       queryParams: 'subset',
@@ -71,12 +76,13 @@ export class TabsComponent {
       return;
     }
 
+    // Навигация для других вкладок
     if (this.currentCollectionId()) {
       this.router.navigate([tab.link], {
         queryParams: { collectionId: this.currentCollectionId() },
-      }).catch();
+      });
     } else {
-      this.router.navigate([tab.link]).catch();
+      this.router.navigate([tab.link]);
     }
 
     this.tabSelected.emit();

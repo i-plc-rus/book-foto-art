@@ -66,7 +66,7 @@
           </div>
 
           @if (menuOpenId() === file.id) {
-            <div class="menu-container absolute top-[28px] right-[0] z-50 bg-white shadow-lg min-w-[220px]">
+            <div class="menu-container absolute top-[28px] right-[0] z-50 bg-white/70 backdrop-blur-md shadow-lg min-w-[220px]">
               @for (option of menuOptions; track option.id) {
                 <div
                   class="menu-option flex items-center gap-2.5 px-[1.5rem] py-2.5 hover:bg-gray-100 cursor-pointer relative"
@@ -82,7 +82,7 @@
                   <span>{{ option.name }}</span>
 
                   @if (menuHoverId() === option.id && option.subMenu) {
-                    <div class="submenu absolute top-0 left-full bg-white shadow-lg min-w-[220px] z-50">
+                    <div class="submenu absolute top-0 left-full bg-white/90 shadow-lg min-w-[220px] z-50">
                       @for (subOption of option.subMenu; track subOption.id) {
                         <div
                           class="menu-option flex items-center gap-2.5 px-[1.5rem] py-2.5 hover:bg-gray-100 cursor-pointer"

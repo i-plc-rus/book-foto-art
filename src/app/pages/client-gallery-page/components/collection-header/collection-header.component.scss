@@ -1,3 +1,9 @@
+::ng-deep {
+  .sort__button {
+    padding: 0;
+  }
+}
+
 .collections-header {
   display: flex;
   justify-content: space-between;
@@ -18,13 +24,13 @@
     position: relative;
     display: flex;
     align-items: center;
-    padding: 0.25rem 1.25rem;
+    padding: 0 1.25rem;
     border-radius: 0.25rem;
     transition: background-color 0.2s ease;
 
     &:hover,
     &:focus-within {
-      background-color: rgb(233 233 233);
+      background-color: #f6f7f7;
     }
 
     .collections-header__search-icon {
@@ -120,10 +126,9 @@
 
 /* Кнопка-иконка: задаём color чтобы fill="currentColor" был виден */
 .collections-header__icon-button {
-  background: none;
   border: none;
   color: #222; /* Важно: задаём цвет иконки */
-  padding: 6px;
+  padding: 4px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -131,8 +136,8 @@
 }
 
 .collections-header__icon-button svg {
-  width: 20px;
-  height: 20px;
+  width: 12px;
+  height: 12px;
   display: block;
 }
 

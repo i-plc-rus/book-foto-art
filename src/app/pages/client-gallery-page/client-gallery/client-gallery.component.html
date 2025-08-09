@@ -7,8 +7,9 @@
     @if (!isGalleryEmpty() && !isCreatingNewCollection()) {
       <div class="collection-top">
         <app-collection-header
-          [(searchTerm)]="searchTerm"
-          [(sort)]="sortOption"
+          [searchTerm]="searchTerm()"
+          (searchTermChange)="searchTerm.set($event)"
+          [sort]="sortOption()"
           (newCollection)="handleNewCollection()"
         />
 
@@ -48,7 +49,7 @@
 <ng-template #steps>
   <!-- Шаг 1 -->
   @if(currentStep() === 1){
-    <section class="welcome centered">
+    <section class="welcome centered mt-5 md:mt-0">
       <p class="subtitle">Начало работы</p>
       <h1 class="headline">Опубликовать свою первую галерею всего за 3 шага</h1>
       <button class="upload-button" (click)="nextStep()">Загрузить фото</button>
@@ -57,7 +58,7 @@
       </div>
     </section>
   }@else {
-    <section class="welcome centered">
+    <section class="welcome centered mt-5 md:mt-0">
       <p class="subtitle">Шаг 2 из 3</p>
       <h1 class="headline">Введите наименование коллекции</h1>
 
@@ -85,13 +86,14 @@
         <button class="upload-button" (click)="nextStep()">
           Создать коллекцию
         </button>
+
       </div>
     </section>
   }
 </ng-template>
 
 <ng-template #gridView>
-  <div class="grid-view">
+  <div class="file-grid grid-small">
     @for (item of filteredCollections(); track $index) {
       <app-collection-card [collection]="item" (action)="onActionClick($event)" (navigate)="onNavigate($event)"/>
     }

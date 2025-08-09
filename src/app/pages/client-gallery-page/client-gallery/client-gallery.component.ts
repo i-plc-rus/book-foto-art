@@ -1,8 +1,8 @@
-import { Component, signal, inject, computed, DestroyRef } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
-import { CollectionHeaderComponent } from '../components/collection-header/collection-header.component';
-import { FilterDropdownComponent } from '../components/filter-dropdown/filter-dropdown.component';
+import {Component, signal, inject, computed, DestroyRef} from '@angular/core';
+import {FormsModule} from '@angular/forms';
+import {Router} from '@angular/router';
+import {CollectionHeaderComponent} from '../components/collection-header/collection-header.component';
+import {FilterDropdownComponent} from '../components/filter-dropdown/filter-dropdown.component';
 import {
   CATEGORY_TAG,
   EVENT_DATE,
@@ -10,19 +10,24 @@ import {
   STARRED,
   STATUS,
 } from '../models/filter.model';
-import { FilterDateComponent } from '../components/filter-date/filter-date.component';
-import { CollectionActionPayload, CollectionActionType, DisplayView, SortOption } from '../models/collection-display.model';
-import { ISavedGallery } from '../../../gallery-upload/interface/upload-file';
-import { NgTemplateOutlet } from '@angular/common';
-import { CollectionSortComponent } from '../components/collection-sort/collection-sort.component';
-import { CollectionViewComponent } from '../components/collection-view/collection-view.component';
-import { CollectionTableComponent } from '../components/collection-table/collection-table.component';
-import { CollectionCardComponent } from '../components/collection-card/collection-card.component';
+import {FilterDateComponent} from '../components/filter-date/filter-date.component';
+import {
+  CollectionActionPayload,
+  CollectionActionType,
+  DisplayView,
+  SortOption
+} from '../models/collection-display.model';
+import {ISavedGallery} from '../../../gallery-upload/interface/upload-file';
+import {NgTemplateOutlet} from '@angular/common';
+import {CollectionSortComponent} from '../components/collection-sort/collection-sort.component';
+import {CollectionViewComponent} from '../components/collection-view/collection-view.component';
+import {CollectionTableComponent} from '../components/collection-table/collection-table.component';
+import {CollectionCardComponent} from '../components/collection-card/collection-card.component';
 import dayjs from 'dayjs';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {CollectionService} from '../../../core/service/collection.service.service';
-import { ShareCollectionModalComponent } from '../modal/share-collection-modal/share-collection-modal.component';
-import { ModalService } from '../../../shared/service/modal/modal.service';
+import {ShareCollectionModalComponent} from '../modal/share-collection-modal/share-collection-modal.component';
+import {ModalService} from '../../../shared/service/modal/modal.service';
 import {environment as env} from '../../../../environments/environment';
 import {GalleryLayoutComponent} from '../gallery-layout/gallery-layout.component';
 
@@ -136,7 +141,7 @@ export class ClientGalleryComponent {
 
   onNavigate(collectionId: string): void {
     this.router.navigate(['/upload'], {
-      queryParams: { collectionId }
+      queryParams: {collectionId}
     }).catch();
   }
 
@@ -200,10 +205,7 @@ export class ClientGalleryComponent {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (apiResponse) => {
-          console.log('API Response:', apiResponse); // Логируем ответ
           const collectionsArray = apiResponse.collections || [];
-          console.log('Collections array:', collectionsArray); // Логируем массив
-
           const transformedCollections = collectionsArray.map((c: any) => ({
             ...c,
             images: [],
@@ -212,13 +214,7 @@ export class ClientGalleryComponent {
             createDate: c.created_at
           }));
 
-          console.log('Transformed collections:', transformedCollections); // Логируем преобразованные данные
           this.collections.set(transformedCollections);
-          this.isLoading = false;
-        },
-        error: (error) => {
-          console.error('Error loading collections:', error); // Логируем ошибку
-          this.errorMessage = 'Ошибка загрузки коллекций';
           this.isLoading = false;
         }
       });
@@ -237,21 +233,15 @@ export class ClientGalleryComponent {
       date: this.galleryDate()
     }).pipe(
       takeUntilDestroyed(this.destroyRef)
-    ).subscribe({
-      next: (res) => {
+    ).subscribe((res) => {
         this.isLoading = false;
         if (res) {
           this.router.navigate(['/upload'], {
-            queryParams: { collectionId: res.id }
+            queryParams: {collectionId: res.id}
           }).catch();
         }
-      },
-      error: (err) => {
-        this.isLoading = false;
-        this.errorMessage = 'Ошибка при создании коллекции';
-        console.error('Create collection error:', err);
       }
-    });
+    );
   }
 
   private finalizeWizard(): void {

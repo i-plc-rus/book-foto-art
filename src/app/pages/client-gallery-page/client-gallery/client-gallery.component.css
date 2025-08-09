@@ -6,6 +6,21 @@
   background-color: #f9f9f9;
 }
 
+.file-grid.grid-small {
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+}
+.file-grid.grid-large {
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+}
+
+.file-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 1rem;
+  padding: 0 0 1.2rem;
+  width: 100%;
+}
+
 .main-content {
   min-height: 100vh;
   padding: 2rem;
@@ -83,7 +98,7 @@
 .form-group {
   display: flex;
   flex-direction: column;
-  margin-bottom: 1rem;
+  margin-bottom: 0.5rem;
   width: 100%;
   max-width: 400px;
   align-items: flex-start; /* выравнивание по левому краю */
@@ -93,7 +108,7 @@
   font-size: 0.85rem;
   font-weight: 500;
   color: #444;
-  margin-bottom: 1rem; /* label ближе к input */
+  margin-bottom: 0.5rem; /* label ближе к input */
 }
 
 .form-group input {

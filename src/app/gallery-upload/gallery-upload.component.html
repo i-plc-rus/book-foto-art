@@ -68,3 +68,11 @@
     (close)="showUploadModal.set(false)"
   ></app-upload-modal>
 }
+
+@if (notification().visible) {
+
+  <div class="fixed bottom-4 right-4 bg-black bg-opacity-70 text-white text-[14px] p-4 shadow-lg z-50"
+       style="min-width: 150px; text-align: center;">
+    <div>{{ notification().message }}</div>
+  </div>
+}

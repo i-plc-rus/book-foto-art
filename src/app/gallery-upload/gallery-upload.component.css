@@ -440,3 +440,9 @@
   object-fit: contain !important;
   background: #f0f0f0;
 }
+ @media screen and (max-width: 766px) {
+   .upload-status {
+     width: calc(100% - 30px);
+     margin: 0 10px;
+   }
+ }

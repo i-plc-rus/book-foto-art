@@ -92,10 +92,17 @@ export class GalleryUploadComponent {
       this.currentlyUploading.size === 0 &&
       !this.isLoading();
   });
-  readonly menuOpenId = signal<string | null>(null);
-  menuHoverId = signal<string | null>(null);
 
+  readonly notification = signal<{ message: string; visible: boolean }>({
+    message: '',
+    visible: false
+  });
+
+  private notificationTimeout: any = null;
+  readonly menuOpenId = signal<string | null>(null);
   readonly isLoading = signal(true);
+
+  isPremium = signal(false);
 
   readonly uploadStats = {
     totalFiles: signal(0),
@@ -276,12 +283,21 @@ export class GalleryUploadComponent {
   async processFiles(files: File[]) {
     if (!files.length) return;
 
+    const videoFiles = files.filter(file => file.type.startsWith('video/') && !this.isPremium());
+
+    if (videoFiles.length > 0) {
+      this.showNotification('Загрузка видео доступна только с премиум-подпиской');
+      files = files.filter(file => !file.type.startsWith('video/') || this.isPremium());
+      if (!files.length) return;
+    }
+
     this.showStatus.set(true);
 
     const existingHashes = await this.getExistingHashes();
     const newFiles: UploadFile[] = [];
 
     for (const file of files) {
+      if (file.type.startsWith('video/') && !this.isPremium()) continue;
       const hash = await this.getFileHash(file);
       if (!existingHashes.has(hash)) {
         const uploadFile = this.createUploadFile(file);
@@ -296,6 +312,18 @@ export class GalleryUploadComponent {
     this.files.update((prev) => [...prev, ...newFiles]);
     this.updateUploadStats();
     this.uploadFiles(newFiles);
+  }
+
+  private showNotification(message: string) {
+    if (this.notificationTimeout) {
+      clearTimeout(this.notificationTimeout);
+    }
+
+    this.notification.set({message, visible: true});
+
+    this.notificationTimeout = setTimeout(() => {
+      this.notification.set({message: '', visible: false});
+    }, 5000);
   }
 
   private uploadFiles(filesToUpload: UploadFile[]) {

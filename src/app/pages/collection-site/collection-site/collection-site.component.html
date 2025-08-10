@@ -1,59 +1,60 @@
-@let firstImage = gallery().images[0].link;
-
-<section class="collection-site">
-  <div class="collection-site__cover">
-    <img class="collection-site__img" [src]="firstImage" alt="bg-cover" />
-    <div class="collection-site__overlay">
-      <h1 class="collection-site__name">{{ gallery().name }}</h1>
-      <div class="collection-site__date">
-        {{ gallery().createDate | date : "d MMM y" }}
+@if (gallery(); as galleryData) {
+  <section class="collection-site">
+    <div class="collection-site__cover">
+      <img class="collection-site__img" [src]="firstImage" alt="bg-cover" />
+      <div class="collection-site__overlay">
+        <h1 class="collection-site__name">{{ gallery().name }}</h1>
+        <div class="collection-site__date">
+          {{ gallery().createDate | date : "d MMM y" }}
+        </div>
+        <button class="collection-site__down-btn" (click)="scrollToGallery()">
+          Посмотреть галерею
+        </button>
+        <a [routerLink]="[]" class="collection-site__user-name">
+          {{ gallery().userName }}
+        </a>
       </div>
-      <button class="collection-site__down-btn" (click)="scrollToGallery()">
-        Посмотреть галерею
-      </button>
-      <a [routerLink]="[]" class="collection-site__user-name">
-        {{ gallery().userName }}
-      </a>
     </div>
-  </div>
 
-  <div class="collection-site__control-bar" #galleryRef>
-    <div class="collection-site__info">
-      <a [routerLink]="[]" class="collection-site__info-name">
-        {{ gallery().name }}
-      </a>
-      <a [routerLink]="[]" class="collection-site__info-user">
-        {{ gallery().userName }}
-      </a>
+    <div class="collection-site__control-bar" #galleryRef>
+      <div class="collection-site__info">
+        <a [routerLink]="[]" class="collection-site__info-name">
+          {{ gallery().name }}
+        </a>
+        <a [routerLink]="[]" class="collection-site__info-user">
+          {{ gallery().userName }}
+        </a>
+      </div>
+      <div class="collection-site__actions">
+        <button class="collection-site__action-btn" (click)="showSlider()">
+          <svg
+            width="24"
+            height="24"
+            fill="none"
+            stroke="black"
+            stroke-width="1.5"
+            viewBox="0 0 24 24"
+          >
+            <path d="M8 5v14l11-7z" />
+          </svg>
+        </button>
+      </div>
     </div>
-    <div class="collection-site__actions">
-      <button class="collection-site__action-btn" (click)="showSlider()">
-        <svg
-          width="24"
-          height="24"
-          fill="none"
-          stroke="black"
-          stroke-width="1.5"
-          viewBox="0 0 24 24"
-        >
-          <path d="M8 5v14l11-7z" />
-        </svg>
+
+    <div class="collection-site__gallery">
+      @for (item of gallery().images; track $index) {
+        <app-gallery-image-card
+          [imageUrl]="item"
+          (makeFavorite)="toggleFavorite($index)"
+          (showCurrentImage)="showCurrentImage($index)"
+        />
+      }
+    </div>
+    <div class="collection-site__flex">
+      <button class="collection-site__up-btn" (click)="scrollToGallery()">
+        Вверх
       </button>
     </div>
-  </div>
+  </section>
+}
 
-  <div class="collection-site__gallery">
-    @for (item of gallery().images; track $index) {
-    <app-gallery-image-card
-      [imageUrl]="item"
-      (makeFavorite)="toggleFavorite($index)"
-      (showCurrentImage)="showCurrentImage($index)"
-    />
-    }
-  </div>
-  <div class="collection-site__flex">
-    <button class="collection-site__up-btn" (click)="scrollToGallery()">
-      Вверх
-    </button>
-  </div>
-</section>

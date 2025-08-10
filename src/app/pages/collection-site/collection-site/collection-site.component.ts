@@ -110,6 +110,10 @@ export class CollectionSiteComponent {
 
   private readonly galleryRef = viewChild<ElementRef>('galleryRef');
 
+  get firstImage() {
+    return this.gallery()?.images[0]?.link || 'assets/default.jpg';
+  }
+
   scrollToGallery(): void {
     this.galleryRef()?.nativeElement.scrollIntoView({ behavior: 'smooth' });
   }

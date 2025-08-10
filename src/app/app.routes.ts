@@ -34,7 +34,7 @@ export const routes: Routes = [
     canActivate: [AuthGuard]
   },
   {
-    path: 'show',
+    path: 'show/:id',
     loadComponent: () =>
       import(
         './pages/collection-site/collection-site/collection-site.component'

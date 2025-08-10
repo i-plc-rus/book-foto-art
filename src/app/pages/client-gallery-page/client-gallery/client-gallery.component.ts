@@ -192,10 +192,9 @@ export class ClientGalleryComponent {
   }
 
   onPublish(item: ISavedGallery): void {
+    const url = `${window.location.origin}/show/${item.id}`;
     this.modalService.open(ShareCollectionModalComponent, {
-      data: {
-        url: `http://localhost:4200/show/${item.id}`,
-      },
+      data: { url },
     });
   }
 

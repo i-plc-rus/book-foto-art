@@ -3,6 +3,7 @@ import {HttpClient, HttpHeaders, HttpParams} from '@angular/common/http';
 import { environment as env } from '../../../environments/environment';
 import {map, Observable} from 'rxjs';
 import { CollectionCreateDto, CollectionCreateResponse } from '../interfaces/collection';
+import {ISavedGallery} from '../../gallery-upload/interface/upload-file';
 
 @Injectable()
 export class CollectionService {
@@ -25,6 +26,10 @@ export class CollectionService {
   getCollectionDelete(collectionId: string, queryParams: { [key: string]: string } = {}): Observable<any[]> {
     const params = new HttpParams({ fromObject: queryParams });
     return this.http.delete<any[]>(`${env.apiUrl}/collection/${collectionId}`, { params });
+  }
+
+  getGalleryById(id: string): Observable<ISavedGallery> {
+    return this.http.get<ISavedGallery>(`${env.apiUrl}/galleries/${id}`);
   }
 
   getCollection(): Observable<any> {

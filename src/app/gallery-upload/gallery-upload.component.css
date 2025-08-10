@@ -333,11 +333,6 @@
   object-fit: cover;
   transition: opacity 0.3s ease;
 }
-
-.hidden {
-  opacity: 0;
-}
-
 .loader-overlay {
   position: absolute;
   top: 0;

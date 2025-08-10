@@ -97,7 +97,7 @@ export class MainLayoutComponent {
   }
 
   goBackToPreviousPage() {
-    this.location.back();
+    this.router.navigate(['/client-gallery']).catch();
   }
 
   get coverImageUrl(): string | null {

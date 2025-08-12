@@ -1,15 +1,16 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { AuthService } from '../../../core/service/auth.service';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-register-page',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule],
+  imports: [ReactiveFormsModule, CommonModule, RouterLink],
   templateUrl: './register-page.component.html',
   styleUrl: './register-page.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RegisterPageComponent implements OnInit {
   form!: FormGroup;
@@ -39,24 +40,21 @@ export class RegisterPageComponent implements OnInit {
   }
 
   onSubmit(): void {
-    if (this.form.valid && !this.isSubmitting) {
-      this.isSubmitting = true;
+    if (this.isSubmitting || this.form.invalid) return;
 
-      this.authService.register(this.form.value).subscribe({
-        next: (res) => {
-          console.log('Регистрация успешна', res);
-          this.router.navigate(['/client-gallery']).then((success) => {
-            console.log('Навигация успешна?', success);
-          });
-        },
-        error: (err) => {
-          console.error('Ошибка при регистрации:', err);
-          alert('Регистрация не удалась');
-        },
-        complete: () => {
-          this.isSubmitting = false;
-        },
-      });
-    }
+    this.isSubmitting = true;
+
+    this.authService.register(this.form.value).subscribe({
+      next: async () => {
+        // ВАЖНО: не сбрасываем флаг — кнопка остаётся disabled до уничтожения компонента
+        await this.router.navigate(['/client-gallery']);
+      },
+      error: (err) => {
+        console.error('Ошибка при регистрации:', err);
+        alert('Регистрация не удалась');
+        // Разрешаем повторную попытку только при ошибке
+        this.isSubmitting = false;
+      },
+    });
   }
 }

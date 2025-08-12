@@ -63,6 +63,7 @@ export class RegisterPageComponent implements OnInit {
     this.isSubmitting = true;
 
     const { email, username, password } = this.form.getRawValue();
+    this.form.disable();
 
     if (!email || !username || !password) {
       this.isSubmitting = false;
@@ -87,6 +88,13 @@ export class RegisterPageComponent implements OnInit {
     return this.form.get('email') as FormControl<string | null>;
   }
 
+  get usernameCtrl(): FormControl<string | null> {
+    return this.form.get('username') as FormControl<string | null>;
+  }
+  get passwordCtrl(): FormControl<string | null> {
+    return this.form.get('password') as FormControl<string | null>;
+  }
+
   isEmailTouched(): boolean {
     const emailCtrl = this.emailCtrl;
     return !!emailCtrl && (emailCtrl.touched || emailCtrl.dirty);
@@ -108,5 +116,29 @@ export class RegisterPageComponent implements OnInit {
 
   canContinueStep1(): boolean {
     return this.emailCtrl?.valid ?? false;
+  }
+
+  isUsernameTouched(): boolean {
+    const usernameCtrl = this.usernameCtrl;
+    return !!usernameCtrl && (usernameCtrl.touched || usernameCtrl.dirty);
+  }
+  hasUsernameRequired(): boolean {
+    const usernameCtrl = this.usernameCtrl;
+    return !!usernameCtrl && usernameCtrl.hasError('required');
+  }
+
+  isPasswordTouched(): boolean {
+    const passwordCtrl = this.passwordCtrl;
+    return !!passwordCtrl && (passwordCtrl.touched || passwordCtrl.dirty);
+  }
+  hasPasswordRequired(): boolean {
+    const passwordCtrl = this.passwordCtrl;
+    return !!passwordCtrl && passwordCtrl.hasError('required');
+  }
+  hasPasswordLengthErr(): boolean {
+    const passwordCtrl = this.passwordCtrl;
+    return (
+      !!passwordCtrl && !passwordCtrl.hasError('required') && passwordCtrl.hasError('minlength')
+    );
   }
 }

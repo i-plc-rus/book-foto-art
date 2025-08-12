@@ -46,11 +46,15 @@ export class RegisterPageComponent implements OnInit {
   }
 
   nextStep(): void {
-    if (this.form.get('email')?.valid) {
-      this.step = 2;
-      this.form.get('password')?.setValidators([Validators.required, Validators.minLength(6)]);
-      this.form.get('password')?.updateValueAndValidity();
+    this.emailCtrl.markAsTouched();
+    this.emailCtrl.updateValueAndValidity({ onlySelf: true });
+    if (!this.canContinueStep1()) {
+      return;
     }
+
+    this.step = 2;
+    this.form.get('password')?.setValidators([Validators.required, Validators.minLength(6)]);
+    this.form.get('password')?.updateValueAndValidity();
   }
 
   onSubmit(): void {
@@ -69,13 +73,11 @@ export class RegisterPageComponent implements OnInit {
 
     this.authService.register(payload).subscribe({
       next: async () => {
-        // ВАЖНО: не сбрасываем флаг — кнопка остаётся disabled до уничтожения компонента
         await this.router.navigate(['/client-gallery']);
       },
       error: (err) => {
         console.error('Ошибка при регистрации:', err);
         alert('Регистрация не удалась');
-        // Разрешаем повторную попытку только при ошибке
         this.isSubmitting = false;
       },
     });
@@ -83,5 +85,28 @@ export class RegisterPageComponent implements OnInit {
 
   get emailCtrl(): FormControl<string | null> {
     return this.form.get('email') as FormControl<string | null>;
+  }
+
+  isEmailTouched(): boolean {
+    const emailCtrl = this.emailCtrl;
+    return !!emailCtrl && (emailCtrl.touched || emailCtrl.dirty);
+  }
+
+  hasEmailFormatError(): boolean {
+    if (!this.emailCtrl) {
+      return false;
+    }
+    return this.emailCtrl.hasError('email');
+  }
+
+  hasEmailRequired(): boolean {
+    if (!this.emailCtrl) {
+      return false;
+    }
+    return this.emailCtrl?.hasError('required');
+  }
+
+  canContinueStep1(): boolean {
+    return this.emailCtrl?.valid ?? false;
   }
 }

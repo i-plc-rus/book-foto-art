@@ -27,8 +27,24 @@
         <!-- Шаг 1 -->
         @switch (step) {
           @case (1) {
-            <input type="email" placeholder="Email" formControlName="email" required />
-            <button type="button" class="submit-btn" (click)="nextStep()">
+            <input
+              type="email"
+              placeholder="Email"
+              formControlName="email"
+              required
+              [class.invalid]="isEmailTouched() && (hasEmailRequired() || hasEmailFormatError())"
+            />
+            @if (isEmailTouched() && hasEmailRequired()) {
+              <div class="error-text">Укажите email</div>
+            } @else if (isEmailTouched() && hasEmailFormatError()) {
+              <div class="error-text">Введён некорректный email</div>
+            }
+            <button
+              type="button"
+              class="submit-btn"
+              (click)="nextStep()"
+              [disabled]="!canContinueStep1()"
+            >
               Продолжить с email
             </button>
           }

@@ -5,7 +5,9 @@
   "projects": {
     "book-foto-art": {
       "projectType": "application",
-      "schematics": {},
+      "schematics": {
+        "@schematics/angular:component": { "style": "scss" }
+      },
       "root": "",
       "sourceRoot": "src",
       "prefix": "app",
@@ -13,6 +15,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
+            "inlineStyleLanguage": "scss",
             "outputPath": "dist/book-foto-art",
             "index": "src/index.html",
             "browser": "src/main.ts",

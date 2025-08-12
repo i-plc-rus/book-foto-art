@@ -9,7 +9,7 @@ import { CommonModule } from '@angular/common';
   standalone: true,
   imports: [ReactiveFormsModule, CommonModule],
   templateUrl: './register-page.component.html',
-  styleUrls: ['./register-page.component.css'],
+  styleUrl: './register-page.component.scss',
 })
 export class RegisterPageComponent implements OnInit {
   form!: FormGroup;
@@ -22,7 +22,7 @@ export class RegisterPageComponent implements OnInit {
     private router: Router,
   ) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.form = this.fb.group({
       username: ['', [Validators.required]],
       email: ['', [Validators.required, Validators.email]],
@@ -30,7 +30,7 @@ export class RegisterPageComponent implements OnInit {
     });
   }
 
-  nextStep() {
+  nextStep(): void {
     if (this.form.get('email')?.valid) {
       this.step = 2;
       this.form.get('password')?.setValidators([Validators.required, Validators.minLength(6)]);

@@ -1,3 +1,5 @@
+@import 'variables';
+
 .register-page {
   display: flex;
   min-height: 100vh;
@@ -108,12 +110,11 @@
   margin: 0 10px;
 }
 
-form input[type="username"],
-form input[type="email"],
-form input[type="password"] {
+form input[type='username'],
+form input[type='email'],
+form input[type='password'] {
   width: 100%;
   padding: 0.75rem;
-  margin-bottom: 1rem;
   border: 1px solid #ccc;
   border-radius: 6px;
   font-size: 1rem;
@@ -152,4 +153,23 @@ form input[type="password"] {
   font-size: 0.75rem;
   color: #777;
   line-height: 1.4;
+}
+
+.error-text {
+  color: $error-text;
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+}
+input.invalid {
+  border: 1px solid $error-text;
+}
+
+.input-area {
+  margin-bottom: 1rem;
+}
+
+input:disabled {
+  background-color: #f3f4f6;
+  color: #9ca3af;
+  cursor: not-allowed;
 }

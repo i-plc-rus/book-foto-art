@@ -27,15 +27,63 @@
         <!-- Шаг 1 -->
         @switch (step) {
           @case (1) {
-            <input type="email" placeholder="Email" formControlName="email" required />
-            <button type="button" class="submit-btn" (click)="nextStep()">
+            <div class="input-area">
+              <input
+                type="email"
+                placeholder="Email"
+                formControlName="email"
+                required
+                [class.invalid]="isEmailTouched() && (hasEmailRequired() || hasEmailFormatError())"
+              />
+              @if (isEmailTouched() && hasEmailRequired()) {
+                <div class="error-text">Укажите email</div>
+              } @else if (isEmailTouched() && hasEmailFormatError()) {
+                <div class="error-text">Введён некорректный email</div>
+              }
+            </div>
+
+            <button
+              type="button"
+              class="submit-btn"
+              (click)="nextStep()"
+              [disabled]="!canContinueStep1()"
+            >
               Продолжить с email
             </button>
           }
           @case (2) {
-            <input type="email" [value]="form.get('email')?.value" disabled />
-            <input type="username" placeholder="Username" formControlName="username" required />
-            <input type="password" placeholder="Пароль" formControlName="password" required />
+            <div class="input-area">
+              <input type="email" [value]="form.get('email')?.value" disabled />
+            </div>
+            <div class="input-area">
+              <input
+                type="username"
+                placeholder="Username"
+                formControlName="username"
+                required
+                [class.invalid]="isUsernameTouched() && hasUsernameRequired()"
+              />
+              @if (isUsernameTouched() && hasUsernameRequired()) {
+                <div class="error-text">Укажите логин</div>
+              }
+            </div>
+            <div class="input-area">
+              <input
+                type="password"
+                placeholder="Пароль"
+                formControlName="password"
+                required
+                [class.invalid]="
+                  isPasswordTouched() && (hasPasswordRequired() || hasPasswordLengthErr())
+                "
+              />
+              @if (isPasswordTouched() && hasPasswordRequired()) {
+                <div class="error-text">Укажите пароль</div>
+              } @else if (isPasswordTouched() && hasPasswordLengthErr()) {
+                <div class="error-text">Минимум 6 символов</div>
+              }
+            </div>
+
             <button [disabled]="isSubmitting || form.invalid" type="submit" class="submit-btn">
               Создать аккаунт
             </button>
@@ -44,7 +92,7 @@
       </form>
 
       <p class="register-disclaimer">
-        Создавая аккаунт, вы соглашаетесь с <a href="#">условиями bookforo.art</a> и подтверждаете,
+        Создавая аккаунт, вы соглашаетесь с <a href="#">условиями bookfoto.art</a> и подтверждаете,
         что прочитали и поняли их.
       </p>
     </main>

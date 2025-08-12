@@ -7,25 +7,26 @@ import { CommonModule } from '@angular/common';
 @Component({
   selector: 'app-register-page',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule, ],
+  imports: [ReactiveFormsModule, CommonModule],
   templateUrl: './register-page.component.html',
-  styleUrls: ['./register-page.component.css']
+  styleUrls: ['./register-page.component.css'],
 })
 export class RegisterPageComponent implements OnInit {
   form!: FormGroup;
   step: number = 1;
+  isSubmitting: boolean = false;
 
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
   ) {}
 
   ngOnInit() {
     this.form = this.fb.group({
       username: ['', [Validators.required]],
       email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required]]
+      password: ['', [Validators.required]],
     });
   }
 
@@ -37,21 +38,25 @@ export class RegisterPageComponent implements OnInit {
     }
   }
 
-  onSubmit() {
-    if (this.form.valid) {
+  onSubmit(): void {
+    if (this.form.valid && !this.isSubmitting) {
+      this.isSubmitting = true;
+
       this.authService.register(this.form.value).subscribe({
         next: (res) => {
           console.log('Регистрация успешна', res);
-          this.router.navigate(['/client-gallery']).then(success => {
+          this.router.navigate(['/client-gallery']).then((success) => {
             console.log('Навигация успешна?', success);
           });
         },
         error: (err) => {
           console.error('Ошибка при регистрации:', err);
           alert('Регистрация не удалась');
-        }
+        },
+        complete: () => {
+          this.isSubmitting = false;
+        },
       });
     }
   }
-
 }

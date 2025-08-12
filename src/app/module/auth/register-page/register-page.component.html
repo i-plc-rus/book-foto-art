@@ -2,9 +2,7 @@
   <div class="register-left">
     <header class="register-header">
       <img src="../../../../assets/icons/logo.svg" alt="Логотип" class="logo" />
-      <button class="close-btn" routerLink="/">
-        &times;
-      </button>
+      <button class="close-btn" routerLink="/">&times;</button>
     </header>
 
     <main class="register-content">
@@ -15,7 +13,11 @@
       </p>
 
       <button class="social-btn yandex">
-        <img src="../../../../assets/icons/yandex-start-svgrepo-com.svg" alt="Яндекс" class="yandex-logo" />
+        <img
+          src="../../../../assets/icons/yandex-start-svgrepo-com.svg"
+          alt="Яндекс"
+          class="yandex-logo"
+        />
         Войти с Яндекс ID
       </button>
 
@@ -26,48 +28,26 @@
       </div>
 
       <form [formGroup]="form" (ngSubmit)="onSubmit()">
+        <!-- Шаг 1 -->
+        <div *ngIf="step === 1">
+          <input type="email" placeholder="Email" formControlName="email" required />
+          <button type="button" class="submit-btn" (click)="nextStep()">Продолжить с email</button>
+        </div>
 
-      <!-- Шаг 1 -->
-      <div *ngIf="step === 1">
-        <input
-          type="email"
-          placeholder="Email"
-          formControlName="email"
-          required
-        />
-        <button type="button" class="submit-btn" (click)="nextStep()">
-          Продолжить с email
-        </button>
-      </div>
-
-      <!-- Шаг 2 -->
-      <div *ngIf="step === 2">
-        <input
-          type="email"
-          [value]="form.get('email')?.value"
-          disabled
-        />
-        <input
-          type="username"
-          placeholder="Username"
-          formControlName="username"
-          required
-        />
-        <input
-          type="password"
-          placeholder="Пароль"
-          formControlName="password"
-          required
-        />
-        <button type="submit" class="submit-btn">
-          Создать аккаунт
-        </button>
-      </div>
-    </form>
-
+        <!-- Шаг 2 -->
+        <div *ngIf="step === 2">
+          <input type="email" [value]="form.get('email')?.value" disabled />
+          <input type="username" placeholder="Username" formControlName="username" required />
+          <input type="password" placeholder="Пароль" formControlName="password" required />
+          <button [disabled]="isSubmitting" type="submit" class="submit-btn">
+            Создать аккаунт
+          </button>
+        </div>
+      </form>
 
       <p class="register-disclaimer">
-        Создавая аккаунт, вы соглашаетесь с <a href="#">условиями bookforo.art</a> и подтверждаете, что прочитали и поняли их.
+        Создавая аккаунт, вы соглашаетесь с <a href="#">условиями bookforo.art</a> и подтверждаете,
+        что прочитали и поняли их.
       </p>
     </main>
   </div>

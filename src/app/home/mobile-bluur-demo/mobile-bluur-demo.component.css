@@ -3,7 +3,7 @@
   position: relative;
   width: 100%;
   max-height: 680px;
-  background-image: url('/assets/mobile_back_bloor.jpg');
+  background-image: url('/src/assets/icons/mobile_back_bloor.jpg');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;

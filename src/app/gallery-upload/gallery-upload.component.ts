@@ -205,42 +205,38 @@ export class GalleryUploadComponent {
     }
   }
 
-  private initPhotoLoadEffect() {
-    effect(
-      () => {
-        const collectionId = this.collectionId();
-        const sort = this.sortType();
+  private initPhotoLoadEffect(): void {
+    effect(() => {
+      const collectionId = this.collectionId();
+      const sort = this.sortType();
 
-        if (!collectionId) return;
+      if (!collectionId) return;
 
-        this.isLoading.set(true);
-        this.photoService
-          .getPhotos(collectionId, { sort })
-          .pipe(
-            tap((response: any) => {
-              const uploadedFiles = response.files.map((photo: any) => ({
-                id: photo.id,
-                file: {
-                  // Это ServerFile, а не File
-                  name: photo.file_name,
-                  lastModified: new Date(photo.uploaded_at).getTime(),
-                  size: 0,
-                  type: `image/${photo.file_ext.slice(1)}`,
-                } as ServerFile,
-                progress: 100,
-                previewUrl: this.baseStaticUrl + photo.original_url,
-                loaded: true,
-              }));
-
-              this.files.set(uploadedFiles);
-            }),
-            finalize(() => this.isLoading.set(false)),
-            takeUntilDestroyed(this.destroyRef),
-          )
-          .subscribe();
-      },
-      { allowSignalWrites: true },
-    );
+      this.isLoading.set(true);
+      this.photoService
+        .getPhotos(collectionId, { sort })
+        .pipe(
+          tap((response: any) => {
+            const uploadedFiles = response.files.map((photo: any) => ({
+              id: photo.id,
+              file: {
+                // Это ServerFile, а не File
+                name: photo.file_name,
+                lastModified: new Date(photo.uploaded_at).getTime(),
+                size: 0,
+                type: `image/${photo.file_ext.slice(1)}`,
+              } as ServerFile,
+              progress: 100,
+              previewUrl: this.baseStaticUrl + photo.thumbnail_url,
+              loaded: true,
+            }));
+            this.files.set(uploadedFiles);
+          }),
+          finalize(() => this.isLoading.set(false)),
+          takeUntilDestroyed(this.destroyRef),
+        )
+        .subscribe();
+    });
   }
 
   handleImageError(event: Event, file: UploadFile) {

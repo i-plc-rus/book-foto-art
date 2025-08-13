@@ -6,17 +6,27 @@
       <app-grid-settings
         class="hidden md:block"
         (gridSizeChange)="onGridSizeChange($event)"
-        (showFilenameChange)="onShowFilenameChange($event)">
+        (showFilenameChange)="onShowFilenameChange($event)"
+      >
       </app-grid-settings>
       <div
         (click)="showUploadModal.set(true)"
-        class="flex items-center gap-1 px-3 py-1.5 cursor-pointer text-[#1ac2c4] relative">
-        <svg xmlns="http://www.w3.org/2000/svg" class="border border-[#1ac2c4] rounded-full w-4 h-4 max-[767px]:w-[14px] max-[767px]:h-[14px] " viewBox="0 0 24 24"
-             fill="none"
-             stroke="currentColor" stroke-width="2">
-          <path d="M12 5v14M5 12h14"/>
+        class="flex items-center gap-1 px-3 py-1.5 cursor-pointer text-[#1ac2c4] relative"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="border border-[#1ac2c4] rounded-full w-4 h-4 max-[767px]:w-[14px] max-[767px]:h-[14px]"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+        >
+          <path d="M12 5v14M5 12h14" />
         </svg>
-        <span class="text-sm font-medium tracking-normal leading-[1] md:text-base md:font-normal md:leading-normal">Add Media</span>
+        <span
+          class="text-sm font-medium tracking-normal leading-[1] md:text-base md:font-normal md:leading-normal"
+          >Add Media</span
+        >
       </div>
     </div>
   </div>
@@ -30,7 +40,8 @@
     (filesDropped)="processFiles($event)"
     (fileSelected)="handleFileSelect($event)"
     (imageError)="handleImageError($event.event, $event.file)"
-    class="w-full h-[-webkit-fill-available]"></app-file-grid>
+    class="w-full h-[-webkit-fill-available]"
+  ></app-file-grid>
 
   @if (uploadStats.totalFiles() > 0 && !uploadStats.allFilesUploaded() && showStatus()) {
     <div class="upload-status">
@@ -40,9 +51,20 @@
             Uploading {{ uploadStats.uploadedFiles() }} of {{ uploadStats.totalFiles() }} items
           </div>
           <button class="close-button" (click)="closeStatus()">
-            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M13 1L1 13M1 1L13 13" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                    stroke-linejoin="round"/>
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 14 14"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M13 1L1 13M1 1L13 13"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
             </svg>
           </button>
         </div>
@@ -55,8 +77,8 @@
       <div class="progress-container">
         <div
           class="progress-bar"
-          [style.width.%]="(uploadStats.uploadedSize() / uploadStats.totalSize()) * 100">
-        </div>
+          [style.width.%]="(uploadStats.uploadedSize() / uploadStats.totalSize()) * 100"
+        ></div>
       </div>
     </div>
   }
@@ -70,9 +92,10 @@
 }
 
 @if (notification().visible) {
-
-  <div class="fixed bottom-4 right-4 bg-black bg-opacity-70 text-white text-[14px] p-4 shadow-lg z-50"
-       style="min-width: 150px; text-align: center;">
+  <div
+    class="fixed bottom-4 right-4 bg-black bg-opacity-70 text-white text-[14px] p-4 shadow-lg z-50"
+    style="min-width: 150px; text-align: center"
+  >
     <div>{{ notification().message }}</div>
   </div>
 }

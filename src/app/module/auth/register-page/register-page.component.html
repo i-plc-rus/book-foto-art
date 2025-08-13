@@ -1,4 +1,5 @@
 <div class="register-page">
+  <p-toast position="top-right" />
   <div class="register-left">
     <header class="register-header">
       <img src="assets/icons/logo.svg" alt="Логотип" class="logo" />
@@ -39,6 +40,8 @@
                 <div class="error-text">Укажите email</div>
               } @else if (isEmailTouched() && hasEmailFormatError()) {
                 <div class="error-text">Введён некорректный email</div>
+              } @else if (emailCtrl.hasError('conflict')) {
+                <div class="error-text">Такой email уже зарегистрирован</div>
               }
             </div>
 
@@ -65,6 +68,8 @@
               />
               @if (isUsernameTouched() && hasUsernameRequired()) {
                 <div class="error-text">Укажите логин</div>
+              } @else if (usernameCtrl.hasError('conflict')) {
+                <div class="error-text">Логин уже занят</div>
               }
             </div>
             <div class="input-area">

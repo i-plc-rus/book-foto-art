@@ -1,28 +1,30 @@
-import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
-import {
-  FormBuilder,
-  FormGroup,
-  Validators,
-  ReactiveFormsModule,
-  FormControl,
-} from '@angular/forms';
-import { AuthService } from '../../../core/service/auth.service';
-import { Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { IAuth } from '../../../core/interfaces/auth.model';
+import type { OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import type { FormControl, FormGroup } from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Router, RouterLink } from '@angular/router';
+import { MessageService } from 'primeng/api';
+import { finalize } from 'rxjs';
+
+import type { IAuth } from '../../../core/interfaces/auth.model';
+import { AuthService } from '../../../core/service/auth.service';
+import { Toast } from 'primeng/toast';
 
 @Component({
   selector: 'app-register-page',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule, RouterLink],
+  imports: [ReactiveFormsModule, CommonModule, RouterLink, Toast],
   templateUrl: './register-page.component.html',
   styleUrl: './register-page.component.scss',
+  providers: [MessageService],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RegisterPageComponent implements OnInit {
   private readonly fb: FormBuilder = inject(FormBuilder);
   private readonly authService: AuthService = inject(AuthService);
   private readonly router: Router = inject(Router);
+  private readonly messageService: MessageService = inject(MessageService);
   form!: FormGroup<{
     email: FormControl<string | null>;
     username: FormControl<string | null>;
@@ -61,27 +63,76 @@ export class RegisterPageComponent implements OnInit {
     if (this.isSubmitting || this.form.invalid) return;
 
     this.isSubmitting = true;
-
     const { email, username, password } = this.form.getRawValue();
     this.form.disable();
 
     if (!email || !username || !password) {
       this.isSubmitting = false;
+      this.form.enable();
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Регистрация',
+        detail: 'окээээй',
+        life: 5000,
+      });
       return;
     }
 
     const payload: IAuth = { email, username, password };
 
-    this.authService.register(payload).subscribe({
-      next: async () => {
-        await this.router.navigate(['/client-gallery']);
-      },
-      error: (err) => {
-        console.error('Ошибка при регистрации:', err);
-        alert('Регистрация не удалась');
-        this.isSubmitting = false;
-      },
-    });
+    this.authService
+      .register(payload)
+      .pipe(
+        finalize(() => {
+          this.isSubmitting = false;
+          this.form.enable();
+        }),
+      )
+      .subscribe({
+        next: async (res: any) => {
+          // бэк вернул 200 + { error: '...' }
+          if (res && typeof res === 'object' && 'error' in res) {
+            const msg = String(res.error ?? 'Ошибка');
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Регистрация',
+              detail: msg,
+              life: 5000,
+            });
+            return;
+          }
+          await this.router.navigate(['/client-gallery']);
+        },
+        error: (err: any) => {
+          if (err?.status === 409) {
+            const msg = typeof err?.error === 'string' ? err.error : 'Пользователь уже существует';
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Регистрация',
+              detail: msg,
+              life: 5000,
+            });
+            return;
+          }
+
+          if (err?.status === 422 && Array.isArray(err?.error?.errors)) {
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Регистрация',
+              detail: 'Исправьте ошибки в форме',
+              life: 5000,
+            });
+            return;
+          }
+
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Регистрация',
+            detail: 'Что-то пошло не так',
+            life: 5000,
+          });
+        },
+      });
   }
 
   get emailCtrl(): FormControl<string | null> {

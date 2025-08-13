@@ -1,19 +1,27 @@
-import {
-  ApplicationConfig,
-  importProvidersFrom,
-  LOCALE_ID,
-  provideZoneChangeDetection,
-} from '@angular/core';
+import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import type { ApplicationConfig } from '@angular/core';
+import { importProvidersFrom, LOCALE_ID, provideZoneChangeDetection } from '@angular/core';
+import { provideAnimations } from '@angular/platform-browser/animations';
 import { provideRouter } from '@angular/router';
+import Aura from '@primeng/themes/aura';
+import { NgxDaterangepickerMd } from 'ngx-daterangepicker-material';
+import { providePrimeNG } from 'primeng/config';
 
 import { routes } from './app.routes';
-import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { AuthInterceptor } from './core/interceptor/auth.interceptor';
-import { NgxDaterangepickerMd } from 'ngx-daterangepicker-material';
 import { SidebarService } from './core/service/sidebar.service';
 
 export const appConfig: ApplicationConfig = {
   providers: [
+    provideAnimations(),
+    providePrimeNG({
+      theme: {
+        preset: Aura,
+        options: {
+          darkModeSelector: '.dark',
+        },
+      },
+    }),
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
     provideHttpClient(withInterceptorsFromDi()),

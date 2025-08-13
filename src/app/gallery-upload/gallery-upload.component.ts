@@ -1,31 +1,26 @@
 import {
-  Component, computed,
+  Component,
+  computed,
   DestroyRef,
-  effect, HostListener,
-  inject, OnInit,
+  effect,
+  HostListener,
+  inject,
   signal,
 } from '@angular/core';
-import {CommonModule} from '@angular/common';
-import {SortMenuComponent} from '../shared/components/sort-menu/sort-menu.component';
-import {GridSettingsComponent} from '../shared/components/grid-settings/grid-settings.component';
-import {UploadModalComponent} from '../shared/modal/upload-modal/upload-modal.component';
-import {SidebarService} from '../core/service/sidebar.service';
-import {
-  catchError,
-  finalize,
-  map,
-  mergeMap,
-  of,
-  switchMap, tap,
-} from 'rxjs';
-import {UploadService} from '../core/service/upload.service';
-import {ActivatedRoute, Router} from '@angular/router';
-import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
-import {CollectionService} from './service/collection.service';
-import {SortType} from '../core/types/sort-type';
-import {environment} from '../../environments/environment';
-import {CollectionStateService} from './service/collection-state.service';
-import {FileGridComponent} from '../shared/components/cover-image/file-grid.component';
+import { CommonModule } from '@angular/common';
+import { SortMenuComponent } from '../shared/components/sort-menu/sort-menu.component';
+import { GridSettingsComponent } from '../shared/components/grid-settings/grid-settings.component';
+import { UploadModalComponent } from '../shared/modal/upload-modal/upload-modal.component';
+import { SidebarService } from '../core/service/sidebar.service';
+import { catchError, finalize, of, tap } from 'rxjs';
+import { UploadService } from '../core/service/upload.service';
+import { ActivatedRoute, Router } from '@angular/router';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { CollectionService } from './service/collection.service';
+import type { SortType } from '../core/types/sort-type';
+import { environment } from '../../environments/environment';
+import { CollectionStateService } from './service/collection-state.service';
+import { FileGridComponent } from '../shared/components/cover-image/file-grid.component';
 
 interface UploadFile {
   id: string;
@@ -88,14 +83,12 @@ export class GalleryUploadComponent {
   readonly baseStaticUrl = environment.staticUrl;
   private readonly currentlyUploading = new Set<string>();
   readonly showEmptyState = computed(() => {
-    return this.files().length === 0 &&
-      this.currentlyUploading.size === 0 &&
-      !this.isLoading();
+    return this.files().length === 0 && this.currentlyUploading.size === 0 && !this.isLoading();
   });
 
   readonly notification = signal<{ message: string; visible: boolean }>({
     message: '',
-    visible: false
+    visible: false,
   });
 
   private notificationTimeout: any = null;
@@ -123,53 +116,50 @@ export class GalleryUploadComponent {
     },
   };
   readonly menuOptions = signal<MenuOption[]>([
-    {id: 'open', name: 'Open', iconUrl: '/assets/icons/double-arrow.svg'},
-    {id: 'share', name: 'Quick share link', iconUrl: '/assets/icons/link.svg'},
-    {id: 'download', name: 'Download', iconUrl: '/assets/icons/download.svg'},
+    { id: 'open', name: 'Open', iconUrl: '/assets/icons/double-arrow.svg' },
+    { id: 'share', name: 'Quick share link', iconUrl: '/assets/icons/link.svg' },
+    { id: 'download', name: 'Download', iconUrl: '/assets/icons/download.svg' },
     {
       id: 'move',
       name: 'Move/Copy',
       iconUrl: '/assets/icons/move-copy.svg',
       subMenu: [
-        {id: 'move_to', name: 'Move to', iconUrl: '/assets/icons/double-arrow.svg'},
-        {id: 'copy_to', name: 'Copy to', iconUrl: '/assets/icons/double-arrow.svg'}
-      ]
+        { id: 'move_to', name: 'Move to', iconUrl: '/assets/icons/double-arrow.svg' },
+        { id: 'copy_to', name: 'Copy to', iconUrl: '/assets/icons/double-arrow.svg' },
+      ],
     },
-    {id: 'copy', name: 'Copy filenames', iconUrl: '/assets/icons/copy.svg'},
-    {id: 'cover', name: 'Set as cover', iconUrl: '/assets/icons/set-image.svg'},
-    {id: 'rename', name: 'Rename', iconUrl: '/assets/icons/edit.svg'},
-    {id: 'replace', name: 'Replace photo', iconUrl: '/assets/icons/replace.svg'},
-    {id: 'watermark', name: 'Watermark', iconUrl: '/assets/icons/mark.svg'},
-    {id: 'delete', name: 'Delete', iconUrl: '/assets/icons/delete.svg'},
+    { id: 'copy', name: 'Copy filenames', iconUrl: '/assets/icons/copy.svg' },
+    { id: 'cover', name: 'Set as cover', iconUrl: '/assets/icons/set-image.svg' },
+    { id: 'rename', name: 'Rename', iconUrl: '/assets/icons/edit.svg' },
+    { id: 'replace', name: 'Replace photo', iconUrl: '/assets/icons/replace.svg' },
+    { id: 'watermark', name: 'Watermark', iconUrl: '/assets/icons/mark.svg' },
+    { id: 'delete', name: 'Delete', iconUrl: '/assets/icons/delete.svg' },
   ]);
 
   constructor() {
-    this.route.queryParams
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((params) => {
-        const collectionId = params['collectionId'];
-        this.collectionId.set(collectionId);
+    this.route.queryParams.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((params) => {
+      const collectionId = params['collectionId'];
+      this.collectionId.set(collectionId);
 
-        if (collectionId) {
-          this.collectionStateService.setCurrentCollectionId(collectionId);
-        } else {
-          this.collectionStateService.getCurrentCollectionId().subscribe(savedId => {
-            if (savedId) {
-              this.router.navigate([], {
-                relativeTo: this.route,
-                queryParams: {collectionId: savedId},
-                queryParamsHandling: 'merge'
-              });
-            }
-          });
-        }
-      });
+      if (collectionId) {
+        this.collectionStateService.setCurrentCollectionId(collectionId);
+      } else {
+        this.collectionStateService.getCurrentCollectionId().subscribe((savedId) => {
+          if (savedId) {
+            this.router.navigate([], {
+              relativeTo: this.route,
+              queryParams: { collectionId: savedId },
+              queryParamsHandling: 'merge',
+            });
+          }
+        });
+      }
+    });
 
     this.subscribeToRouteParams();
     this.initSidebar();
     this.initSortEffect();
     this.initPhotoLoadEffect();
-
   }
 
   onModalFileSelected(files: File[]) {
@@ -216,34 +206,41 @@ export class GalleryUploadComponent {
   }
 
   private initPhotoLoadEffect() {
-    effect(() => {
-      const collectionId = this.collectionId();
-      const sort = this.sortType();
+    effect(
+      () => {
+        const collectionId = this.collectionId();
+        const sort = this.sortType();
 
-      if (!collectionId) return;
+        if (!collectionId) return;
 
-      this.isLoading.set(true);
-      this.photoService.getPhotos(collectionId, {sort}).pipe(
-        tap((response: any) => {
-          const uploadedFiles = response.files.map((photo: any) => ({
-            id: photo.id,
-            file: { // Это ServerFile, а не File
-              name: photo.file_name,
-              lastModified: new Date(photo.uploaded_at).getTime(),
-              size: 0,
-              type: `image/${photo.file_ext.slice(1)}`
-            } as ServerFile,
-            progress: 100,
-            previewUrl: this.baseStaticUrl + photo.original_url,
-            loaded: true
-          }));
+        this.isLoading.set(true);
+        this.photoService
+          .getPhotos(collectionId, { sort })
+          .pipe(
+            tap((response: any) => {
+              const uploadedFiles = response.files.map((photo: any) => ({
+                id: photo.id,
+                file: {
+                  // Это ServerFile, а не File
+                  name: photo.file_name,
+                  lastModified: new Date(photo.uploaded_at).getTime(),
+                  size: 0,
+                  type: `image/${photo.file_ext.slice(1)}`,
+                } as ServerFile,
+                progress: 100,
+                previewUrl: this.baseStaticUrl + photo.original_url,
+                loaded: true,
+              }));
 
-          this.files.set(uploadedFiles);
-        }),
-        finalize(() => this.isLoading.set(false)),
-        takeUntilDestroyed(this.destroyRef)
-      ).subscribe();
-    }, {allowSignalWrites: true});
+              this.files.set(uploadedFiles);
+            }),
+            finalize(() => this.isLoading.set(false)),
+            takeUntilDestroyed(this.destroyRef),
+          )
+          .subscribe();
+      },
+      { allowSignalWrites: true },
+    );
   }
 
   handleImageError(event: Event, file: UploadFile) {
@@ -257,16 +254,14 @@ export class GalleryUploadComponent {
   }
 
   private subscribeToRouteParams() {
-    this.route.queryParams
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((params) => {
-        const collectionId = params['collectionId'];
-        this.collectionId.set(collectionId);
+    this.route.queryParams.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((params) => {
+      const collectionId = params['collectionId'];
+      this.collectionId.set(collectionId);
 
-        if (this.collectionId()) {
-          this.collectionStateService.setCurrentCollectionId(collectionId);
-        }
-      });
+      if (this.collectionId()) {
+        this.collectionStateService.setCurrentCollectionId(collectionId);
+      }
+    });
   }
 
   private initSidebar() {
@@ -275,19 +270,22 @@ export class GalleryUploadComponent {
   }
 
   private initSortEffect() {
-    effect(() => {
-      this.applySort(this.sortType());
-    }, {allowSignalWrites: true});
+    effect(
+      () => {
+        this.applySort(this.sortType());
+      },
+      { allowSignalWrites: true },
+    );
   }
 
   async processFiles(files: File[]) {
     if (!files.length) return;
 
-    const videoFiles = files.filter(file => file.type.startsWith('video/') && !this.isPremium());
+    const videoFiles = files.filter((file) => file.type.startsWith('video/') && !this.isPremium());
 
     if (videoFiles.length > 0) {
       this.showNotification('Загрузка видео доступна только с премиум-подпиской');
-      files = files.filter(file => !file.type.startsWith('video/') || this.isPremium());
+      files = files.filter((file) => !file.type.startsWith('video/') || this.isPremium());
       if (!files.length) return;
     }
 
@@ -319,10 +317,10 @@ export class GalleryUploadComponent {
       clearTimeout(this.notificationTimeout);
     }
 
-    this.notification.set({message, visible: true});
+    this.notification.set({ message, visible: true });
 
     this.notificationTimeout = setTimeout(() => {
-      this.notification.set({message: '', visible: false});
+      this.notification.set({ message: '', visible: false });
     }, 5000);
   }
 
@@ -342,39 +340,36 @@ export class GalleryUploadComponent {
         currentIndex++;
         currentUploads++;
 
-        this.uploadService.uploadFile(file.file, collectionId).pipe(
-          tap(({progress}) => {
-            this.files.update(prev =>
-              prev.map(f =>
-                f.id === file.id
-                  ? {...f, progress, loaded: progress === 100}
-                  : f
-              )
-            );
-            this.updateUploadStats();
-          }),
-          catchError(error => {
-            console.error('Upload error:', error);
-            // Помечаем файл как ошибочный
-            this.files.update(prev =>
-              prev.map(f =>
-                f.id === file.id
-                  ? {...f, error: true, loaded: true}
-                  : f
-              )
-            );
-            return of({progress: -1});
-          }),
-          finalize(() => {
-            currentUploads--;
-            uploadNext();
-            this.updateUploadStats();
+        this.uploadService
+          .uploadFile(file.file, collectionId)
+          .pipe(
+            tap(({ progress }) => {
+              this.files.update((prev) =>
+                prev.map((f) =>
+                  f.id === file.id ? { ...f, progress, loaded: progress === 100 } : f,
+                ),
+              );
+              this.updateUploadStats();
+            }),
+            catchError((error) => {
+              console.error('Upload error:', error);
+              // Помечаем файл как ошибочный
+              this.files.update((prev) =>
+                prev.map((f) => (f.id === file.id ? { ...f, error: true, loaded: true } : f)),
+              );
+              return of({ progress: -1 });
+            }),
+            finalize(() => {
+              currentUploads--;
+              uploadNext();
+              this.updateUploadStats();
 
-            if (currentUploads === 0 && currentIndex >= filesToUpload.length) {
-              this.currentlyUploading.clear();
-            }
-          })
-        ).subscribe();
+              if (currentUploads === 0 && currentIndex >= filesToUpload.length) {
+                this.currentlyUploading.clear();
+              }
+            }),
+          )
+          .subscribe();
       }
     };
 
@@ -382,16 +377,11 @@ export class GalleryUploadComponent {
   }
 
   private updateUploadStats() {
-    const uploading = this.files().filter((f) =>
-      this.currentlyUploading.has(f.id)
-    );
+    const uploading = this.files().filter((f) => this.currentlyUploading.has(f.id));
     const uploaded = uploading.filter((f) => f.loaded);
 
     const totalSize = uploading.reduce((acc, f) => acc + f.file.size, 0);
-    const uploadedSize = uploading.reduce(
-      (acc, f) => acc + (f.file.size * f.progress) / 100,
-      0
-    );
+    const uploadedSize = uploading.reduce((acc, f) => acc + (f.file.size * f.progress) / 100, 0);
 
     this.uploadStats.totalFiles.set(uploading.length);
     this.uploadStats.uploadedFiles.set(uploaded.length);
@@ -437,13 +427,9 @@ export class GalleryUploadComponent {
       const sorted = [...prev];
       switch (sortType) {
         case 'uploaded_new':
-          return sorted.sort(
-            (a, b) => b.file.lastModified - a.file.lastModified
-          );
+          return sorted.sort((a, b) => b.file.lastModified - a.file.lastModified);
         case 'uploaded_old':
-          return sorted.sort(
-            (a, b) => a.file.lastModified - b.file.lastModified
-          );
+          return sorted.sort((a, b) => a.file.lastModified - b.file.lastModified);
         case 'name_az':
           return sorted.sort((a, b) => a.file.name.localeCompare(b.file.name));
         case 'name_za':

@@ -1,15 +1,16 @@
-import { Component, inject, signal, DestroyRef } from '@angular/core';
 import { DatePipe, Location } from '@angular/common';
-import { RouterOutlet, Router, NavigationEnd, ActivatedRoute } from '@angular/router';
+import { Component, DestroyRef, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ActivatedRoute, NavigationEnd, Router, RouterOutlet } from '@angular/router';
+import { filter } from 'rxjs';
+
+import { environment as env } from '../../../environments/environment';
+import { CollectionService } from '../../gallery-upload/service/collection.service';
+import { CollectionStateService } from '../../gallery-upload/service/collection-state.service';
+import { DesignSectionsComponent } from '../../shared/components/design-sections/design-sections.component';
+import { MobileHeaderComponent } from '../../shared/components/mobile-header/mobile-header.component';
 import { TabsComponent } from '../../shared/components/tabs/tabs.component';
 import { DesignService } from '../design-component/service/design.service';
-import { filter } from 'rxjs';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { CollectionService } from '../../gallery-upload/service/collection.service';
-import { environment as env } from '../../../environments/environment';
-import { MobileHeaderComponent } from '../../shared/components/mobile-header/mobile-header.component';
-import { DesignSectionsComponent } from '../../shared/components/design-sections/design-sections.component';
-import { CollectionStateService } from '../../gallery-upload/service/collection-state.service';
 
 interface CollectionData {
   name: string;

@@ -72,13 +72,13 @@ export class MainLayoutComponent {
       });
   }
 
-  private updateRouteState() {
+  private updateRouteState(): void {
     const path = this.location.path();
     this.isDesignRoute.set(path.includes('/design'));
     this.isPhotosRoute.set(path.startsWith('/upload'));
   }
 
-  navigateToPage() {
+  navigateToPage(): void {
     const id = this.collectionId();
     if (id) {
       this.router
@@ -89,7 +89,7 @@ export class MainLayoutComponent {
     }
   }
 
-  goBackToPreviousPage() {
+  goBackToPreviousPage(): void {
     this.router.navigate(['/client-gallery']).catch();
   }
 
@@ -100,7 +100,7 @@ export class MainLayoutComponent {
     return env.apiUrl + cover;
   }
 
-  updateFocalPoint(position: { x: number; y: number }) {
+  updateFocalPoint(position: { x: number; y: number }): void {
     const currentData = this.collectionData();
     if (currentData) {
       this.collectionData.set({

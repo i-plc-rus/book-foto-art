@@ -57,7 +57,11 @@ select.ng-invalid.ng-touched:focus,
 
 /* 7. Гарантия читаемости в комбинированных полях */
 .p-inputgroup input,
-.p-inputgroup .p-inputtext {
+.p-inputgroup .p-inputtext,
+h1,
+a,
+h2,
+.border-b {
   color: #000 !important;
 }
 
@@ -118,26 +122,4 @@ select.ng-invalid.ng-touched:focus {
   outline: none !important;
   --p-focus-ring-shadow: none; /* гасим ринг темы */
   box-shadow: none !important; /* на всякий случай */
-}
-
-/* Контейнерные компоненты (ринг рисуется на обёртке) */
-:root .p-dropdown.p-invalid:focus-within,
-:root .p-calendar.p-invalid:focus-within,
-:root .p-password.p-invalid:focus-within,
-:root .p-autocomplete.p-invalid:focus-within {
-  border-color: #ef4444 !important;
-  border-width: 2px !important;
-  outline: none !important;
-  --p-focus-ring-shadow: none;
-  box-shadow: none !important;
-}
-
-/* Внутренний инпут на всякий случай */
-:root .p-calendar.p-invalid .p-inputtext:focus,
-:root .p-password.p-invalid .p-inputtext:focus,
-:root .p-autocomplete.p-invalid .p-inputtext:focus {
-  border-color: #ef4444 !important;
-  border-width: 2px !important;
-  outline: none !important;
-  box-shadow: none !important;
 }

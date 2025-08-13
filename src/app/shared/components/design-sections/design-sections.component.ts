@@ -1,4 +1,6 @@
 import { Component, inject } from '@angular/core';
+
+import type { DesignSection } from '../../../module/design-component/service/design.service';
 import { DesignService } from '../../../module/design-component/service/design.service';
 
 @Component({
@@ -10,4 +12,8 @@ import { DesignService } from '../../../module/design-component/service/design.s
 })
 export class DesignSectionsComponent {
   readonly designService = inject(DesignService);
+
+  isActiveSession(section: DesignSection): boolean {
+    return this.designService.getActiveSection()?.id === section.id;
+  }
 }

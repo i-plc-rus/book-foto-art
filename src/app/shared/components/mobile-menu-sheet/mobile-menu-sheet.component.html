@@ -15,7 +15,7 @@
           <li>
             <a
               (click)="selectSection(section.id)"
-              [class.active]="designService.getActiveSection()?.id === section.id"
+              [class.active]="isActiveSession(section)"
               class="section-item"
             >
               <span class="section-icon">

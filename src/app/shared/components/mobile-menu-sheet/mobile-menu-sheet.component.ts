@@ -1,12 +1,14 @@
+import { NgIf } from '@angular/common';
 import { Component, DestroyRef, inject, signal } from '@angular/core';
-import { MatBottomSheetRef } from '@angular/material/bottom-sheet';
-import { Router, NavigationEnd } from '@angular/router';
-import { filter } from 'rxjs/operators';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { MatBottomSheetRef } from '@angular/material/bottom-sheet';
+import { NavigationEnd, Router } from '@angular/router';
+import { filter } from 'rxjs/operators';
+
+import { CollectionStateService } from '../../../gallery-upload/service/collection-state.service';
+import type { DesignSection } from '../../../module/design-component/service/design.service';
 import { DesignService } from '../../../module/design-component/service/design.service';
 import { TabsComponent } from '../tabs/tabs.component';
-import { NgIf } from '@angular/common';
-import { CollectionStateService } from '../../../gallery-upload/service/collection-state.service';
 
 @Component({
   standalone: true,
@@ -37,7 +39,7 @@ export class MobileMenuSheetComponent {
       });
   }
 
-  private determineInitialView() {
+  private determineInitialView(): void {
     if (this.router.url.startsWith('/design')) {
       this.activeView.set('design-sections');
     } else {
@@ -45,35 +47,39 @@ export class MobileMenuSheetComponent {
     }
   }
 
-  showDesignSections() {
+  async showDesignSections(): Promise<void> {
     const collectionId = this.collectionStateService.getCurrentCollectionIdValue();
 
     if (collectionId) {
-      this.router.navigate(['/design', 'cover'], {
+      await this.router.navigate(['/design', 'cover'], {
         queryParams: { collectionId },
       });
     } else {
-      this.router.navigate(['/design', 'cover']);
+      await this.router.navigate(['/design', 'cover']);
     }
 
     this.activeView.set('design-sections');
   }
 
-  closeMenu() {
+  closeMenu(): void {
     this.bottomSheetRef.dismiss();
   }
 
-  selectSection(sectionId: string) {
+  async selectSection(sectionId: string): Promise<void> {
     const collectionId = this.collectionStateService.getCurrentCollectionIdValue();
 
     if (collectionId) {
-      this.router.navigate(['/design', sectionId], {
+      await this.router.navigate(['/design', sectionId], {
         queryParams: { collectionId },
       });
     } else {
-      this.router.navigate(['/design', sectionId]);
+      await this.router.navigate(['/design', sectionId]);
     }
 
     this.closeMenu();
+  }
+
+  isActiveSession(section: DesignSection): boolean {
+    return this.designService.getActiveSection()?.id === section.id;
   }
 }

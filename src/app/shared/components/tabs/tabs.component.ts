@@ -1,16 +1,16 @@
 import { Component, DestroyRef, EventEmitter, inject, Input, Output, signal } from '@angular/core';
-import { ActivatedRoute, Router, RouterLink, RouterLinkActive } from '@angular/router';
-import { CollectionStateService } from '../../../gallery-upload/service/collection-state.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ActivatedRoute, Router } from '@angular/router';
+
 import { CollectionService } from '../../../gallery-upload/service/collection.service';
-import { NgForOf, NgIf } from '@angular/common';
+import { CollectionStateService } from '../../../gallery-upload/service/collection-state.service';
 
 @Component({
   standalone: true,
   selector: 'app-tabs',
   templateUrl: './tabs.component.html',
   styleUrls: ['./tabs.component.css'],
-  imports: [RouterLink, RouterLinkActive, NgIf, NgForOf],
+  imports: [],
   providers: [CollectionService],
 })
 export class TabsComponent {
@@ -52,7 +52,7 @@ export class TabsComponent {
     });
   }
 
-  loadCollectionData(collectionId: string) {
+  loadCollectionData(collectionId: string): void {
     this.designService.getPhotosIngo(collectionId);
   }
 
@@ -70,7 +70,7 @@ export class TabsComponent {
     });
   }
 
-  navigateToTab(tab: any) {
+  async navigateToTab(tab: any): Promise<void> {
     if (this.isMobileMenu && tab.tooltip === 'Design') {
       this.designTabClick.emit();
       return;
@@ -78,11 +78,11 @@ export class TabsComponent {
 
     // Навигация для других вкладок
     if (this.currentCollectionId()) {
-      this.router.navigate([tab.link], {
+      await this.router.navigate([tab.link], {
         queryParams: { collectionId: this.currentCollectionId() },
       });
     } else {
-      this.router.navigate([tab.link]);
+      await this.router.navigate([tab.link]);
     }
 
     this.tabSelected.emit();

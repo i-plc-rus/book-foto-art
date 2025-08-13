@@ -1,5 +1,5 @@
-@import 'tailwindcss';
-@import 'variables';
+@use 'tailwindcss';
+@use 'variables';
 
 body {
   font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;

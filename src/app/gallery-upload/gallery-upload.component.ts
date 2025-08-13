@@ -12,7 +12,7 @@ import { SortMenuComponent } from '../shared/components/sort-menu/sort-menu.comp
 import { GridSettingsComponent } from '../shared/components/grid-settings/grid-settings.component';
 import { UploadModalComponent } from '../shared/modal/upload-modal/upload-modal.component';
 import { SidebarService } from '../core/service/sidebar.service';
-import { catchError, finalize, of, tap } from 'rxjs';
+import { catchError, finalize, from, mergeMap, of, tap } from 'rxjs';
 import { UploadService } from '../core/service/upload.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -190,11 +190,11 @@ export class GalleryUploadComponent {
     this.gridSize.set(size);
   }
 
-  onShowFilenameChange(value: boolean) {
+  onShowFilenameChange(value: boolean): void {
     this.showFilename.set(value);
   }
 
-  closeStatus() {
+  closeStatus(): void {
     this.showStatus.set(false);
   }
 
@@ -320,25 +320,17 @@ export class GalleryUploadComponent {
     }, 5000);
   }
 
-  private uploadFiles(filesToUpload: UploadFile[]) {
+  private uploadFiles(filesToUpload: UploadFile[]): void {
     const collectionId = this.collectionId();
     if (!collectionId) return;
 
     this.uploadStats.startTime.set(Date.now());
 
-    const MAX_CONCURRENT_UPLOADS = 4;
-    let currentUploads = 0;
-    let currentIndex = 0;
-
-    const uploadNext = () => {
-      while (currentIndex < filesToUpload.length && currentUploads < MAX_CONCURRENT_UPLOADS) {
-        const file = filesToUpload[currentIndex];
-        currentIndex++;
-        currentUploads++;
-
-        this.uploadService
-          .uploadFile(file.file, collectionId)
-          .pipe(
+    from(filesToUpload)
+      .pipe(
+        tap((file) => this.currentlyUploading.add(file.id)),
+        mergeMap((file) =>
+          this.uploadService.uploadFile(file.file, collectionId).pipe(
             tap(({ progress }) => {
               this.files.update((prev) =>
                 prev.map((f) =>
@@ -347,29 +339,23 @@ export class GalleryUploadComponent {
               );
               this.updateUploadStats();
             }),
-            catchError((error) => {
-              console.error('Upload error:', error);
-              // Помечаем файл как ошибочный
+            catchError((err) => {
+              console.error('Upload error:', err);
               this.files.update((prev) =>
                 prev.map((f) => (f.id === file.id ? { ...f, error: true, loaded: true } : f)),
               );
-              return of({ progress: -1 });
+              return of(null);
             }),
-            finalize(() => {
-              currentUploads--;
-              uploadNext();
-              this.updateUploadStats();
-
-              if (currentUploads === 0 && currentIndex >= filesToUpload.length) {
-                this.currentlyUploading.clear();
-              }
-            }),
-          )
-          .subscribe();
-      }
-    };
-
-    uploadNext();
+            finalize(() => this.currentlyUploading.delete(file.id)),
+          ),
+        ),
+      )
+      .subscribe({
+        complete: () => {
+          this.currentlyUploading.clear();
+          this.updateUploadStats();
+        },
+      });
   }
 
   private updateUploadStats() {

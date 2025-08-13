@@ -49,6 +49,10 @@
   } @else {
     <section class="welcome centered mt-5 md:mt-0">
       <p class="subtitle">Шаг 2 из 3</p>
+
+      @if (isLoading) {
+        <div class="loading-message">Создаём коллекцию...</div>
+      }
       <h1
         class="headline text-[1.2rem] font-medium mb-4 leading-[1.2] tracking-[0.02em] text-[#111] md:text-[1.8rem] md:mb-6"
       >

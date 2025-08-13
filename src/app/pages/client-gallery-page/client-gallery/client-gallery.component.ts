@@ -1,29 +1,26 @@
-import { Component, signal, inject, computed, DestroyRef } from '@angular/core';
+import { NgTemplateOutlet } from '@angular/common';
+import { Component, computed, DestroyRef, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { CollectionHeaderComponent } from '../components/collection-header/collection-header.component';
-import { FilterDropdownComponent } from '../components/filter-dropdown/filter-dropdown.component';
-import { CATEGORY_TAG, EVENT_DATE, EXPIRY_DATE, STARRED, STATUS } from '../models/filter.model';
-import { FilterDateComponent } from '../components/filter-date/filter-date.component';
-import {
-  CollectionActionPayload,
-  CollectionActionType,
-  DisplayView,
-  SortOption,
-} from '../models/collection-display.model';
-import { ISavedGallery } from '../../../gallery-upload/interface/upload-file';
-import { NgTemplateOutlet } from '@angular/common';
-import { CollectionSortComponent } from '../components/collection-sort/collection-sort.component';
-import { CollectionViewComponent } from '../components/collection-view/collection-view.component';
-import { CollectionTableComponent } from '../components/collection-table/collection-table.component';
-import { CollectionCardComponent } from '../components/collection-card/collection-card.component';
 import dayjs from 'dayjs';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { CollectionService } from '../../../core/service/collection.service.service';
-import { ShareCollectionModalComponent } from '../modal/share-collection-modal/share-collection-modal.component';
-import { ModalService } from '../../../shared/service/modal/modal.service';
+
 import { environment as env } from '../../../../environments/environment';
+import { CollectionService } from '../../../core/service/collection.service.service';
+import type { ISavedGallery } from '../../../gallery-upload/interface/upload-file';
+import { ModalService } from '../../../shared/service/modal/modal.service';
+import { CollectionCardComponent } from '../components/collection-card/collection-card.component';
+import { CollectionHeaderComponent } from '../components/collection-header/collection-header.component';
+import { CollectionSortComponent } from '../components/collection-sort/collection-sort.component';
+import { CollectionTableComponent } from '../components/collection-table/collection-table.component';
+import { CollectionViewComponent } from '../components/collection-view/collection-view.component';
+import { FilterDateComponent } from '../components/filter-date/filter-date.component';
+import { FilterDropdownComponent } from '../components/filter-dropdown/filter-dropdown.component';
 import { GalleryLayoutComponent } from '../gallery-layout/gallery-layout.component';
+import { ShareCollectionModalComponent } from '../modal/share-collection-modal/share-collection-modal.component';
+import type { CollectionActionPayload, DisplayView } from '../models/collection-display.model';
+import { CollectionActionType, SortOption } from '../models/collection-display.model';
+import { CATEGORY_TAG, EVENT_DATE, EXPIRY_DATE, STARRED, STATUS } from '../models/filter.model';
 
 @Component({
   standalone: true,
@@ -46,8 +43,8 @@ import { GalleryLayoutComponent } from '../gallery-layout/gallery-layout.compone
 })
 export class ClientGalleryComponent {
   isLoading = false;
+  isSubmitting = signal(false);
   errorMessage = '';
-  collectionId: string | undefined;
 
   readonly STATUS = STATUS;
   readonly EVENT_DATE = EVENT_DATE;
@@ -113,7 +110,7 @@ export class ClientGalleryComponent {
     this.loadCollectionsFromAPI();
   }
 
-  nextStep(): void {
+  async nextStep(): Promise<void> {
     const step = this.currentStep();
 
     if (step === 2) {
@@ -125,12 +122,12 @@ export class ClientGalleryComponent {
     this.currentStep.set(next);
 
     if (next >= 3) {
-      this.finalizeWizard();
+      await this.finalizeWizard();
     }
   }
 
-  onNavigate(collectionId: string): void {
-    this.router
+  async onNavigate(collectionId: string): Promise<void> {
+    await this.router
       .navigate(['/upload'], {
         queryParams: { collectionId },
       })
@@ -142,7 +139,7 @@ export class ClientGalleryComponent {
     this.currentStep.set(2);
   }
 
-  onSortChange(option: SortOption) {
+  onSortChange(option: SortOption): void {
     this.sortOption.set(option);
   }
 
@@ -150,7 +147,7 @@ export class ClientGalleryComponent {
     this.displayView.set(view);
   }
 
-  onSelectDate(range: [dayjs.Dayjs, dayjs.Dayjs] | null) {
+  onSelectDate(range: [dayjs.Dayjs, dayjs.Dayjs] | null): void {
     this.dateRange.set(range);
   }
 
@@ -216,6 +213,8 @@ export class ClientGalleryComponent {
   private handleStepTwo(): void {
     this.errorMessage = '';
     this.isLoading = true;
+    this.isSubmitting.set(true);
+    this.isLoading = true;
 
     this.createCollectionRequest();
   }
@@ -227,21 +226,43 @@ export class ClientGalleryComponent {
         date: this.galleryDate(),
       })
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((res) => {
-        this.isLoading = false;
-        if (res) {
+      .subscribe({
+        next: (res) => {
+          if (!res) {
+            this.isSubmitting.set(false);
+            this.isLoading = false;
+            return;
+          }
+
+          // (Опционально) чтобы не вернуться на шаги при промежуточном ререндере
+          this.isCreatingNewCollection.set(false);
+
+          // ВАЖНО: не снимаем isLoading до завершения навигации
           this.router
-            .navigate(['/upload'], {
-              queryParams: { collectionId: res.id },
+            .navigate(['/upload'], { queryParams: { collectionId: res.id } })
+            .then(() => {
+              this.isSubmitting.set(false);
+              this.isLoading = false; // только после успешной навигации
             })
-            .catch();
-        }
+            .catch(() => {
+              // Если навигация не удалась — возвращаем UI в валидное состояние
+              this.errorMessage = 'Не удалось открыть загрузку. Попробуйте ещё раз.';
+              this.isSubmitting.set(false);
+              this.isLoading = false;
+              this.isCreatingNewCollection.set(true);
+            });
+        },
+        error: () => {
+          this.errorMessage = 'Ошибка при создании коллекции';
+          this.isSubmitting.set(false);
+          this.isLoading = false;
+        },
       });
   }
 
-  private finalizeWizard(): void {
+  async finalizeWizard(): Promise<void> {
     this.isCreatingNewCollection.set(false);
-    this.router
+    await this.router
       .navigate(['/upload'], {
         queryParams: {
           galleryName: this.galleryName(),

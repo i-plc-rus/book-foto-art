@@ -1,0 +1,143 @@
+/* =======================
+   PrimeNG / Angular reset
+   ======================= */
+
+/* 1. Цвет текста по умолчанию для всех полей */
+input,
+textarea,
+select,
+.p-inputtext {
+  color: #000 !important;
+}
+
+input::placeholder,
+textarea::placeholder,
+.p-inputtext::placeholder {
+  color: #6b7280 !important; /* серый плейсхолдер */
+}
+
+/* 2. Красная рамка для Angular форм с ошибкой */
+input.ng-invalid.ng-touched,
+textarea.ng-invalid.ng-touched,
+select.ng-invalid.ng-touched {
+  border-color: #ef4444 !important;
+}
+
+/* 3. Красная рамка для PrimeNG-инпутов с ошибкой */
+.p-inputtext.p-invalid,
+.p-dropdown.p-invalid,
+.p-calendar.p-invalid .p-inputtext,
+.p-password.p-invalid .p-inputtext,
+.p-autocomplete.p-invalid .p-inputtext {
+  border-color: #ef4444 !important;
+}
+
+/* 4. Подсветка рамки при фокусе на ошибочном поле */
+input.ng-invalid.ng-touched:focus,
+textarea.ng-invalid.ng-touched:focus,
+select.ng-invalid.ng-touched:focus,
+.p-inputtext.p-invalid:focus {
+  box-shadow: 0 0 0 1px #ef4444 inset !important;
+}
+
+/* 5. Текст сообщений об ошибках */
+.p-error,
+.error-text {
+  color: #ef4444 !important;
+  font-size: 0.875rem;
+}
+
+/* 6. Убираем белый текст из кнопок PrimeNG, если тема поставила */
+.p-button {
+  color: #fff; /* или #000, если кнопка светлая */
+}
+.p-button:disabled {
+  opacity: 0.6;
+}
+
+/* 7. Гарантия читаемости в комбинированных полях */
+.p-inputgroup input,
+.p-inputgroup .p-inputtext {
+  color: #000 !important;
+}
+
+/* --- Ошибка + фокус: красный должен оставаться --- */
+
+/* Нативные поля (Reactive Forms) */
+input.ng-invalid.ng-touched:focus,
+textarea.ng-invalid.ng-touched:focus,
+select.ng-invalid.ng-touched:focus {
+  border-color: #ef4444 !important;
+  outline: none !important;
+  box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.45) !important; /* внешний красный ринг */
+}
+
+/* PrimeNG InputText */
+:root .p-inputtext.p-invalid:focus {
+  border-color: #ef4444 !important;
+  outline: none !important;
+  /* переопределяем токен фокус-ринга темы на уровне элемента */
+  --p-focus-ring-shadow: 0 0 0 2px rgba(239, 68, 68, 0.45);
+  box-shadow: var(--p-focus-ring-shadow) !important;
+}
+
+/* Компоненты-контейнеры с фокусом внутри (у них ринг на обёртке) */
+:root .p-dropdown.p-invalid:focus-within,
+:root .p-calendar.p-invalid:focus-within,
+:root .p-password.p-invalid:focus-within,
+:root .p-autocomplete.p-invalid:focus-within {
+  border-color: #ef4444 !important;
+  outline: none !important;
+  --p-focus-ring-shadow: 0 0 0 2px rgba(239, 68, 68, 0.45);
+  box-shadow: var(--p-focus-ring-shadow) !important;
+}
+
+/* На всякий случай — внутренний инпут в комбинированных полях */
+:root .p-calendar.p-invalid .p-inputtext:focus,
+:root .p-password.p-invalid .p-inputtext:focus,
+:root .p-autocomplete.p-invalid .p-inputtext:focus {
+  border-color: #ef4444 !important;
+  outline: none !important;
+  box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.45) !important;
+}
+
+/* ЕДИНАЯ красная рамка для полей с ошибкой во фокусе — без тени */
+input.ng-invalid.ng-touched:focus,
+textarea.ng-invalid.ng-touched:focus,
+select.ng-invalid.ng-touched:focus {
+  border-color: #ef4444 !important;
+  border-width: 2px !important;
+  outline: none !important;
+  box-shadow: none !important; /* убираем второй контур */
+}
+
+/* PrimeNG InputText */
+:root .p-inputtext.p-invalid:focus {
+  border-color: #ef4444 !important;
+  border-width: 2px !important;
+  outline: none !important;
+  --p-focus-ring-shadow: none; /* гасим ринг темы */
+  box-shadow: none !important; /* на всякий случай */
+}
+
+/* Контейнерные компоненты (ринг рисуется на обёртке) */
+:root .p-dropdown.p-invalid:focus-within,
+:root .p-calendar.p-invalid:focus-within,
+:root .p-password.p-invalid:focus-within,
+:root .p-autocomplete.p-invalid:focus-within {
+  border-color: #ef4444 !important;
+  border-width: 2px !important;
+  outline: none !important;
+  --p-focus-ring-shadow: none;
+  box-shadow: none !important;
+}
+
+/* Внутренний инпут на всякий случай */
+:root .p-calendar.p-invalid .p-inputtext:focus,
+:root .p-password.p-invalid .p-inputtext:focus,
+:root .p-autocomplete.p-invalid .p-inputtext:focus {
+  border-color: #ef4444 !important;
+  border-width: 2px !important;
+  outline: none !important;
+  box-shadow: none !important;
+}

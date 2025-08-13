@@ -4,7 +4,10 @@ import type { ComponentType } from '@angular/cdk/portal';
 import { TemplateRef, DestroyRef, Injectable, inject } from '@angular/core';
 import { Observable, take, takeLast, takeUntil } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ImagePreviewData, ImageSliderData } from '../../../pages/collection-site/model/image-preview.model';
+import {
+  ImagePreviewData,
+  ImageSliderData,
+} from '../../../pages/collection-site/model/image-preview.model';
 import { ImageSliderModalComponent } from '../../../pages/collection-site/modal/image-slider-modal/image-slider-modal.component';
 import { ImagePreviewModalComponent } from '../../../pages/collection-site/modal/image-preview-modal/image-preview-modal.component';
 @Injectable({ providedIn: 'root' })
@@ -15,12 +18,9 @@ export class ModalService {
 
   open<R = unknown, D = unknown, C = unknown>(
     component: ComponentType<C> | TemplateRef<C>,
-    config?: DialogConfig<D, DialogRef<R, C>>
+    config?: DialogConfig<D, DialogRef<R, C>>,
   ): DialogRef<R, C> {
-    const positionStrategy = this.overlay
-      .position()
-      .global()
-      .centerHorizontally();
+    const positionStrategy = this.overlay.position().global().centerHorizontally();
 
     const dialogRef = this.dialog.open(component, {
       positionStrategy,
@@ -31,11 +31,7 @@ export class ModalService {
 
     if (!config?.disableClose) {
       dialogRef.outsidePointerEvents
-        .pipe(
-          take(1),
-          takeUntil(dialogRef.closed),
-          takeUntilDestroyed(this.destroyRef)
-        )
+        .pipe(take(1), takeUntil(dialogRef.closed), takeUntilDestroyed(this.destroyRef))
         .subscribe(() => dialogRef.close());
     }
 
@@ -51,14 +47,13 @@ export class ModalService {
    */
 
   previewImage(data: ImagePreviewData): Observable<number> {
-    const dialogRef = this.open<
-      null,
-      ImagePreviewData,
-      ImagePreviewModalComponent
-    >(ImagePreviewModalComponent, {
-      data,
-      panelClass: 'image-modal',
-    });
+    const dialogRef = this.open<null, ImagePreviewData, ImagePreviewModalComponent>(
+      ImagePreviewModalComponent,
+      {
+        data,
+        panelClass: 'image-modal',
+      },
+    );
 
     return dialogRef.componentInstance!.favoriteIndex$.asObservable();
   }
@@ -75,13 +70,12 @@ export class ModalService {
    */
 
   openImageSlider(data: ImageSliderData): Observable<number> {
-    const dialogRef = this.open<
-      number,
-      ImageSliderData,
-      ImageSliderModalComponent
-    >(ImageSliderModalComponent, {
-      data,
-    });
+    const dialogRef = this.open<number, ImageSliderData, ImageSliderModalComponent>(
+      ImageSliderModalComponent,
+      {
+        data,
+      },
+    );
 
     return dialogRef.componentInstance!.result$.pipe(takeLast(1));
   }

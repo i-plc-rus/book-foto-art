@@ -2,16 +2,15 @@ import { Injectable, signal } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
-
 export class CollectionStateService {
   readonly title = signal<string>('Моя галерея');
   readonly date = signal<Date>(new Date());
   readonly coverUrl = signal<string | null>(null);
 
   private currentCollectionId = new BehaviorSubject<string | null>(
-    localStorage.getItem('currentCollectionId')
+    localStorage.getItem('currentCollectionId'),
   );
 
   setCollectionData(data: { title: string; date: Date; coverUrl: string }) {

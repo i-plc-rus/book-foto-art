@@ -21,13 +21,9 @@ export class RangeCalendarComponent {
   readonly endDate = model<Date | null>(null);
   readonly isOpen = model<boolean>(false);
 
-  readonly start = computed(() =>
-    this.startDate() ? dayjs(this.startDate()!) : dayjs()
-  );
+  readonly start = computed(() => (this.startDate() ? dayjs(this.startDate()!) : dayjs()));
 
-  readonly end = computed(() =>
-    this.endDate() ? dayjs(this.endDate()!) : dayjs()
-  );
+  readonly end = computed(() => (this.endDate() ? dayjs(this.endDate()!) : dayjs()));
 
   readonly locale = {
     applyLabel: 'Выбрать',

@@ -5,13 +5,13 @@ import { Component } from '@angular/core';
   selector: 'app-easy-choice',
   imports: [CommonModule],
   templateUrl: './easy-choice.component.html',
-  styleUrl: './easy-choice.component.css'
+  styleUrl: './easy-choice.component.css',
 })
 export class EasyChoiceComponent {
-features = [
+  features = [
     'Избранное в печать',
     'Скачать избранное',
     'Поделиться избранным',
-    'Утверждение обложки галереи'
+    'Утверждение обложки галереи',
   ];
 }

@@ -1,19 +1,16 @@
-import {Component, computed, signal} from '@angular/core';
-import {ActionBarComponent} from '../../../shared/components/editor-action-bar/editor-action-bar.component';
-import {DevicePreviewComponent} from '../../../shared/components/device-preview/device-preview.component';
-import {CoverTemplate} from '../design-cover/cover-template';
-import {IActionBarItem} from '../../../shared/components/editor-action-bar/action-bar-item';
-import {COLOR_TEMPLATES, ACTION_BAR_ITEMS} from "./design-color.constants";
+import { Component, computed, signal } from '@angular/core';
+import { ActionBarComponent } from '../../../shared/components/editor-action-bar/editor-action-bar.component';
+import { DevicePreviewComponent } from '../../../shared/components/device-preview/device-preview.component';
+import { CoverTemplate } from '../design-cover/cover-template';
+import { IActionBarItem } from '../../../shared/components/editor-action-bar/action-bar-item';
+import { COLOR_TEMPLATES, ACTION_BAR_ITEMS } from './design-color.constants';
 
 @Component({
   standalone: true,
   selector: 'app-design-color',
   templateUrl: './design-color.component.html',
   styleUrl: './design-color.component.css',
-  imports: [
-    ActionBarComponent,
-    DevicePreviewComponent
-  ]
+  imports: [ActionBarComponent, DevicePreviewComponent],
 })
 export class DesignColorComponent {
   templates = signal<CoverTemplate[]>(COLOR_TEMPLATES);
@@ -25,18 +22,13 @@ export class DesignColorComponent {
   selectedTemplate = signal<CoverTemplate | null>(null);
   viewMode = signal<'desktop' | 'icon-m'>('desktop');
 
-  regularTemplates = computed(() =>
-    this.templates().filter(t => t.id !== 'none')
-  );
+  regularTemplates = computed(() => this.templates().filter((t) => t.id !== 'none'));
 
-  visibleTemplates = computed(() =>
-    this.regularTemplates()
-  );
-
+  visibleTemplates = computed(() => this.regularTemplates());
 
   handleMenuItem(item: IActionBarItem): void {
     console.log('Menu item clicked:', item);
-    switch(item.id) {
+    switch (item.id) {
       case 'get-link':
         this.getDirectLink();
         break;
@@ -81,5 +73,4 @@ export class DesignColorComponent {
   setViewMode(mode: 'desktop' | 'icon-m') {
     this.viewMode.set(mode);
   }
-
 }

@@ -2,10 +2,9 @@ import { Pipe, PipeTransform } from '@angular/core';
 
 @Pipe({
   standalone: true,
-  name: 'fileSize'
+  name: 'fileSize',
 })
 export class FileSizePipe implements PipeTransform {
-
   transform(bytes: number, decimals: number = 2): string {
     if (bytes === 0) return '0 Bytes';
 

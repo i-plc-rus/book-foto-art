@@ -5,7 +5,7 @@
       <div class="collection-site__overlay">
         <h1 class="collection-site__name">{{ gallery().name }}</h1>
         <div class="collection-site__date">
-          {{ gallery().createDate | date : "d MMM y" }}
+          {{ gallery().createDate | date: 'd MMM y' }}
         </div>
         <button class="collection-site__down-btn" (click)="scrollToGallery()">
           Посмотреть галерею
@@ -51,10 +51,7 @@
       }
     </div>
     <div class="collection-site__flex">
-      <button class="collection-site__up-btn" (click)="scrollToGallery()">
-        Вверх
-      </button>
+      <button class="collection-site__up-btn" (click)="scrollToGallery()">Вверх</button>
     </div>
   </section>
 }
-

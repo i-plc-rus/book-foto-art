@@ -1,13 +1,6 @@
-import {
-  Component,
-  Input,
-  Output,
-  EventEmitter,
-  HostListener,
-  signal,
-} from '@angular/core';
+import { Component, Input, Output, EventEmitter, HostListener, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import {MenuOption, UploadFile} from '../../../gallery-upload/interface/upload-file';
+import { MenuOption, UploadFile } from '../../../gallery-upload/interface/upload-file';
 
 @Component({
   standalone: true,

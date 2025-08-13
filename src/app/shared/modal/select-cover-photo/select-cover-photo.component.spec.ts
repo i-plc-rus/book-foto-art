@@ -8,9 +8,8 @@ describe('SelectCoverPhotoComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [SelectCoverPhotoComponent]
-    })
-    .compileComponents();
+      imports: [SelectCoverPhotoComponent],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(SelectCoverPhotoComponent);
     component = fixture.componentInstance;

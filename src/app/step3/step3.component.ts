@@ -5,10 +5,10 @@ import { FormsModule } from '@angular/forms';
   selector: 'app-step3',
   imports: [FormsModule],
   templateUrl: './step3.component.html',
-  styleUrl: './step3.component.css'
+  styleUrl: './step3.component.css',
 })
-export class Step3Component implements OnInit{
-title = '';
+export class Step3Component implements OnInit {
+  title = '';
   date = '';
   status = 'draft';
   uploadedFiles: { file: File; preview: string }[] = [];

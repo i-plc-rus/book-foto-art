@@ -8,9 +8,8 @@ describe('FocalPointModalComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [FocalPointModalComponent]
-    })
-    .compileComponents();
+      imports: [FocalPointModalComponent],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(FocalPointModalComponent);
     component = fixture.componentInstance;

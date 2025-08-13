@@ -1,14 +1,20 @@
-<div class="fixed inset-0 bg-[#0000002e] z-50 flex items-center justify-center p-4"
-     (click)="close.emit()">
-  <div class="bg-white shadow-2xl w-full max-w-[720px] flex flex-col overflow-hidden p-5 md:p-7"
-       (click)="$event.stopPropagation()">
+<div
+  class="fixed inset-0 bg-[#0000002e] z-50 flex items-center justify-center p-4"
+  (click)="close.emit()"
+>
+  <div
+    class="bg-white shadow-2xl w-full max-w-[720px] flex flex-col overflow-hidden p-5 md:p-7"
+    (click)="$event.stopPropagation()"
+  >
     <div class="pb-2 md:pb-5">
       <div class="flex items-center justify-between">
         <div>
           <h3 class="text-sm font-semibold tracking-widest leading-[1.429]">Set focal point</h3>
         </div>
-        <button (click)="close.emit()"
-                class="text-gray-400 hover:text-gray-500 text-2xl focus:outline-none">
+        <button
+          (click)="close.emit()"
+          class="text-gray-400 hover:text-gray-500 text-2xl focus:outline-none"
+        >
           &times;
         </button>
       </div>
@@ -20,18 +26,18 @@
           [imageUrl]="imageUrl"
           [initialPosition]="currentPosition"
           (positionChanged)="handlePositionChange($event)"
-          class="w-full h-full">
+          class="w-full h-full"
+        >
         </app-focal-point>
       </div>
     </div>
   </div>
 </div>
 @if (showSuccessMessage()) {
-  <div class="fixed bottom-4 right-4 bg-black bg-opacity-70 text-white text-[14px] p-4 shadow-lg z-50"
-    style="min-width: 150px; text-align: center;"
+  <div
+    class="fixed bottom-4 right-4 bg-black bg-opacity-70 text-white text-[14px] p-4 shadow-lg z-50"
+    style="min-width: 150px; text-align: center"
   >
     Collection update
   </div>
 }
-
-

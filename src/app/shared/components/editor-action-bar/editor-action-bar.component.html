@@ -18,23 +18,25 @@
         </svg>
       </button>
       @if (isMenuOpen) {
-        <div class="absolute left-0 mt-1 w-56 bg-white shadow-lg rounded-md border border-[#eaeaea] z-50">
+        <div
+          class="absolute left-0 mt-1 w-56 bg-white shadow-lg rounded-md border border-[#eaeaea] z-50"
+        >
           <div class="py-1">
             @for (item of menuItems; track item.id) {
               @if (item.divider) {
                 <div class="border-t border-[#eaeaea] my-1"></div>
-
               } @else {
-                <a href="#"
-                   class="block px-4 py-2 text-sm flex items-center"
-                   [class.text-gray-400]="item.disabled"
-                   [class.cursor-not-allowed]="item.disabled"
-                   [class.hover:bg-gray-50]="!item.disabled"
-                   (click)="!item.disabled && onMenuItemClick(item, $event)"
+                <a
+                  href="#"
+                  class="block px-4 py-2 text-sm flex items-center"
+                  [class.text-gray-400]="item.disabled"
+                  [class.cursor-not-allowed]="item.disabled"
+                  [class.hover:bg-gray-50]="!item.disabled"
+                  (click)="!item.disabled && onMenuItemClick(item, $event)"
                 >
                   @if (item.icon) {
                     <span class="mr-2 w-4 h-4 flex items-center">
-                      <img [src]="item.icon" [alt]="item.label" class="w-full">
+                      <img [src]="item.icon" [alt]="item.label" class="w-full" />
                     </span>
                   }
 
@@ -44,20 +46,23 @@
             }
           </div>
         </div>
-
       }
     </div>
 
     <div class="flex space-x-3">
-      <button class="flex items-center px-4 py-2 text-[#3d3d3d] hover:bg-[#f6f7f7] transition-colors"
+      <button
+        class="flex items-center px-4 py-2 text-[#3d3d3d] hover:bg-[#f6f7f7] transition-colors"
         [disabled]="previewDisabled"
-        (click)="onButtonClick('preview')">
+        (click)="onButtonClick('preview')"
+      >
         Preview
       </button>
 
-      <button class="flex items-center px-4 py-2 bg-[#1abc9c] text-white hover:bg-[#008e74] transition-colors"
+      <button
+        class="flex items-center px-4 py-2 bg-[#1abc9c] text-white hover:bg-[#008e74] transition-colors"
         [disabled]="publishDisabled"
-        (click)="onButtonClick('publish')">
+        (click)="onButtonClick('publish')"
+      >
         Publish
       </button>
     </div>

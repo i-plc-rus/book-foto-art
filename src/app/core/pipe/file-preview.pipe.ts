@@ -1,12 +1,10 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
 @Pipe({
-  name: 'filePreview'
+  name: 'filePreview',
 })
 export class FilePreviewPipe implements PipeTransform {
-
   transform(file: File): any {
     return URL.createObjectURL(file);
   }
-
 }

@@ -13,10 +13,11 @@
       <button
         class="flex-shrink-0 text-sm font-normal leading-9 border-b-2"
         [ngClass]="{
-        'border-[#1abc9c] text-[#111111]': activeTab() === tab.id,
-        'border-transparent text-[#888]': activeTab() !== tab.id
-      }"
-        (click)="selectTab(tab.id)">
+          'border-[#1abc9c] text-[#111111]': activeTab() === tab.id,
+          'border-transparent text-[#888]': activeTab() !== tab.id,
+        }"
+        (click)="selectTab(tab.id)"
+      >
         {{ tab.title }}
       </button>
     }

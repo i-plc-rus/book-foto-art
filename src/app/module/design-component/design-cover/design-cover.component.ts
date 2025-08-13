@@ -1,26 +1,42 @@
-import {Component, computed, OnInit, signal, inject, ElementRef, ViewChild, DestroyRef} from '@angular/core';
+import {
+  Component,
+  computed,
+  OnInit,
+  signal,
+  inject,
+  ElementRef,
+  ViewChild,
+  DestroyRef,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActionBarComponent } from "../../../shared/components/editor-action-bar/editor-action-bar.component";
-import { IActionBarItem } from "../../../shared/components/editor-action-bar/action-bar-item";
-import { DevicePreviewComponent } from "../../../shared/components/device-preview/device-preview.component";
-import { ACTION_BAR_ITEMS, COVER_TEMPLATES } from "./design-cover.constants";
-import { CoverTemplate } from "./cover-template";
+import { ActionBarComponent } from '../../../shared/components/editor-action-bar/editor-action-bar.component';
+import { IActionBarItem } from '../../../shared/components/editor-action-bar/action-bar-item';
+import { DevicePreviewComponent } from '../../../shared/components/device-preview/device-preview.component';
+import { ACTION_BAR_ITEMS, COVER_TEMPLATES } from './design-cover.constants';
+import { CoverTemplate } from './cover-template';
 import { MainLayoutComponent } from '../../main-layout/main-layout.component';
-import {FocalPointModalComponent} from '../../../shared/modal/focal-point-modal/focal-point-modal.component';
-import {ChangeCoverComponent} from '../../../shared/modal/change-cover/change-cover.component';
-import {SelectCoverPhotoComponent} from '../../../shared/modal/select-cover-photo/select-cover-photo.component';
-import {environment} from '../../../../environments/environment';
-import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
-import {finalize} from 'rxjs';
-import {CollectionService} from '../../../gallery-upload/service/collection.service';
-import {ActivatedRoute} from '@angular/router';
+import { FocalPointModalComponent } from '../../../shared/modal/focal-point-modal/focal-point-modal.component';
+import { ChangeCoverComponent } from '../../../shared/modal/change-cover/change-cover.component';
+import { SelectCoverPhotoComponent } from '../../../shared/modal/select-cover-photo/select-cover-photo.component';
+import { environment } from '../../../../environments/environment';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { finalize } from 'rxjs';
+import { CollectionService } from '../../../gallery-upload/service/collection.service';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   standalone: true,
   selector: 'app-design-cover',
   templateUrl: './design-cover.component.html',
   styleUrl: './design-cover.component.css',
-  imports: [CommonModule, ActionBarComponent, DevicePreviewComponent, FocalPointModalComponent, ChangeCoverComponent, SelectCoverPhotoComponent]
+  imports: [
+    CommonModule,
+    ActionBarComponent,
+    DevicePreviewComponent,
+    FocalPointModalComponent,
+    ChangeCoverComponent,
+    SelectCoverPhotoComponent,
+  ],
 })
 export class DesignCoverComponent implements OnInit {
   @ViewChild('fileInput') fileInput!: ElementRef;
@@ -50,21 +66,13 @@ export class DesignCoverComponent implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
   private readonly route = inject(ActivatedRoute);
 
-  containerWidth = computed(() =>
-    this.viewMode() === 'icon-m' ? 'w-[280px]' : 'w-[420px]'
-  );
+  containerWidth = computed(() => (this.viewMode() === 'icon-m' ? 'w-[280px]' : 'w-[420px]'));
 
-  regularTemplates = computed(() =>
-    this.templates().filter(t => t.id !== 'none')
-  );
+  regularTemplates = computed(() => this.templates().filter((t) => t.id !== 'none'));
 
-  visibleTemplates = computed(() =>
-    this.regularTemplates().slice(0, this.itemsToShow())
-  );
+  visibleTemplates = computed(() => this.regularTemplates().slice(0, this.itemsToShow()));
 
-  noneTemplate = computed(() =>
-    this.templates().find(t => t.id === 'none')!
-  );
+  noneTemplate = computed(() => this.templates().find((t) => t.id === 'none')!);
 
   ngOnInit() {
     if (this.templates().length > 0) {
@@ -121,7 +129,7 @@ export class DesignCoverComponent implements OnInit {
       this.selectedTemplate.set({
         id: 'custom',
         name: 'Custom Cover',
-        image: this.previewImageUrl
+        image: this.previewImageUrl,
       });
 
       this.closeChangeCoverModal();
@@ -138,38 +146,32 @@ export class DesignCoverComponent implements OnInit {
   }
 
   loadCollectionPhotos() {
-    this.route.queryParams
-      .pipe(
-        takeUntilDestroyed(this.destroyRef)
-      )
-      .subscribe((params: any) => {
-        const collectionId = params['collectionId'];
-        this.collectionId.set(collectionId);
-        this.fetchPhotos(collectionId);
-      });
+    this.route.queryParams.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((params: any) => {
+      const collectionId = params['collectionId'];
+      this.collectionId.set(collectionId);
+      this.fetchPhotos(collectionId);
+    });
   }
 
   private fetchPhotos(collectionId: string) {
     this.isLoading.set(true);
 
-    this.collectionService.getPhotos(collectionId, {})
+    this.collectionService
+      .getPhotos(collectionId, {})
       .pipe(
         takeUntilDestroyed(this.destroyRef),
-        finalize(() => this.isLoading.set(false))
+        finalize(() => this.isLoading.set(false)),
       )
       .subscribe({
         next: (response: any) => {
-          this.collectionPhotos.set(
-            response.files.map((photo: any) => this.mapPhotoToView(photo))
-          );
+          this.collectionPhotos.set(response.files.map((photo: any) => this.mapPhotoToView(photo)));
         },
         error: (err) => {
           console.error('Failed to load photos:', err);
           this.collectionPhotos.set([]);
-        }
+        },
       });
   }
-
 
   private mapPhotoToView(photo: any): any {
     return {
@@ -180,13 +182,13 @@ export class DesignCoverComponent implements OnInit {
         name: photo.file_name,
         lastModified: new Date(photo.uploaded_at).getTime(),
         size: photo.file_size,
-        type: `image/${photo.file_ext.slice(1)}`
-      }
+        type: `image/${photo.file_ext.slice(1)}`,
+      },
     };
   }
 
   handleMenuItem(item: IActionBarItem): void {
-    switch(item.id) {
+    switch (item.id) {
       case 'get-link':
         this.getDirectLink();
         break;

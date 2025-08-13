@@ -2,7 +2,7 @@
   background-color: #000;
   color: #ccc;
   padding: 4rem 2rem;
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
 
 .footer__container {
@@ -41,13 +41,10 @@
   padding: 0;
   margin: 0;
   text-align: left; /* на всякий случай */
-  
 }
 
 .footer__column li {
   margin-bottom: 0.5rem;
-  
-  
 }
 
 .footer__column a {
@@ -59,9 +56,9 @@
   font-family: 'Montserrat', 'Helvetica Neue', Helvetica, Arial, sans-serif;
   font-size: 0.8rem;
   color: #ccc;
-  line-height: 1.1;  
-  display: block;         /* добавлено для надёжности выравнивания */
-  text-align: left;       /* добавлено */
+  line-height: 1.1;
+  display: block; /* добавлено для надёжности выравнивания */
+  text-align: left; /* добавлено */
 }
 
 .footer__column a:hover {

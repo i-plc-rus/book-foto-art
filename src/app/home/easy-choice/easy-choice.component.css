@@ -16,7 +16,7 @@
 
 .image-section {
   flex: 1;
-  order: 2; 
+  order: 2;
   display: flex;
   justify-content: flex-start;
   padding-right: 1rem;
@@ -24,7 +24,7 @@
 
 .text-section {
   flex: 1;
-  order: 1; 
+  order: 1;
 }
 
 .image-section img {

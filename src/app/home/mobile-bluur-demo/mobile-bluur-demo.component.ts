@@ -4,8 +4,6 @@ import { Component } from '@angular/core';
   selector: 'app-mobile-bluur-demo',
   imports: [],
   templateUrl: './mobile-bluur-demo.component.html',
-  styleUrl: './mobile-bluur-demo.component.css'
+  styleUrl: './mobile-bluur-demo.component.css',
 })
-export class MobileBluurDemoComponent {
-
-}
+export class MobileBluurDemoComponent {}

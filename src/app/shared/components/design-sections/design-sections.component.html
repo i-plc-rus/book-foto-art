@@ -8,10 +8,11 @@
         <a
           (click)="designService.navigateToSection(section.id)"
           [class.active]="designService.getActiveSection()?.id === section.id"
-          class="section-item">
-              <span class="section-icon">
-                <img [src]="section.icon" [alt]="section.name" />
-              </span>
+          class="section-item"
+        >
+          <span class="section-icon">
+            <img [src]="section.icon" [alt]="section.name" />
+          </span>
           <span class="section-name">{{ section.name }}</span>
         </a>
       </li>

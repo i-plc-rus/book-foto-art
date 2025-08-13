@@ -18,23 +18,14 @@
             <app-filter-dropdown [config]="STATUS" [disabled]="true" />
             <app-filter-dropdown [config]="CATEGORY_TAG" [disabled]="true" />
 
-            <app-filter-date
-              [config]="EVENT_DATE"
-              (onSelect)="onSelectDate($event)"
-            />
+            <app-filter-date [config]="EVENT_DATE" (onSelect)="onSelectDate($event)" />
             <app-filter-dropdown [config]="EXPIRY_DATE" [disabled]="true" />
             <app-filter-dropdown [config]="STARRED" [disabled]="true" />
           </div>
 
           <div class="collection-top__filter">
-            <app-sort-dropdown
-              [sort]="sortOption()"
-              (sortChange)="onSortChange($event)"
-            />
-            <app-collection-view
-              [view]="displayView()"
-              (chooseView)="changeDisplayView($event)"
-            />
+            <app-sort-dropdown [sort]="sortOption()" (sortChange)="onSortChange($event)" />
+            <app-collection-view [view]="displayView()" (chooseView)="changeDisplayView($event)" />
           </div>
         </div>
       </div>
@@ -48,7 +39,7 @@
 
 <ng-template #steps>
   <!-- Шаг 1 -->
-  @if(currentStep() === 1){
+  @if (currentStep() === 1) {
     <section class="welcome centered mt-5 md:mt-0">
       <p class="subtitle">Начало работы</p>
       <h1 class="headline">Опубликовать свою первую галерею всего за 3 шага</h1>
@@ -57,10 +48,14 @@
         <img src="../../../../assets/icons/promo.png" alt="Promo Image" />
       </div>
     </section>
-  }@else {
+  } @else {
     <section class="welcome centered mt-5 md:mt-0">
       <p class="subtitle">Шаг 2 из 3</p>
-      <h1 class="headline text-[1.2rem] font-medium mb-4 leading-[1.2] tracking-[0.02em] text-[#111] md:text-[1.8rem] md:mb-6 ">Введите наименование коллекции</h1>
+      <h1
+        class="headline text-[1.2rem] font-medium mb-4 leading-[1.2] tracking-[0.02em] text-[#111] md:text-[1.8rem] md:mb-6"
+      >
+        Введите наименование коллекции
+      </h1>
 
       <div class="form-group">
         <label for="galleryName">Имя коллекции</label>
@@ -75,18 +70,12 @@
 
       <div class="form-group">
         <label for="galleryDate">Дата события</label>
-        <input
-          id="galleryDate"
-          type="date"
-          [(ngModel)]="galleryDate"
-          name="galleryDate"
-        />
+        <input id="galleryDate" type="date" [(ngModel)]="galleryDate" name="galleryDate" />
       </div>
       <div class="form-group">
-        <button class="upload-button w-[100%] md:w-[auto] " (click)="nextStep()">
+        <button class="upload-button w-[100%] md:w-[auto]" (click)="nextStep()">
           Создать коллекцию
         </button>
-
       </div>
     </section>
   }
@@ -95,34 +84,35 @@
 <ng-template #gridView>
   <div class="file-grid grid-small">
     @for (item of filteredCollections(); track $index) {
-      <app-collection-card [collection]="item" (action)="onActionClick($event)" (navigate)="onNavigate($event)"/>
+      <app-collection-card
+        [collection]="item"
+        (action)="onActionClick($event)"
+        (navigate)="onNavigate($event)"
+      />
     }
   </div>
 </ng-template>
 
 <ng-template #tableView>
-  <app-collection-table
-    [collections]="filteredCollections()"
-    (action)="onActionClick($event)"
-  />
+  <app-collection-table [collections]="filteredCollections()" (action)="onActionClick($event)" />
 </ng-template>
 
 <ng-template #emptyView>
   <div class="empty-container">
     <img class="cover-image" src="assets/icons/empty.svg" alt="Пусто" />
     <p>Ничего не найдено</p>
-    <button (click)="handleNewCollection()" class="create-button">
-      Создать первую коллекцию
-    </button>
+    <button (click)="handleNewCollection()" class="create-button">Создать первую коллекцию</button>
   </div>
 </ng-template>
 
 <ng-template #view>
   @if (filteredCollections().length === 0) {
     <ng-container [ngTemplateOutlet]="emptyView"></ng-container>
-  } @else { @if (displayView() === 'grid') {
-    <ng-container [ngTemplateOutlet]="gridView"></ng-container>
   } @else {
-    <ng-container [ngTemplateOutlet]="tableView"></ng-container>
-  } }
+    @if (displayView() === 'grid') {
+      <ng-container [ngTemplateOutlet]="gridView"></ng-container>
+    } @else {
+      <ng-container [ngTemplateOutlet]="tableView"></ng-container>
+    }
+  }
 </ng-template>

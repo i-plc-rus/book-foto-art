@@ -82,7 +82,7 @@
   }
 
   &__btn:disabled,
-  &__btn[aria-disabled="true"] {
+  &__btn[aria-disabled='true'] {
     cursor: not-allowed;
     opacity: 0.6;
   }

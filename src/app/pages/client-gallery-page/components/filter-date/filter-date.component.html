@@ -14,24 +14,24 @@
     {{ summary() }}
 
     @if (startDate() && endDate()) {
-    <button
-      type="button"
-      class="filter-date__clear"
-      (click)="clear($event)"
-      aria-label="Очистить фильтр"
-    >
-      ✕
-    </button>
+      <button
+        type="button"
+        class="filter-date__clear"
+        (click)="clear($event)"
+        aria-label="Очистить фильтр"
+      >
+        ✕
+      </button>
     }
   </button>
 
   @if (isOpen()) {
-  <div class="filter-date__menu">
-    <app-range-calendar
-      [(startDate)]="startDate"
-      [(endDate)]="endDate"
-      [(isOpen)]="isOpen"
-    ></app-range-calendar>
-  </div>
+    <div class="filter-date__menu">
+      <app-range-calendar
+        [(startDate)]="startDate"
+        [(endDate)]="endDate"
+        [(isOpen)]="isOpen"
+      ></app-range-calendar>
+    </div>
   }
 </div>

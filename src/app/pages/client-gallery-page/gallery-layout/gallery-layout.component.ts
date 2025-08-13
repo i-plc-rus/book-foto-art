@@ -1,20 +1,16 @@
-import {Component, HostListener, OnInit, signal} from '@angular/core';
+import { Component, HostListener, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import {MobileHeaderComponent} from '../../sidebar/mobile-header/mobile-header.component';
-import {SidebarComponent} from '../../sidebar/sidebar.component';
+import { MobileHeaderComponent } from '../../sidebar/mobile-header/mobile-header.component';
+import { SidebarComponent } from '../../sidebar/sidebar.component';
 
 @Component({
   standalone: true,
   selector: 'app-gallery-layout',
   templateUrl: './gallery-layout.component.html',
   styleUrls: ['./gallery-layout.component.css'],
-  imports: [
-    CommonModule,
-    SidebarComponent,
-    MobileHeaderComponent
-  ]
+  imports: [CommonModule, SidebarComponent, MobileHeaderComponent],
 })
-export class GalleryLayoutComponent implements OnInit{
+export class GalleryLayoutComponent implements OnInit {
   isMobileView = signal(false);
 
   @HostListener('window:resize', ['$event'])

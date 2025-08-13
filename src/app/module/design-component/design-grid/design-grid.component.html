@@ -1,43 +1,51 @@
 <app-editor-action-bar
-        [menuItems]="actionBarItems"
-        [previewDisabled]="isPreviewDisabled"
-        [publishDisabled]="isPublishDisabled"
-        (menuItemClick)="handleMenuItem($event)"
-        (buttonClick)="handleButtonClick($event)"
+  [menuItems]="actionBarItems"
+  [previewDisabled]="isPreviewDisabled"
+  [publishDisabled]="isPublishDisabled"
+  (menuItemClick)="handleMenuItem($event)"
+  (buttonClick)="handleButtonClick($event)"
 ></app-editor-action-bar>
 <div class="flex bg-[#fff] max-h">
-    <div class="template flex flex-col w-1/2">
-        <div class="bg-white z-10 p-[1rem] md:p-[1.5rem]">
-            <h2 class="font-medium text-[1.375rem] leading-[1.18]">Grid</h2>
-        </div>
+  <div class="template flex flex-col w-1/2">
+    <div class="bg-white z-10 p-[1rem] md:p-[1.5rem]">
+      <h2 class="font-medium text-[1.375rem] leading-[1.18]">Grid</h2>
+    </div>
 
-        <div class="scroll p-[1rem] md:p-[1.5rem] pt-0 md:pt-0  overflow-y-auto bg-[#fff] flex-1">
-            <div class="space-y-8">
-                @for (group of gridGroups(); track group.title) {
-                    <div>
-                        <h3 class="text-[0.875rem] leading-[1.7] text-[#3d3d3d] font-semibold mb-2">{{ group.title }}</h3>
-                        <div class="grid grid-cols-2 gap-4">
-                            @for (item of group.items; track item.id) {
-                                <div class="flex flex-col items-center">
-                                    <div (click)="selectItem(item)"
-                                         [class.border-green-500]="isSelected(item)"
-                                         class="template-item flex items-center justify-center pb_ border border-[#eaeaea] p-3 w-full transition-colors cursor-pointer">
-                                        <img [src]="item.image" [alt]="item.name" class="w-[24px] object-contain images-grid"/>
-                                    </div>
-                                    <label class="p-2 text-center text-sm font-medium">{{ item.name }}</label>
-                                </div>
-                            }
-                        </div>
-                    </div>
-                }
+    <div class="scroll p-[1rem] md:p-[1.5rem] pt-0 md:pt-0 overflow-y-auto bg-[#fff] flex-1">
+      <div class="space-y-8">
+        @for (group of gridGroups(); track group.title) {
+          <div>
+            <h3 class="text-[0.875rem] leading-[1.7] text-[#3d3d3d] font-semibold mb-2">
+              {{ group.title }}
+            </h3>
+            <div class="grid grid-cols-2 gap-4">
+              @for (item of group.items; track item.id) {
+                <div class="flex flex-col items-center">
+                  <div
+                    (click)="selectItem(item)"
+                    [class.border-green-500]="isSelected(item)"
+                    class="template-item flex items-center justify-center pb_ border border-[#eaeaea] p-3 w-full transition-colors cursor-pointer"
+                  >
+                    <img
+                      [src]="item.image"
+                      [alt]="item.name"
+                      class="w-[24px] object-contain images-grid"
+                    />
+                  </div>
+                  <label class="p-2 text-center text-sm font-medium">{{ item.name }}</label>
+                </div>
+              }
             </div>
-        </div>
+          </div>
+        }
+      </div>
     </div>
+  </div>
 
-    <div class="device border-t border-t-[#cecccc] flex flex-col w-full">
-        <app-device-preview
-                [viewMode]="viewMode()"
-                (viewModeChange)="setViewMode($event)"
-        ></app-device-preview>
-    </div>
+  <div class="device border-t border-t-[#cecccc] flex flex-col w-full">
+    <app-device-preview
+      [viewMode]="viewMode()"
+      (viewModeChange)="setViewMode($event)"
+    ></app-device-preview>
+  </div>
 </div>

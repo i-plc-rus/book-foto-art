@@ -4,8 +4,6 @@ import { Component } from '@angular/core';
   selector: 'app-photo-lab',
   imports: [],
   templateUrl: './photo-lab.component.html',
-  styleUrl: './photo-lab.component.css'
+  styleUrl: './photo-lab.component.css',
 })
-export class PhotoLabComponent {
-
-}
+export class PhotoLabComponent {}

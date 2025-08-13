@@ -7,11 +7,7 @@ import {
 import { provideRouter } from '@angular/router';
 
 import { routes } from './app.routes';
-import {
-  HTTP_INTERCEPTORS,
-  provideHttpClient,
-  withInterceptorsFromDi,
-} from '@angular/common/http';
+import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { AuthInterceptor } from './core/interceptor/auth.interceptor';
 import { NgxDaterangepickerMd } from 'ngx-daterangepicker-material';
 import { SidebarService } from './core/service/sidebar.service';
@@ -31,7 +27,7 @@ export const appConfig: ApplicationConfig = {
       NgxDaterangepickerMd.forRoot({
         separator: ' – ',
         format: 'DD.MM.YYYY',
-      })
+      }),
     ),
     { provide: LOCALE_ID, useValue: 'ru' },
   ],

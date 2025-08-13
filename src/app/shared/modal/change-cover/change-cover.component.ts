@@ -1,11 +1,11 @@
-import {Component, EventEmitter, Output} from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
 
 @Component({
   standalone: true,
   selector: 'app-change-cover',
   templateUrl: './change-cover.component.html',
   styleUrl: './change-cover.component.css',
-  imports: []
+  imports: [],
 })
 export class ChangeCoverComponent {
   @Output() close = new EventEmitter<void>();

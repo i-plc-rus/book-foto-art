@@ -16,12 +16,7 @@ import { RangeCalendarComponent } from '../../../../shared/components/range-cale
 
 @Component({
   selector: 'app-filter-date',
-  imports: [
-    FormsModule,
-    NgxDaterangepickerMd,
-    NgClickOutsideDirective,
-    RangeCalendarComponent,
-  ],
+  imports: [FormsModule, NgxDaterangepickerMd, NgClickOutsideDirective, RangeCalendarComponent],
   templateUrl: './filter-date.component.html',
   styleUrls: ['./filter-date.component.scss'],
   standalone: true,

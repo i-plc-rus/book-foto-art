@@ -18,11 +18,13 @@
   </button>
 
   @if (isMenuOpen()) {
-  <div class="menu-container__dropdown">
-    <button class="menu-container__item" (click)="onActionClick(actionType.Publish)">Опубликовать</button>
-    <button class="menu-container__item" (click)="onActionClick(actionType.Delete)">
-      Удалить
-    </button>
-  </div>
+    <div class="menu-container__dropdown">
+      <button class="menu-container__item" (click)="onActionClick(actionType.Publish)">
+        Опубликовать
+      </button>
+      <button class="menu-container__item" (click)="onActionClick(actionType.Delete)">
+        Удалить
+      </button>
+    </div>
   }
 </div>

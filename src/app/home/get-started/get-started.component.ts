@@ -4,8 +4,6 @@ import { Component } from '@angular/core';
   selector: 'app-get-started',
   imports: [],
   templateUrl: './get-started.component.html',
-  styleUrl: './get-started.component.css'
+  styleUrl: './get-started.component.css',
 })
-export class GetStartedComponent {
-
-}
+export class GetStartedComponent {}

@@ -1,7 +1,10 @@
 <div class="device-preview flex-1 p-10 bg-[#f1f1f1] flex flex-col justify-center items-center">
-  <div [ngClass]="containerWidth" class="tw-shadow-regular custom-height transition-all duration-300">
+  <div
+    [ngClass]="containerWidth"
+    class="tw-shadow-regular custom-height transition-all duration-300"
+  >
     @if (previewImage) {
-        <img [src]="previewImage" alt="preview" class="w-full h-64">
+      <img [src]="previewImage" alt="preview" class="w-full h-64" />
     } @else {
       <div>
         <div class="w-full h-64 flex items-center justify-center text-gray-400">
@@ -13,16 +16,20 @@
 
   <div>
     <div class="flex justify-center gap-4 mt-6">
-      <button (click)="setViewMode('desktop')"
-              [class.active]="viewMode === 'desktop'"
-              class="btn-devices w-[24px] h-[24px]">
-        <img src="assets/icons/dc.svg" alt="preview" class="w-[14px] h-full">
+      <button
+        (click)="setViewMode('desktop')"
+        [class.active]="viewMode === 'desktop'"
+        class="btn-devices w-[24px] h-[24px]"
+      >
+        <img src="assets/icons/dc.svg" alt="preview" class="w-[14px] h-full" />
       </button>
 
-      <button (click)="setViewMode('icon-m')"
-              [class.active]="viewMode === 'icon-m'"
-              class="btn-devices w-[24px] h-[24px]">
-        <img src="assets/icons/icon-mobile.svg" alt="preview" class="w-[12px] h-full">
+      <button
+        (click)="setViewMode('icon-m')"
+        [class.active]="viewMode === 'icon-m'"
+        class="btn-devices w-[24px] h-[24px]"
+      >
+        <img src="assets/icons/icon-mobile.svg" alt="preview" class="w-[12px] h-full" />
       </button>
     </div>
   </div>

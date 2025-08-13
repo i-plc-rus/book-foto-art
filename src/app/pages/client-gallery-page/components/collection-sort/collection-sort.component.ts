@@ -1,13 +1,5 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  input,
-  output,
-} from '@angular/core';
-import {
-  SORT_OPTIONS,
-  SortOption,
-} from '../../models/collection-display.model';
+import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
+import { SORT_OPTIONS, SortOption } from '../../models/collection-display.model';
 import { SortComponent } from '../../../../shared/components/sort/sort.component';
 
 @Component({

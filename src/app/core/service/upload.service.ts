@@ -17,16 +17,18 @@ export class UploadService {
     formData.append('files', file, file.name);
     formData.append('collection_id', collectionId);
 
-    return this.http.post<any>(`${env.apiUrl}/upload/files`, formData, {
-      reportProgress: true,
-      observe: 'events'
-    }).pipe(
-      map((event: HttpEvent<any>) => this.getUploadProgress(event)),
-      catchError(error => {
-        console.error('Upload failed', error);
-        return throwError(() => new Error('Upload failed'));
+    return this.http
+      .post<any>(`${env.apiUrl}/upload/files`, formData, {
+        reportProgress: true,
+        observe: 'events',
       })
-    );
+      .pipe(
+        map((event: HttpEvent<any>) => this.getUploadProgress(event)),
+        catchError((error) => {
+          console.error('Upload failed', error);
+          return throwError(() => new Error('Upload failed'));
+        }),
+      );
   }
 
   private getUploadProgress(event: HttpEvent<any>): { progress: number } {

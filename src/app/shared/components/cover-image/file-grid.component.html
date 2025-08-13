@@ -8,13 +8,7 @@
     <div class="empty-state">
       <p class="drop-text">Перетащите медиафайлы сюда или</p>
       <label for="fileInput" class="file-label">выберите на устройстве</label>
-      <input
-        type="file"
-        multiple
-        hidden
-        id="fileInput"
-        (change)="handleFileSelect($event)"
-      />
+      <input type="file" multiple hidden id="fileInput" (change)="handleFileSelect($event)" />
     </div>
   } @else {
     <div
@@ -49,11 +43,19 @@
                   [class.opacity-100]="menuOpenId() === file.id"
                   [class.opacity-0]="menuOpenId() !== file.id"
                   [class.group-hover:opacity-100]="menuOpenId() !== file.id"
-                  (click)="toggleMenu(file.id, $event)">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <circle cx="12" cy="6" r="1.5" fill="currentColor"/>
-                    <circle cx="12" cy="12" r="1.5" fill="currentColor"/>
-                    <circle cx="12" cy="18" r="1.5" fill="currentColor"/>
+                  (click)="toggleMenu(file.id, $event)"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="w-4 h-4 text-gray-600"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  >
+                    <circle cx="12" cy="6" r="1.5" fill="currentColor" />
+                    <circle cx="12" cy="12" r="1.5" fill="currentColor" />
+                    <circle cx="12" cy="18" r="1.5" fill="currentColor" />
                   </svg>
                 </div>
               }
@@ -64,7 +66,13 @@
             </div>
             @if (file.file.type.startsWith('video/')) {
               <div class="absolute top-1 left-1 bg-black/50 text-white px-2 py-1 rounded text-xs">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 inline mr-1" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="w-4 h-4 inline mr-1"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                >
                   <path d="M23 7l-7 5 7 5V7z"></path>
                   <rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect>
                 </svg>
@@ -74,7 +82,9 @@
           </div>
 
           @if (menuOpenId() === file.id) {
-            <div class="menu-container absolute top-[32px] right-[0] md:right-[-192px] z-50 bg-white/70 backdrop-blur-md shadow-lg min-w-[220px]">
+            <div
+              class="menu-container absolute top-[32px] right-[0] md:right-[-192px] z-50 bg-white/70 backdrop-blur-md shadow-lg min-w-[220px]"
+            >
               @for (option of menuOptions; track option.id) {
                 <div
                   class="menu-option flex items-center gap-2.5 px-[1.5rem] py-2.5 hover:bg-gray-100 cursor-pointer relative"
@@ -82,25 +92,19 @@
                   (mouseleave)="option.subMenu ? onMenuOptionMouseLeave() : null"
                   (click)="!option.subMenu && handleOptionClick(option.id, file)"
                 >
-                  <img
-                    [src]="option.iconUrl"
-                    alt=""
-                    class="w-4 h-4 object-contain"
-                  />
+                  <img [src]="option.iconUrl" alt="" class="w-4 h-4 object-contain" />
                   <span>{{ option.name }}</span>
 
                   @if (menuHoverId() === option.id && option.subMenu) {
-                    <div class="submenu absolute top-0 left-full bg-white/90 shadow-lg min-w-[220px] z-50">
+                    <div
+                      class="submenu absolute top-0 left-full bg-white/90 shadow-lg min-w-[220px] z-50"
+                    >
                       @for (subOption of option.subMenu; track subOption.id) {
                         <div
                           class="menu-option flex items-center gap-2.5 px-[1.5rem] py-2.5 hover:bg-gray-100 cursor-pointer"
                           (click)="handleOptionClick(subOption.id, file)"
                         >
-                          <img
-                            [src]="subOption.iconUrl"
-                            alt=""
-                            class="w-4 h-4 object-contain"
-                          />
+                          <img [src]="subOption.iconUrl" alt="" class="w-4 h-4 object-contain" />
                           <span>{{ subOption.name }}</span>
                         </div>
                       }

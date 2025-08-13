@@ -1,11 +1,4 @@
-import {
-  Component,
-  signal,
-  input,
-  output,
-  computed,
-  ChangeDetectionStrategy,
-} from '@angular/core';
+import { Component, signal, input, output, computed, ChangeDetectionStrategy } from '@angular/core';
 import { FilterConfig } from '../../models/filter.model';
 import { NgClickOutsideDirective } from 'ng-click-outside2';
 
@@ -44,9 +37,7 @@ export class FilterDropdownComponent {
 
     if (isMultiple) {
       const exists = current.includes(option);
-      const updated = exists
-        ? current.filter((o) => o !== option)
-        : [...current, option];
+      const updated = exists ? current.filter((o) => o !== option) : [...current, option];
 
       this.selected.set(updated);
       this.onSelect.emit(updated);

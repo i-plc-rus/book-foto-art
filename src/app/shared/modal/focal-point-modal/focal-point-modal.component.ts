@@ -1,4 +1,4 @@
-import {Component, inject, Output, EventEmitter, signal, DestroyRef} from '@angular/core';
+import { Component, inject, Output, EventEmitter, signal, DestroyRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FocalPointComponent } from '../../../module/design-component/design-cover/focal-point/focal-point.component';
 import { MainLayoutComponent } from '../../../module/main-layout/main-layout.component';
@@ -10,7 +10,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
   selector: 'app-focal-point-modal',
   templateUrl: './focal-point-modal.component.html',
   styleUrls: ['./focal-point-modal.component.css'],
-  imports: [CommonModule, FocalPointComponent]
+  imports: [CommonModule, FocalPointComponent],
 })
 export class FocalPointModalComponent {
   @Output() save = new EventEmitter<{ x: number; y: number }>();
@@ -37,7 +37,7 @@ export class FocalPointModalComponent {
     if (currentData) {
       this.mainLayout.collectionData.set({
         ...currentData,
-        focal_point: this.currentPosition
+        focal_point: this.currentPosition,
       });
 
       this.showSuccessMessage.set(true);

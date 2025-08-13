@@ -78,10 +78,10 @@ export class MainLayoutComponent {
     this.isPhotosRoute.set(path.startsWith('/upload'));
   }
 
-  navigateToPage(): void {
+  async navigateToPage(): Promise<void> {
     const id = this.collectionId();
     if (id) {
-      this.router
+      await this.router
         .navigate(['/design/cover'], {
           queryParams: { collectionId: id },
         })
@@ -89,8 +89,8 @@ export class MainLayoutComponent {
     }
   }
 
-  goBackToPreviousPage(): void {
-    this.router.navigate(['/client-gallery']).catch();
+  async goBackToPreviousPage(): Promise<void> {
+    await this.router.navigate(['/client-gallery']).catch();
   }
 
   get coverImageUrl(): string | null {

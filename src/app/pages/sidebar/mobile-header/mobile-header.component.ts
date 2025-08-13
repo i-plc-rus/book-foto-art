@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Output, signal } from '@angular/core';
-import {NgClass, NgForOf, NgSwitch, NgSwitchCase} from '@angular/common';
+import { NgClass } from '@angular/common';
 
 export type SidebarMenu = 'collections' | 'favorites' | 'home' | 'settings';
 
@@ -7,13 +7,8 @@ export type SidebarMenu = 'collections' | 'favorites' | 'home' | 'settings';
   standalone: true,
   selector: 'app-mobile-header',
   templateUrl: './mobile-header.component.html',
-  imports: [
-    NgForOf,
-    NgSwitch,
-    NgSwitchCase,
-    NgClass
-  ],
-  styleUrls: ['./mobile-header.component.css']
+  imports: [NgClass],
+  styleUrls: ['./mobile-header.component.css'],
 })
 export class MobileHeaderComponent {
   activeTab = signal<any>('collections');
@@ -22,7 +17,7 @@ export class MobileHeaderComponent {
     { id: 'collections', title: 'Collections' },
     { id: 'starred', title: 'Starred' },
     { id: 'settings', title: 'Settings' },
-    { id: 'homepage', title: 'Homepage' }
+    { id: 'homepage', title: 'Homepage' },
   ];
 
   @Output() tabChange = new EventEmitter<any>();

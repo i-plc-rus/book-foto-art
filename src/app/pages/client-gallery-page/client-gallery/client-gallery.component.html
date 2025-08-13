@@ -1,7 +1,5 @@
 <app-gallery-layout>
-  @if (isLoading) {
-    <div class="loading">Загрузка коллекций...</div>
-  } @else if (errorMessage) {
+  @if (errorMessage) {
     <div class="error">{{ errorMessage }}</div>
   } @else {
     @if (!isGalleryEmpty() && !isCreatingNewCollection()) {
@@ -65,15 +63,22 @@
           placeholder="например: Псков - Свадьба"
           [(ngModel)]="galleryName"
           name="galleryName"
+          [disabled]="isSubmitting() || isLoading"
         />
       </div>
 
       <div class="form-group">
         <label for="galleryDate">Дата события</label>
-        <input id="galleryDate" type="date" [(ngModel)]="galleryDate" name="galleryDate" />
+        <input
+          id="galleryDate"
+          type="date"
+          [(ngModel)]="galleryDate"
+          name="galleryDate"
+          [disabled]="isSubmitting() || isLoading"
+        />
       </div>
       <div class="form-group">
-        <button class="upload-button w-[100%] md:w-[auto]" (click)="nextStep()">
+        <button class="submit-btn" (click)="nextStep()" [disabled]="isSubmitting() || isLoading">
           Создать коллекцию
         </button>
       </div>

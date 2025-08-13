@@ -1,16 +1,15 @@
-import {Component, inject, signal, DestroyRef} from '@angular/core';
-import {DatePipe, Location, NgComponentOutlet, NgTemplateOutlet} from '@angular/common';
-import {RouterOutlet, Router, NavigationEnd, ActivatedRoute} from '@angular/router';
-import {TabsComponent} from '../../shared/components/tabs/tabs.component';
-import {DesignService} from '../design-component/service/design.service';
-import {filter} from 'rxjs';
-import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
-import {CollectionService} from '../../gallery-upload/service/collection.service';
-import {environment as env} from '../../../environments/environment';
-import {GalleryUploadComponent} from '../../gallery-upload/gallery-upload.component';
-import {MobileHeaderComponent} from '../../shared/components/mobile-header/mobile-header.component';
-import {DesignSectionsComponent} from '../../shared/components/design-sections/design-sections.component';
-import {CollectionStateService} from '../../gallery-upload/service/collection-state.service';
+import { Component, inject, signal, DestroyRef } from '@angular/core';
+import { DatePipe, Location } from '@angular/common';
+import { RouterOutlet, Router, NavigationEnd, ActivatedRoute } from '@angular/router';
+import { TabsComponent } from '../../shared/components/tabs/tabs.component';
+import { DesignService } from '../design-component/service/design.service';
+import { filter } from 'rxjs';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { CollectionService } from '../../gallery-upload/service/collection.service';
+import { environment as env } from '../../../environments/environment';
+import { MobileHeaderComponent } from '../../shared/components/mobile-header/mobile-header.component';
+import { DesignSectionsComponent } from '../../shared/components/design-sections/design-sections.component';
+import { CollectionStateService } from '../../gallery-upload/service/collection-state.service';
 
 interface CollectionData {
   name: string;
@@ -24,17 +23,8 @@ interface CollectionData {
   selector: 'app-main-layout',
   templateUrl: './main-layout.component.html',
   styleUrl: './main-layout.component.css',
-  imports: [
-    RouterOutlet,
-    TabsComponent,
-    DatePipe,
-    NgComponentOutlet,
-    GalleryUploadComponent,
-    NgTemplateOutlet,
-    MobileHeaderComponent,
-    DesignSectionsComponent
-  ],
-  providers: [DesignService, CollectionService]
+  imports: [RouterOutlet, TabsComponent, DatePipe, MobileHeaderComponent, DesignSectionsComponent],
+  providers: [DesignService, CollectionService],
 })
 export class MainLayoutComponent {
   private readonly location = inject(Location);
@@ -50,14 +40,14 @@ export class MainLayoutComponent {
   isPhotosRoute = signal(false);
 
   constructor() {
-    this.router.events.pipe(
-      filter(event => event instanceof NavigationEnd),
-      takeUntilDestroyed(this.destroyRef)
-    ).subscribe(() => this.updateRouteState());
+    this.router.events
+      .pipe(
+        filter((event) => event instanceof NavigationEnd),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe(() => this.updateRouteState());
 
-    this.route.queryParams.pipe(
-      takeUntilDestroyed(this.destroyRef)
-    ).subscribe(params => {
+    this.route.queryParams.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((params) => {
       const collectionId = params['collectionId'] || null;
       this.collectionId.set(collectionId);
       if (collectionId) {
@@ -69,15 +59,15 @@ export class MainLayoutComponent {
   }
 
   private loadCollectionData(collectionId: string): void {
-    this.photoService.getPhotosIngo(collectionId)
+    this.photoService
+      .getPhotosIngo(collectionId)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((res: any) => {
         if (!res.focal_point) {
-          res.focal_point = {x: 50, y: 50};
+          res.focal_point = { x: 50, y: 50 };
         }
         this.collectionData.set(res);
         this.collectionStateService.setCurrentCollectionId(collectionId);
-
       });
   }
 
@@ -90,9 +80,11 @@ export class MainLayoutComponent {
   navigateToPage() {
     const id = this.collectionId();
     if (id) {
-      this.router.navigate(['/design/cover'], {
-        queryParams: { collectionId: id }
-      }).catch();
+      this.router
+        .navigate(['/design/cover'], {
+          queryParams: { collectionId: id },
+        })
+        .catch();
     }
   }
 
@@ -112,7 +104,7 @@ export class MainLayoutComponent {
     if (currentData) {
       this.collectionData.set({
         ...currentData,
-        focal_point: position
+        focal_point: position,
       });
     }
   }

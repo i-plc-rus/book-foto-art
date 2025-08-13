@@ -10,10 +10,7 @@ import { GridItem } from './grid-group';
   selector: 'app-design-grid',
   templateUrl: './design-grid.component.html',
   styleUrl: './design-grid.component.css',
-  imports: [
-    ActionBarComponent,
-    DevicePreviewComponent
-  ]
+  imports: [ActionBarComponent, DevicePreviewComponent],
 })
 export class DesignGridComponent {
   gridGroups = signal(GRID_GROUPS);
@@ -25,18 +22,16 @@ export class DesignGridComponent {
   viewMode = signal<'desktop' | 'icon-m'>('desktop');
 
   isSelected(item: GridItem): boolean {
-    return this.selectedItems().some(selected => selected.id === item.id);
+    return this.selectedItems().some((selected) => selected.id === item.id);
   }
 
   selectItem(item: GridItem) {
-    const group = this.gridGroups().find(g =>
-        g.items.some(i => i.id === item.id)
-    );
+    const group = this.gridGroups().find((g) => g.items.some((i) => i.id === item.id));
 
     if (!group) return;
 
     const newSelection = this.selectedItems().filter(
-        selected => !group.items.some(i => i.id === selected.id)
+      (selected) => !group.items.some((i) => i.id === selected.id),
     );
 
     newSelection.push(item);
@@ -45,7 +40,7 @@ export class DesignGridComponent {
 
   handleMenuItem(item: IActionBarItem): void {
     console.log('Menu item clicked:', item);
-    switch(item.id) {
+    switch (item.id) {
       case 'get-link':
         this.getDirectLink();
         break;

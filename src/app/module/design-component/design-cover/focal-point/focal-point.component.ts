@@ -1,10 +1,20 @@
-import { Component, Input, Output, EventEmitter, ElementRef, ViewChild, AfterViewInit, OnChanges, SimpleChanges } from '@angular/core';
+import {
+  Component,
+  Input,
+  Output,
+  EventEmitter,
+  ElementRef,
+  ViewChild,
+  AfterViewInit,
+  OnChanges,
+  SimpleChanges,
+} from '@angular/core';
 
 @Component({
   standalone: true,
   selector: 'app-focal-point',
   templateUrl: './focal-point.component.html',
-  styleUrls: ['./focal-point.component.css']
+  styleUrls: ['./focal-point.component.css'],
 })
 export class FocalPointComponent implements AfterViewInit, OnChanges {
   @Input() imageUrl: string = '';
@@ -33,7 +43,7 @@ export class FocalPointComponent implements AfterViewInit, OnChanges {
     if (this.imageContainer) {
       this.containerRect = this.imageContainer.nativeElement.getBoundingClientRect();
     }
-  }
+  };
 
   startDrag(event: MouseEvent | TouchEvent) {
     event.preventDefault();
@@ -76,7 +86,7 @@ export class FocalPointComponent implements AfterViewInit, OnChanges {
     return {
       left: `${left}%`,
       top: `${top}%`,
-      transform: 'translate(-50%, -50%)'
+      transform: 'translate(-50%, -50%)',
     };
   }
 }

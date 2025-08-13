@@ -1,9 +1,9 @@
-import {Component, DestroyRef, EventEmitter, inject, Input, Output, signal} from '@angular/core';
+import { Component, DestroyRef, EventEmitter, inject, Input, Output, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { CollectionStateService } from '../../../gallery-upload/service/collection-state.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CollectionService } from '../../../gallery-upload/service/collection.service';
-import {NgForOf, NgIf} from '@angular/common';
+import { NgForOf, NgIf } from '@angular/common';
 
 @Component({
   standalone: true,
@@ -36,16 +36,16 @@ export class TabsComponent {
   ];
 
   constructor() {
-    this.collectionStateService.getCurrentCollectionId().subscribe(id => {
+    this.collectionStateService.getCurrentCollectionId().subscribe((id) => {
       this.currentCollectionId.set(id);
     });
 
-    this.route.queryParams.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(params => {
+    this.route.queryParams.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((params) => {
       const collectionId = params['collectionId'] || null;
       this.currentCollectionId.set(collectionId);
 
       const currentUrl = this.router.url;
-      const isMatchingTab = this.tabs.some(tab => currentUrl.startsWith(tab.link));
+      const isMatchingTab = this.tabs.some((tab) => currentUrl.startsWith(tab.link));
       if (collectionId && isMatchingTab) {
         this.loadCollectionData(collectionId);
       }

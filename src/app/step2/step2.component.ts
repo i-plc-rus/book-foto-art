@@ -6,18 +6,20 @@ import { Router } from '@angular/router';
   selector: 'app-step2',
   imports: [ReactiveFormsModule],
   templateUrl: './step2.component.html',
-  styleUrl: './step2.component.css'
+  styleUrl: './step2.component.css',
 })
 export class Step2Component implements OnInit {
   form!: FormGroup;
 
-
-  constructor(private fb: FormBuilder, private router: Router) {}
+  constructor(
+    private fb: FormBuilder,
+    private router: Router,
+  ) {}
 
   ngOnInit() {
     this.form = this.fb.group({
       title: ['', Validators.required],
-      date: ['', Validators.required]
+      date: ['', Validators.required],
     });
   }
 

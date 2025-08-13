@@ -1,6 +1,5 @@
-import {IActionBarItem} from '../../../shared/components/editor-action-bar/action-bar-item';
-import {CoverTemplate} from '../design-cover/cover-template';
-
+import { IActionBarItem } from '../../../shared/components/editor-action-bar/action-bar-item';
+import { CoverTemplate } from '../design-cover/cover-template';
 
 export const COLOR_TEMPLATES: CoverTemplate[] = [
   { id: 'Light', name: 'Light', image: 'assets/images/color/light.png' },

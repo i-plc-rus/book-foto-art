@@ -122,7 +122,7 @@ export class CollectionSiteComponent {
     const current = this.gallery();
 
     const updatedImages = current.images.map((image, i) =>
-      i === index ? { ...image, isFavorite: !image.isFavorite } : image
+      i === index ? { ...image, isFavorite: !image.isFavorite } : image,
     );
 
     this.gallery.update((g) => ({
@@ -151,9 +151,9 @@ export class CollectionSiteComponent {
           this.modalService.previewImage({
             images: this.images,
             currentIndex,
-          })
+          }),
         ),
-        takeUntilDestroyed(this.destroyRef)
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe((finalIndex) => {
         this.toggleFavorite(finalIndex);

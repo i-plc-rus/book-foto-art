@@ -22,13 +22,7 @@
     (click)="fileInput.click()"
   >
     <p>Перетащите или выберите файлы для загрузки</p>
-    <input
-      type="file"
-      multiple
-      hidden
-      #fileInput
-      (change)="onFileSelect($event)"
-    />
+    <input type="file" multiple hidden #fileInput (change)="onFileSelect($event)" />
   </div>
 
   <div class="preview-grid">

@@ -35,8 +35,7 @@ export class ImagePreviewModalComponent {
   readonly favoriteIndex$ = new Subject<number>();
 
   prev(): void {
-    const newIndex =
-      (this.currentIndex() - 1 + this.images().length) % this.images().length;
+    const newIndex = (this.currentIndex() - 1 + this.images().length) % this.images().length;
     this.currentIndex.set(newIndex);
   }
 

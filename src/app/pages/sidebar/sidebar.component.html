@@ -1,4 +1,6 @@
-<aside class="w-64 h-full bg-white border-r border-[#eaeaea] shadow-md flex flex-col hidden md:block">
+<aside
+  class="w-64 h-full bg-white border-r border-[#eaeaea] shadow-md flex flex-col hidden md:block"
+>
   <div class="sidebar-header flex justify-between items-center p-5 border-b">
     <h2 class="text-xl font-bold">Галереи</h2>
     <div class="icons flex gap-3">
@@ -8,13 +10,13 @@
     </div>
   </div>
   <nav class="menu flex-1">
-    @for(item of menuItems; track item.id) {
+    @for (item of menuItems; track item.id) {
       <a
         class="block px-5 py-3 hover:bg-gray-100 flex items-center gap-3 transition-colors"
         [ngClass]="{ 'bg-[#f6f7f7]': activeMenuId() === item.id }"
-        (click)="setActiveMenu(item.id)">
-          <span class="text-gray-500">
-          </span>
+        (click)="setActiveMenu(item.id)"
+      >
+        <span class="text-gray-500"> </span>
         <span>{{ item.title }}</span>
       </a>
     }

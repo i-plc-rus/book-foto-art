@@ -1,7 +1,15 @@
-import {Component, ElementRef, EventEmitter, HostListener, Output, signal, viewChild} from '@angular/core';
-import {SORT_OPTION} from './sort-menu.constants';
-import {ISortOption} from './interface/sort-option';
-import {SortType} from '../../../core/types/sort-type';
+import {
+  Component,
+  ElementRef,
+  EventEmitter,
+  HostListener,
+  Output,
+  signal,
+  viewChild,
+} from '@angular/core';
+import { SORT_OPTION } from './sort-menu.constants';
+import { ISortOption } from './interface/sort-option';
+import { SortType } from '../../../core/types/sort-type';
 
 @Component({
   selector: 'app-sort-menu',
@@ -30,7 +38,7 @@ export class SortMenuComponent {
   }
 
   toggleMenu() {
-    this.isOpen.update(v => !v);
+    this.isOpen.update((v) => !v);
   }
 
   select(option: SortType) {

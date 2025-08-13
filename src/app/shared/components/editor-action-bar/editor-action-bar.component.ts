@@ -1,11 +1,19 @@
-import { Component, EventEmitter, Input, Output, HostListener, ViewChild, ElementRef } from '@angular/core';
-import {IActionBarItem} from './action-bar-item';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  Output,
+  HostListener,
+  ViewChild,
+  ElementRef,
+} from '@angular/core';
+import { IActionBarItem } from './action-bar-item';
 
 @Component({
   standalone: true,
   selector: 'app-editor-action-bar',
   templateUrl: './editor-action-bar.component.html',
-  styleUrls: ['./editor-action-bar.component.css']
+  styleUrls: ['./editor-action-bar.component.css'],
 })
 export class ActionBarComponent {
   @Input() menuItems: IActionBarItem[] = [];
@@ -41,5 +49,4 @@ export class ActionBarComponent {
       this.isMenuOpen = false;
     }
   }
-
 }

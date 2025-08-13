@@ -76,15 +76,15 @@
 .tab-item.active {
   border-bottom: 1px solid #1abc9c;
 }
- @media screen and (max-width: 768px) {
-   .tabs {
-     width: 100%;
-     display: flex;
-     justify-content: space-between;
-   }
+@media screen and (max-width: 768px) {
+  .tabs {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+  }
 
-   .tab-icon {
-     width: 0.8rem;
-     height: 0.8rem;
-   }
- }
+  .tab-icon {
+    width: 0.8rem;
+    height: 0.8rem;
+  }
+}

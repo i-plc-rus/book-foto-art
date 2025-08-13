@@ -1,9 +1,8 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 body {
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
-
 
 /*
 
@@ -60,7 +59,10 @@ body {
 }
 
 .tw-shadow-regular {
-  box-shadow: 0 0 #0000, 0 0 #0000, 0 10px 40px 0 rgba(0, 0, 0, 0.15);
+  box-shadow:
+    0 0 #0000,
+    0 0 #0000,
+    0 10px 40px 0 rgba(0, 0, 0, 0.15);
 }
 
 .grid {

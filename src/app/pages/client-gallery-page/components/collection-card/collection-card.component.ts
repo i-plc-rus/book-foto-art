@@ -1,7 +1,8 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  computed, inject,
+  computed,
+  inject,
   input,
   output,
   signal,
@@ -9,9 +10,12 @@ import {
 import { ISavedGallery } from '../../../../gallery-upload/interface/upload-file';
 import { DatePipe } from '@angular/common';
 import { NgClickOutsideDirective } from 'ng-click-outside2';
-import { CollectionActionPayload, CollectionActionType } from '../../models/collection-display.model';
-import {CollectionListService} from '../../service/collection-list.service';
-import {catchError, EMPTY, tap} from 'rxjs';
+import {
+  CollectionActionPayload,
+  CollectionActionType,
+} from '../../models/collection-display.model';
+import { CollectionListService } from '../../service/collection-list.service';
+import { catchError, EMPTY, tap } from 'rxjs';
 
 @Component({
   selector: 'app-collection-card',
@@ -23,13 +27,15 @@ import {catchError, EMPTY, tap} from 'rxjs';
 })
 export class CollectionCardComponent {
   readonly collection = input.required<ISavedGallery>();
-  readonly action  = output<CollectionActionPayload>();
+  readonly action = output<CollectionActionPayload>();
   readonly navigate = output<string>();
   readonly isMenuOpen = signal(false);
 
-  readonly itemCount = computed(() => this.collection().imagesCount ?? this.collection().images?.length ?? 0);
+  readonly itemCount = computed(
+    () => this.collection().imagesCount ?? this.collection().images?.length ?? 0,
+  );
 
-  readonly actionType = CollectionActionType
+  readonly actionType = CollectionActionType;
   private collectionService = inject(CollectionListService);
 
   toggleMenu() {
@@ -64,15 +70,16 @@ export class CollectionCardComponent {
     this.isMenuOpen.set(false);
 
     if (actionKey === CollectionActionType.Delete) {
-      this.collectionService.deleteCollection(this.collection().id)
+      this.collectionService
+        .deleteCollection(this.collection().id)
         .pipe(
           tap(() => {
             this.action.emit({ actionKey, item: this.collection() });
           }),
-          catchError(err => {
+          catchError((err) => {
             console.error('Ошибка при удалении коллекции', err);
             return EMPTY;
-          })
+          }),
         )
         .subscribe();
     } else {

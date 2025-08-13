@@ -8,9 +8,8 @@ describe('DigitalDeliveryComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [DigitalDeliveryComponent]
-    })
-    .compileComponents();
+      imports: [DigitalDeliveryComponent],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(DigitalDeliveryComponent);
     component = fixture.componentInstance;

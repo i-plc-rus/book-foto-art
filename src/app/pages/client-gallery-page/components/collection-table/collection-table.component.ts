@@ -1,11 +1,5 @@
 import { CommonModule, DatePipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  input,
-  output,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
 import { ISavedGallery } from '../../../../gallery-upload/interface/upload-file';
 import { CollectionMenuComponent } from '../collection-menu/collection-menu.component';
 import { CollectionActionPayload } from '../../models/collection-display.model';
@@ -20,7 +14,7 @@ import { CollectionActionPayload } from '../../models/collection-display.model';
 })
 export class CollectionTableComponent {
   readonly collections = input.required<ISavedGallery[]>();
-  readonly action  = output<CollectionActionPayload>();
+  readonly action = output<CollectionActionPayload>();
 
   readonly collectionWithMeta = computed(() => {
     return this.collections().map((item) => {
@@ -47,7 +41,7 @@ export class CollectionTableComponent {
     });
   });
 
-  onActionClick({actionKey, item}: CollectionActionPayload): void {
+  onActionClick({ actionKey, item }: CollectionActionPayload): void {
     this.action.emit({ actionKey, item });
   }
 }

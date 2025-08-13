@@ -1,6 +1,5 @@
-import {IActionBarItem} from '../../../shared/components/editor-action-bar/action-bar-item';
-import {CoverTemplate} from './cover-template';
-
+import { IActionBarItem } from '../../../shared/components/editor-action-bar/action-bar-item';
+import { CoverTemplate } from './cover-template';
 
 export const COVER_TEMPLATES: CoverTemplate[] = [
   { id: 'frame', name: 'Frame', image: 'assets/images/covers/divider.png' },

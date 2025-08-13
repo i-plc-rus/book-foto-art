@@ -1,14 +1,12 @@
-import {Component, EventEmitter, Input, Output} from '@angular/core';
-import {CommonModule} from '@angular/common';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { CommonModule } from '@angular/common';
 
 @Component({
   standalone: true,
   selector: 'app-select-cover-photo',
   templateUrl: './select-cover-photo.component.html',
   styleUrl: './select-cover-photo.component.css',
-  imports: [
-    CommonModule
-  ]
+  imports: [CommonModule],
 })
 export class SelectCoverPhotoComponent {
   @Input() collectionPhotos: any[] = [];
@@ -22,14 +20,12 @@ export class SelectCoverPhotoComponent {
   selectedPhotoId: string | null = null;
   gridSize: 'small' | 'large' = 'small';
 
-
   selectPhotoId(id: string) {
     this.selectedPhotoId = id;
 
-    const selectedPhoto = this.collectionPhotos.find(photo => photo.id === id);
+    const selectedPhoto = this.collectionPhotos.find((photo) => photo.id === id);
     if (selectedPhoto) {
       this.photoSelected.emit(selectedPhoto);
     }
   }
-
 }

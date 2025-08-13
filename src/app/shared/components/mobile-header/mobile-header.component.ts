@@ -1,14 +1,14 @@
-import {Component, computed, inject, Input, signal} from '@angular/core';
-import {MatBottomSheet} from '@angular/material/bottom-sheet';
-import {MobileMenuSheetComponent} from '../mobile-menu-sheet/mobile-menu-sheet.component';
-import {Router} from '@angular/router';
+import { Component, computed, inject, Input, signal } from '@angular/core';
+import { MatBottomSheet } from '@angular/material/bottom-sheet';
+import { MobileMenuSheetComponent } from '../mobile-menu-sheet/mobile-menu-sheet.component';
+import { Router } from '@angular/router';
 
 @Component({
   standalone: true,
   selector: 'app-mobile-header',
   templateUrl: './mobile-header.component.html',
   styleUrl: './mobile-header.component.css',
-  imports: []
+  imports: [],
 })
 export class MobileHeaderComponent {
   @Input() titleSignal = signal<any | null>(null);

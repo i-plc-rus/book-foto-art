@@ -13,14 +13,16 @@
       </div>
     </div>
 
-    <div class="scroll p-[1rem] md:p-[1.5rem] pt-0 md:pt-0  overflow-y-auto bg-[#fff] flex-1">
+    <div class="scroll p-[1rem] md:p-[1.5rem] pt-0 md:pt-0 overflow-y-auto bg-[#fff] flex-1">
       <div class="grid gap-4">
         @for (template of visibleTemplates(); track template.id) {
           <div class="flex justify-center flex-col items-center">
-            <div (click)="selectTemplate(template)"
-                 [class.active]="isSelected(template)"
-                 class="template-item">
-              <img [src]="template.image" alt="cover" class="w-full h-[115px]"/>
+            <div
+              (click)="selectTemplate(template)"
+              [class.active]="isSelected(template)"
+              class="template-item"
+            >
+              <img [src]="template.image" alt="cover" class="w-full h-[115px]" />
             </div>
             <label class="p-2 text-center text-sm font-medium">{{ template.name }}</label>
           </div>
@@ -35,6 +37,5 @@
       [viewMode]="viewMode()"
       (viewModeChange)="setViewMode($event)"
     ></app-device-preview>
-
   </div>
 </div>

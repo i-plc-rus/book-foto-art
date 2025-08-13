@@ -88,7 +88,7 @@
   }
 
   &__btn:disabled,
-  &__btn[aria-disabled="true"] {
+  &__btn[aria-disabled='true'] {
     background-color: #f1f1f1;
     cursor: not-allowed;
     opacity: 0.6;

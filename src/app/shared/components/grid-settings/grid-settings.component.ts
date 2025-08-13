@@ -1,4 +1,12 @@
-import { Component, ElementRef, EventEmitter, HostListener, Output, signal, viewChild } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  EventEmitter,
+  HostListener,
+  Output,
+  signal,
+  viewChild,
+} from '@angular/core';
 
 interface GridSizeOption {
   value: 'small' | 'large';
@@ -22,7 +30,7 @@ export class GridSettingsComponent {
 
   gridSizes: GridSizeOption[] = [
     { value: 'small', label: 'Small' },
-    { value: 'large', label: 'Large' }
+    { value: 'large', label: 'Large' },
   ];
 
   @HostListener('document:click', ['$event'])
@@ -38,7 +46,7 @@ export class GridSettingsComponent {
   }
 
   toggleMenu() {
-    this.isOpen.update(v => !v);
+    this.isOpen.update((v) => !v);
   }
 
   setGridSize(size: 'small' | 'large') {
@@ -48,7 +56,7 @@ export class GridSettingsComponent {
   }
 
   toggleFilename() {
-    this.showFilename.update(v => !v);
+    this.showFilename.update((v) => !v);
     this.showFilenameChange.emit(this.showFilename());
   }
 }

@@ -5,13 +5,13 @@ import { Component } from '@angular/core';
   selector: 'app-gallery-switcher',
   imports: [CommonModule],
   templateUrl: './gallery-switcher.component.html',
-  styleUrl: './gallery-switcher.component.css'
+  styleUrl: './gallery-switcher.component.css',
 })
 export class GallerySwitcherComponent {
- images = [
+  images = [
     { src: 'assets/personal.jpg', label: 'ВАШ СТИЛЬ' },
     { src: 'assets/gallery.jpg', label: 'ГАЛЕРЕИ' },
-    { src: 'assets/space.jpg', label: 'ПОРТФОЛИО' }
+    { src: 'assets/space.jpg', label: 'ПОРТФОЛИО' },
   ];
 
   selectedIndex = 0;

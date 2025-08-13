@@ -14,21 +14,18 @@
 
     <div class="sidebar-content">
       @if (isPhotosRoute()) {
-        <div
-          class="cover-image-wrapper relative group cursor-pointer"
-          (click)="navigateToPage()">
-          <img
-            class="cover-image w-full h-auto object-cover"
-            [src]="coverImageUrl"
-            alt="Обложка" />
+        <div class="cover-image-wrapper relative group cursor-pointer" (click)="navigateToPage()">
+          <img class="cover-image w-full h-auto object-cover" [src]="coverImageUrl" alt="Обложка" />
           <div class="sidebar-content">
             <div
-              class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+              class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+            >
               <div class="text-white text-lg flex items-center gap-2">
                 <img
                   src="assets/icons/white-edit.svg"
                   alt="Edit"
-                  class="w-[14px] h-[14px] filter invert" />
+                  class="w-[14px] h-[14px] filter invert"
+                />
                 <span class="text-[16px]">Change Cover</span>
               </div>
             </div>
@@ -36,10 +33,7 @@
         </div>
       } @else {
         <div class="cover-image-wrapper relative group cursor-default">
-          <img
-            class="cover-image w-full h-auto object-cover"
-            [src]="coverImageUrl"
-            alt="Обложка" />
+          <img class="cover-image w-full h-auto object-cover" [src]="coverImageUrl" alt="Обложка" />
         </div>
       }
 

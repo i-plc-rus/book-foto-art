@@ -8,9 +8,8 @@ describe('ChangeCoverComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ChangeCoverComponent]
-    })
-    .compileComponents();
+      imports: [ChangeCoverComponent],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(ChangeCoverComponent);
     component = fixture.componentInstance;

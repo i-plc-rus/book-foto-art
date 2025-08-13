@@ -1,7 +1,7 @@
 .hero {
   font-family: 'Proxima Nova', 'Lato', 'Lucida Sans Unicode', 'Lucida Grande', sans-serif;
   position: relative;
-  background: linear-gradient(to bottom, rgba(255,255,255,0.9), rgba(255,255,255,0));
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0));
   padding-top: 80px;
   text-align: center;
 }

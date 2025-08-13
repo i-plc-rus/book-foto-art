@@ -2,29 +2,51 @@
   <div class="bg-white p-5 w-[90%] md:p-8 md:w-[580px]">
     <div class="flex items-center justify-between mb-5">
       <h3 class="text-sm font-semibold tracking-widest leading-[1.429]">Change Cover</h3>
-      <button (click)="close.emit()"
-              class="text-gray-400 hover:text-gray-500 text-2xl focus:outline-none">
+      <button
+        (click)="close.emit()"
+        class="text-gray-400 hover:text-gray-500 text-2xl focus:outline-none"
+      >
         &times;
       </button>
-
     </div>
     <div
-      class="flex flex-col items-center gap-3 border border-dashed border-gray-300 rounded p-[3rem] md:p-[6rem] text-center mb-4">
-      <p class="md:text-[1rem] md:font-medium md:leading-[1.429] text-[0.8rem] font-medium tracking-normal leading-[1.25]">Drag photo here to upload or</p>
+      class="flex flex-col items-center gap-3 border border-dashed border-gray-300 rounded p-[3rem] md:p-[6rem] text-center mb-4"
+    >
+      <p
+        class="md:text-[1rem] md:font-medium md:leading-[1.429] text-[0.8rem] font-medium tracking-normal leading-[1.25]"
+      >
+        Drag photo here to upload or
+      </p>
       <div class="flex flex-col items-center gap-2">
-        <button (click)="selectFromCollection.emit()"
-                class="w-[fit-content] cursor-pointer text-sm font-medium tracking-normal leading-none bg-[#1abc9c] text-white p-3">
+        <button
+          (click)="selectFromCollection.emit()"
+          class="w-[fit-content] cursor-pointer text-sm font-medium tracking-normal leading-none bg-[#1abc9c] text-white p-3"
+        >
           Select from Collection
         </button>
-        <button (click)="browseFiles.emit()"
-                class="w-[fit-content] p-3 cursor-pointer flex items-center gap-1 text-[0.825rem] font-medium leading-none">
+        <button
+          (click)="browseFiles.emit()"
+          class="w-[fit-content] p-3 cursor-pointer flex items-center gap-1 text-[0.825rem] font-medium leading-none"
+        >
           <span class="w-4">
-            <svg class="svg-inline--fa fa-laptop tw-relative tw-text-[0.7em]" aria-hidden="true" focusable="false"
-                 data-prefix="far" data-icon="laptop" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"
-                 as="span" hasHover="false">
-            <path class="" fill="currentColor"
-                  d="M512 80L128 80c-8.8 0-16 7.2-16 16l0 224-48 0L64 96c0-35.3 28.7-64 64-64l384 0c35.3 0 64 28.7 64 64l0 224-48 0 0-224c0-8.8-7.2-16-16-16zM96 432l448 0c20.9 0 38.7-13.4 45.3-32L50.7 400c6.6 18.6 24.4 32 45.3 32zM0 384c0-17.7 14.3-32 32-32l576 0c17.7 0 32 14.3 32 32c0 53-43 96-96 96L96 480c-53 0-96-43-96-96z"></path>
-          </svg>
+            <svg
+              class="svg-inline--fa fa-laptop tw-relative tw-text-[0.7em]"
+              aria-hidden="true"
+              focusable="false"
+              data-prefix="far"
+              data-icon="laptop"
+              role="img"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 640 512"
+              as="span"
+              hasHover="false"
+            >
+              <path
+                class=""
+                fill="currentColor"
+                d="M512 80L128 80c-8.8 0-16 7.2-16 16l0 224-48 0L64 96c0-35.3 28.7-64 64-64l384 0c35.3 0 64 28.7 64 64l0 224-48 0 0-224c0-8.8-7.2-16-16-16zM96 432l448 0c20.9 0 38.7-13.4 45.3-32L50.7 400c6.6 18.6 24.4 32 45.3 32zM0 384c0-17.7 14.3-32 32-32l576 0c17.7 0 32 14.3 32 32c0 53-43 96-96 96L96 480c-53 0-96-43-96-96z"
+              ></path>
+            </svg>
           </span>
           Browse files
         </button>

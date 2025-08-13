@@ -8,12 +8,7 @@
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
       >
-        <path
-          d="M5 12H19"
-          stroke="#8C8C8C"
-          stroke-width="1.5"
-          stroke-linecap="round"
-        />
+        <path d="M5 12H19" stroke="#8C8C8C" stroke-width="1.5" stroke-linecap="round" />
         <path
           d="M12 5L5 12L12 19"
           stroke="#8C8C8C"
@@ -77,10 +72,7 @@
   </div>
 
   <div class="image-preview__wrapper">
-    <button
-      class="image-preview__nav image-preview__nav--left"
-      (click)="prev()"
-    >
+    <button class="image-preview__nav image-preview__nav--left" (click)="prev()">
       <svg
         width="24"
         height="24"
@@ -99,17 +91,10 @@
     </button>
 
     <div class="image-preview__image-container">
-      <img
-        class="image-preview__image"
-        [src]="currentImage().link"
-        [alt]="fileName()"
-      />
+      <img class="image-preview__image" [src]="currentImage().link" [alt]="fileName()" />
     </div>
 
-    <button
-      class="image-preview__nav image-preview__nav--right"
-      (click)="next()"
-    >
+    <button class="image-preview__nav image-preview__nav--right" (click)="next()">
       <svg
         width="24"
         height="24"

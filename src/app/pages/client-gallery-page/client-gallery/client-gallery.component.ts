@@ -1,35 +1,29 @@
-import {Component, signal, inject, computed, DestroyRef} from '@angular/core';
-import {FormsModule} from '@angular/forms';
-import {Router} from '@angular/router';
-import {CollectionHeaderComponent} from '../components/collection-header/collection-header.component';
-import {FilterDropdownComponent} from '../components/filter-dropdown/filter-dropdown.component';
-import {
-  CATEGORY_TAG,
-  EVENT_DATE,
-  EXPIRY_DATE,
-  STARRED,
-  STATUS,
-} from '../models/filter.model';
-import {FilterDateComponent} from '../components/filter-date/filter-date.component';
+import { Component, signal, inject, computed, DestroyRef } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
+import { CollectionHeaderComponent } from '../components/collection-header/collection-header.component';
+import { FilterDropdownComponent } from '../components/filter-dropdown/filter-dropdown.component';
+import { CATEGORY_TAG, EVENT_DATE, EXPIRY_DATE, STARRED, STATUS } from '../models/filter.model';
+import { FilterDateComponent } from '../components/filter-date/filter-date.component';
 import {
   CollectionActionPayload,
   CollectionActionType,
   DisplayView,
-  SortOption
+  SortOption,
 } from '../models/collection-display.model';
-import {ISavedGallery} from '../../../gallery-upload/interface/upload-file';
-import {NgTemplateOutlet} from '@angular/common';
-import {CollectionSortComponent} from '../components/collection-sort/collection-sort.component';
-import {CollectionViewComponent} from '../components/collection-view/collection-view.component';
-import {CollectionTableComponent} from '../components/collection-table/collection-table.component';
-import {CollectionCardComponent} from '../components/collection-card/collection-card.component';
+import { ISavedGallery } from '../../../gallery-upload/interface/upload-file';
+import { NgTemplateOutlet } from '@angular/common';
+import { CollectionSortComponent } from '../components/collection-sort/collection-sort.component';
+import { CollectionViewComponent } from '../components/collection-view/collection-view.component';
+import { CollectionTableComponent } from '../components/collection-table/collection-table.component';
+import { CollectionCardComponent } from '../components/collection-card/collection-card.component';
 import dayjs from 'dayjs';
-import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
-import {CollectionService} from '../../../core/service/collection.service.service';
-import {ShareCollectionModalComponent} from '../modal/share-collection-modal/share-collection-modal.component';
-import {ModalService} from '../../../shared/service/modal/modal.service';
-import {environment as env} from '../../../../environments/environment';
-import {GalleryLayoutComponent} from '../gallery-layout/gallery-layout.component';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { CollectionService } from '../../../core/service/collection.service.service';
+import { ShareCollectionModalComponent } from '../modal/share-collection-modal/share-collection-modal.component';
+import { ModalService } from '../../../shared/service/modal/modal.service';
+import { environment as env } from '../../../../environments/environment';
+import { GalleryLayoutComponent } from '../gallery-layout/gallery-layout.component';
 
 @Component({
   standalone: true,
@@ -46,9 +40,9 @@ import {GalleryLayoutComponent} from '../gallery-layout/gallery-layout.component
     CollectionCardComponent,
     CollectionTableComponent,
     NgTemplateOutlet,
-    GalleryLayoutComponent
+    GalleryLayoutComponent,
   ],
-  providers: [CollectionService]
+  providers: [CollectionService],
 })
 export class ClientGalleryComponent {
   isLoading = false;
@@ -76,7 +70,7 @@ export class ClientGalleryComponent {
   private readonly destroyRef = inject(DestroyRef);
   private readonly collectionService = inject(CollectionService);
   private readonly router = inject(Router);
-  private readonly modalService = inject(ModalService)
+  private readonly modalService = inject(ModalService);
 
   private readonly sortedCollections = computed(() => {
     const list = [...this.collections()];
@@ -84,13 +78,9 @@ export class ClientGalleryComponent {
 
     switch (sort) {
       case SortOption.CreatedNew:
-        return list.sort(
-          (a, b) => +new Date(b.created_at) - +new Date(a.created_at)
-        );
+        return list.sort((a, b) => +new Date(b.created_at) - +new Date(a.created_at));
       case SortOption.CreatedOld:
-        return list.sort(
-          (a, b) => +new Date(a.created_at) - +new Date(b.created_at)
-        );
+        return list.sort((a, b) => +new Date(a.created_at) - +new Date(b.created_at));
       case SortOption.NameAsc:
         return list.sort((a, b) => a.name.localeCompare(b.name));
       case SortOption.NameDesc:
@@ -140,9 +130,11 @@ export class ClientGalleryComponent {
   }
 
   onNavigate(collectionId: string): void {
-    this.router.navigate(['/upload'], {
-      queryParams: {collectionId}
-    }).catch();
+    this.router
+      .navigate(['/upload'], {
+        queryParams: { collectionId },
+      })
+      .catch();
   }
 
   handleNewCollection(): void {
@@ -162,7 +154,7 @@ export class ClientGalleryComponent {
     this.dateRange.set(range);
   }
 
-  onActionClick({actionKey, item}: CollectionActionPayload): void {
+  onActionClick({ actionKey, item }: CollectionActionPayload): void {
     switch (actionKey) {
       case CollectionActionType.Publish:
         this.onPublish(item);
@@ -178,16 +170,17 @@ export class ClientGalleryComponent {
   onDelete(item: ISavedGallery): void {
     if (!item.id) return;
 
-    this.collectionService.getCollectionDelete(item.id)
+    this.collectionService
+      .getCollectionDelete(item.id)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
-          this.collections.update(list => list.filter(col => col.id !== item.id));
+          this.collections.update((list) => list.filter((col) => col.id !== item.id));
         },
         error: (error) => {
           this.errorMessage = 'Ошибка при удалении коллекции';
           console.error('Ошибка удаления:', error);
-        }
+        },
       });
   }
 
@@ -200,7 +193,8 @@ export class ClientGalleryComponent {
 
   private loadCollectionsFromAPI(): void {
     this.isLoading = true;
-    this.collectionService.getCollection()
+    this.collectionService
+      .getCollection()
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (apiResponse) => {
@@ -210,12 +204,12 @@ export class ClientGalleryComponent {
             images: [],
             imagesCount: 0,
             preview: this.baseStaticUrl + c.cover_thumbnail_url,
-            createDate: c.created_at
+            createDate: c.created_at,
           }));
 
           this.collections.set(transformedCollections);
           this.isLoading = false;
-        }
+        },
       });
   }
 
@@ -227,29 +221,33 @@ export class ClientGalleryComponent {
   }
 
   private createCollectionRequest(): void {
-    this.collectionService.createCollection({
-      name: this.galleryName(),
-      date: this.galleryDate()
-    }).pipe(
-      takeUntilDestroyed(this.destroyRef)
-    ).subscribe((res) => {
+    this.collectionService
+      .createCollection({
+        name: this.galleryName(),
+        date: this.galleryDate(),
+      })
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((res) => {
         this.isLoading = false;
         if (res) {
-          this.router.navigate(['/upload'], {
-            queryParams: {collectionId: res.id}
-          }).catch();
+          this.router
+            .navigate(['/upload'], {
+              queryParams: { collectionId: res.id },
+            })
+            .catch();
         }
-      }
-    );
+      });
   }
 
   private finalizeWizard(): void {
     this.isCreatingNewCollection.set(false);
-    this.router.navigate(['/upload'], {
-      queryParams: {
-        galleryName: this.galleryName(),
-        galleryDate: this.galleryDate()
-      }
-    }).catch();
+    this.router
+      .navigate(['/upload'], {
+        queryParams: {
+          galleryName: this.galleryName(),
+          galleryDate: this.galleryDate(),
+        },
+      })
+      .catch();
   }
 }

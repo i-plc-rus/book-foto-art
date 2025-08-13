@@ -39,6 +39,8 @@
                 <div class="error-text">Укажите email</div>
               } @else if (isEmailTouched() && hasEmailFormatError()) {
                 <div class="error-text">Введён некорректный email</div>
+              } @else if (emailCtrl.hasError('conflict')) {
+                <div class="error-text">Такой email уже зарегистрирован</div>
               }
             </div>
 
@@ -65,6 +67,8 @@
               />
               @if (isUsernameTouched() && hasUsernameRequired()) {
                 <div class="error-text">Укажите логин</div>
+              } @else if (usernameCtrl.hasError('conflict')) {
+                <div class="error-text">Логин уже занят</div>
               }
             </div>
             <div class="input-area">

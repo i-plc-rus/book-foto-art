@@ -77,9 +77,40 @@ export class RegisterPageComponent implements OnInit {
         await this.router.navigate(['/client-gallery']);
       },
       error: (err) => {
-        console.error('Ошибка при регистрации:', err);
-        alert('Регистрация не удалась');
+        // Всегда разблокируем форму при ошибке
         this.isSubmitting = false;
+        this.form.enable();
+
+        // Конфликт уникальности (email/username)
+        if (err?.status === 409) {
+          // Ожидаем от бэка код причины в теле (пример)
+          const reason: string | undefined = err?.error?.code ?? err?.error?.reason;
+
+          if (reason === 'EMAIL_TAKEN') {
+            this.emailCtrl.setErrors({ conflict: true });
+            this.step = 1; // предложить изменить email
+          } else if (reason === 'USERNAME_TAKEN') {
+            this.usernameCtrl.setErrors({ conflict: true });
+            this.step = 2;
+          } else {
+            // неизвестный конфликт
+            this.form.setErrors({ conflict: true });
+          }
+          return;
+        }
+
+        // Валидационные ошибки бэкенда (часто 422)
+        if (err?.status === 422 && Array.isArray(err?.error?.errors)) {
+          for (const e of err.error.errors) {
+            // e = { field: 'email' | 'username' | 'password', message: string }
+            const ctrl = this.form.get(e.field);
+            if (ctrl) ctrl.setErrors({ server: true, message: e.message });
+          }
+          return;
+        }
+
+        // Прочие ошибки — покажем общий текст
+        this.form.setErrors({ server: true });
       },
     });
   }

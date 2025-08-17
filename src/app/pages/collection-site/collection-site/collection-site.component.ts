@@ -1,17 +1,18 @@
-import { CommonModule, DatePipe } from '@angular/common';
+import { DatePipe } from '@angular/common';
+import type { ElementRef } from '@angular/core';
 import {
   ChangeDetectionStrategy,
   Component,
   computed,
   DestroyRef,
-  ElementRef,
   inject,
   signal,
   viewChild,
 } from '@angular/core';
-import { RouterLink } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { RouterLink } from '@angular/router';
 import { switchMap } from 'rxjs';
+
 import { ModalService } from '../../../shared/service/modal/modal.service';
 import { GalleryImageCardComponent } from '../components/gallery-image-card/gallery-image-card.component';
 
@@ -110,7 +111,7 @@ export class CollectionSiteComponent {
 
   private readonly galleryRef = viewChild<ElementRef>('galleryRef');
 
-  get firstImage() {
+  get firstImage(): string {
     return this.gallery()?.images[0]?.link || 'assets/default.jpg';
   }
 

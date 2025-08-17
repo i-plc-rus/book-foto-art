@@ -27,7 +27,7 @@
     </div>
 
     <form [formGroup]="form" (submit)="onSubmit()">
-      <input type="email" formControlName="email" placeholder="Email" />
+      <input type="email" autocomplete="email" formControlName="email" placeholder="Email" />
 
       <input type="password" formControlName="password" placeholder="Пароль" />
 

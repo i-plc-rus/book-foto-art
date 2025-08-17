@@ -22,10 +22,10 @@
   <div class="collection-site__control-bar" #galleryRef>
     <div class="collection-site__info">
       <a [routerLink]="[]" class="collection-site__info-name">
-        {{ gallery().name }}
+        {{ collectionInfo()?.name }}
       </a>
       <a [routerLink]="[]" class="collection-site__info-user">
-        {{ gallery().userName }}
+        {{ collectionInfo()?.user_id }}
       </a>
     </div>
     <div class="collection-site__actions">
@@ -45,12 +45,8 @@
   </div>
 
   <div class="collection-site__gallery">
-    @for (item of gallery().images; track $index) {
-      <app-gallery-image-card
-        [imageUrl]="item"
-        (makeFavorite)="toggleFavorite($index)"
-        (showCurrentImage)="showCurrentImage($index)"
-      />
+    @for (item of thumbImages(); track $index) {
+      <app-gallery-image-card [imageUrl]="item" (showCurrentImage)="showCurrentImage($index)" />
     }
   </div>
   <div class="collection-site__flex">

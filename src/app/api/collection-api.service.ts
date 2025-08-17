@@ -5,7 +5,7 @@ import { map } from 'rxjs';
 
 import { BASE_API_URL } from '../app.config';
 import type { CollectionCreateDto, CollectionCreateResponse } from '../core/interfaces/collection';
-import type { ICollectionInfoResponse } from '../interfaces/collection.interface';
+import { ICollectionInfo, ICollectionPhoto } from '../interfaces/collection.interface';
 
 /**
  * Сервис для работы с коллекциями
@@ -61,7 +61,15 @@ export class CollectionApiService {
    * Получить информацию о коллекции
    * @param id идентификатор коллекции
    */
-  getCollection(id: string): Observable<ICollectionInfoResponse> {
-    return this.httpClient.get<ICollectionInfoResponse>(`${this.baseUrl}/collection/${id}`);
+  getCollection(id: string): Observable<ICollectionInfo> {
+    return this.httpClient.get<ICollectionInfo>(`${this.baseUrl}/collection/${id}`);
+  }
+
+  /**
+   * Загрузить фотографии из коллекции
+   * @param id идентификатор коллекции
+   */
+  getCollectionPhotos(id: string): Observable<ICollectionPhoto> {
+    return this.httpClient.get<ICollectionPhoto>(`${this.baseUrl}/collection/${id}/photos`).pipe();
   }
 }

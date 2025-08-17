@@ -1,8 +1,9 @@
-import { CommonModule, DatePipe } from '@angular/common';
+import { DatePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
-import { ISavedGallery } from '../../../../gallery-upload/interface/upload-file';
+
+import type { ISavedGallery } from '../../../../gallery-upload/interface/upload-file';
+import type { CollectionActionPayload } from '../../models/collection-display.model';
 import { CollectionMenuComponent } from '../collection-menu/collection-menu.component';
-import { CollectionActionPayload } from '../../models/collection-display.model';
 
 @Component({
   selector: 'app-collection-table',

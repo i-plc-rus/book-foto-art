@@ -121,14 +121,13 @@ export class CollectionSiteComponent implements OnInit {
 
   private readonly galleryRef = viewChild<ElementRef>('galleryRef');
 
-  get firstImage(): string {
-    return this.gallery()?.images[0]?.link || 'assets/default.jpg';
-  }
-
   ngOnInit(): void {
     this.getCollection();
   }
 
+  /**
+   * Загрузить данные о коллекции
+   */
   getCollection(): void {
     this.activatedRoute.paramMap
       .pipe(

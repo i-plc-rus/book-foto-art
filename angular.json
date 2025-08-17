@@ -56,7 +56,7 @@
                 }
               ],
               "outputHashing": "all",
-              "index": "src/app/prod/index.html"
+              "index": "src/index.prod.html"
             },
             "development": {
               "optimization": false,

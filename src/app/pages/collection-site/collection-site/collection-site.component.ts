@@ -1,9 +1,9 @@
 import { DatePipe } from '@angular/common';
 import type { ElementRef, OnInit, WritableSignal } from '@angular/core';
+import { computed } from '@angular/core';
 import {
   ChangeDetectionStrategy,
   Component,
-  computed,
   DestroyRef,
   inject,
   signal,
@@ -15,7 +15,12 @@ import { catchError, of, switchMap } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 
 import { CollectionApiService } from '../../../api/collection-api.service';
-import type { ICollectionInfoResponse } from '../../../interfaces/collection.interface';
+import type {
+  ICollectionInfo,
+  ICollectionPhoto,
+  IUploadedPhoto,
+  PreviewItem,
+} from '../../../interfaces/collection.interface';
 import { ModalService } from '../../../shared/service/modal/modal.service';
 import { GalleryImageCardComponent } from '../components/gallery-image-card/gallery-image-card.component';
 
@@ -113,11 +118,27 @@ export class CollectionSiteComponent implements OnInit {
 
   readonly loading: WritableSignal<boolean> = signal<boolean>(false);
   readonly error: WritableSignal<string | null> = signal<string | null>(null);
-  readonly collectionInfo: WritableSignal<ICollectionInfoResponse | null> =
-    signal<ICollectionInfoResponse | null>(null);
+  readonly collectionInfo: WritableSignal<ICollectionInfo | null> = signal<ICollectionInfo | null>(
+    null,
+  );
+  readonly images: WritableSignal<IUploadedPhoto[]> = signal<IUploadedPhoto[]>([]);
+  private readonly favorite: WritableSignal<Set<number>> = signal<Set<number>>(new Set());
+  readonly previewImages = computed<PreviewItem[]>(() =>
+    this.images().map((photo, i) => ({
+      link: photo.original_url,
+      isFavorite: this.favorite().has(i),
+    })),
+  );
+
+  readonly thumbImages = computed<PreviewItem[]>(() =>
+    this.images().map((photo, i) => ({
+      link: photo.thumbnail_url,
+      isFavorite: this.favorite().has(i),
+    })),
+  );
 
   readonly gallery = signal<ISavedGallery>(mockGalleries);
-  readonly images = computed(() => this.gallery().images);
+  // readonly images = computed(() => this.gallery().images);
 
   private readonly galleryRef = viewChild<ElementRef>('galleryRef');
 
@@ -138,6 +159,10 @@ export class CollectionSiteComponent implements OnInit {
           this.error.set(null);
 
           return this.collectionApiService.getCollection(id).pipe(
+            switchMap((info) => {
+              this.collectionInfo.set(info);
+              return this.collectionApiService.getCollectionPhotos(id);
+            }),
             catchError((err) => {
               this.error.set('Не удалось загрузить коллекцию');
               this.loading.set(false);
@@ -147,10 +172,10 @@ export class CollectionSiteComponent implements OnInit {
         }),
         takeUntilDestroyed(this.destroyRef),
       )
-      .subscribe((resp: ICollectionInfoResponse | null) => {
+      .subscribe((photos: ICollectionPhoto | null) => {
         this.loading.set(false);
-        if (resp) {
-          this.collectionInfo.set(resp);
+        if (photos) {
+          this.images.set(photos.files); // кладём список фоток
         }
       });
   }
@@ -174,30 +199,45 @@ export class CollectionSiteComponent implements OnInit {
 
   showCurrentImage(index: number): void {
     this.modalService
-      .previewImage({ currentIndex: index, images: this.images })
+      .previewImage({
+        images: this.previewImages, // Signal<{link,isFavorite}[]>
+        currentIndex: index,
+      })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((favIndex) => {
-        this.toggleFavorite(favIndex);
+        this.toggleFavoriteIndex(favIndex);
       });
   }
 
   showSlider(): void {
     this.modalService
       .openImageSlider({
-        images: this.images,
+        images: this.previewImages, // тот же адаптер
         currentIndex: signal(0),
       })
       .pipe(
         switchMap((currentIndex) =>
           this.modalService.previewImage({
-            images: this.images,
+            images: this.previewImages,
             currentIndex,
           }),
         ),
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe((finalIndex) => {
-        this.toggleFavorite(finalIndex);
+        this.toggleFavoriteIndex(finalIndex);
       });
+  }
+
+  private toggleFavoriteIndex(index: number): void {
+    this.favorite.update((set) => {
+      const next = new Set(set);
+      if (next.has(index)) {
+        next.delete(index);
+      } else {
+        next.add(index);
+      }
+      return next;
+    });
   }
 }

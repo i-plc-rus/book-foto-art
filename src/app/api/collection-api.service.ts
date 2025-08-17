@@ -12,7 +12,7 @@ import type { CollectionCreateDto, CollectionCreateResponse } from '../core/inte
 @Injectable({
   providedIn: 'root',
 })
-export class CollectionService {
+export class CollectionApiService {
   private readonly httpClient: HttpClient = inject(HttpClient);
   private readonly baseUrl: string = inject(BASE_API_URL);
 

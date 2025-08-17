@@ -24,84 +24,6 @@ import type {
 import { ModalService } from '../../../shared/service/modal/modal.service';
 import { GalleryImageCardComponent } from '../components/gallery-image-card/gallery-image-card.component';
 
-interface ISavedGallery {
-  name: string;
-  userName: string;
-  createDate: string;
-  images: {
-    link: string;
-    isFavorite: boolean;
-  }[];
-}
-
-export const mockGalleries: ISavedGallery = {
-  name: 'Мужская фотосессия #1',
-  userName: 'Nursultan',
-  createDate: '2025-07-10',
-  images: [
-    {
-      link: 'assets/mockImages/8dfa455df6206f75c8bee021fdeca0b9.jpg',
-      isFavorite: false,
-    },
-    {
-      link: 'assets/mockImages/7ca83dc4f5e31627917e87ac7c6ba77d.jpg',
-      isFavorite: true,
-    },
-    {
-      link: 'assets/mockImages/1702895570_bogatyr-club-p-koshechka-iz-toma-i-dzherri-foni-instagram-4.png',
-      isFavorite: true,
-    },
-    {
-      link: 'assets/mockImages/ead3b558586cc51653230d9eaf58f503.jpg',
-      isFavorite: true,
-    },
-    {
-      link: 'assets/mockImages/f4319ba238bdc7da00c56adbb45461dc.jpg',
-      isFavorite: false,
-    },
-    {
-      link: 'assets/mockImages/8dfa455df6206f75c8bee021fdeca0b9.jpg',
-      isFavorite: false,
-    },
-    {
-      link: 'assets/mockImages/7ca83dc4f5e31627917e87ac7c6ba77d.jpg',
-      isFavorite: true,
-    },
-    {
-      link: 'assets/mockImages/1702895570_bogatyr-club-p-koshechka-iz-toma-i-dzherri-foni-instagram-4.png',
-      isFavorite: true,
-    },
-    {
-      link: 'assets/mockImages/ead3b558586cc51653230d9eaf58f503.jpg',
-      isFavorite: true,
-    },
-    {
-      link: 'assets/mockImages/f4319ba238bdc7da00c56adbb45461dc.jpg',
-      isFavorite: false,
-    },
-    {
-      link: 'assets/mockImages/8dfa455df6206f75c8bee021fdeca0b9.jpg',
-      isFavorite: false,
-    },
-    {
-      link: 'assets/mockImages/7ca83dc4f5e31627917e87ac7c6ba77d.jpg',
-      isFavorite: true,
-    },
-    {
-      link: 'assets/mockImages/1702895570_bogatyr-club-p-koshechka-iz-toma-i-dzherri-foni-instagram-4.png',
-      isFavorite: true,
-    },
-    {
-      link: 'assets/mockImages/ead3b558586cc51653230d9eaf58f503.jpg',
-      isFavorite: true,
-    },
-    {
-      link: 'assets/mockImages/f4319ba238bdc7da00c56adbb45461dc.jpg',
-      isFavorite: false,
-    },
-  ],
-};
-
 @Component({
   selector: 'app-collection-site',
   templateUrl: './collection-site.component.html',
@@ -137,9 +59,6 @@ export class CollectionSiteComponent implements OnInit {
     })),
   );
 
-  readonly gallery = signal<ISavedGallery>(mockGalleries);
-  // readonly images = computed(() => this.gallery().images);
-
   private readonly galleryRef = viewChild<ElementRef>('galleryRef');
 
   ngOnInit(): void {
@@ -163,7 +82,7 @@ export class CollectionSiteComponent implements OnInit {
               this.collectionInfo.set(info);
               return this.collectionApiService.getCollectionPhotos(id);
             }),
-            catchError((err) => {
+            catchError(() => {
               this.error.set('Не удалось загрузить коллекцию');
               this.loading.set(false);
               return of(null);
@@ -182,19 +101,6 @@ export class CollectionSiteComponent implements OnInit {
 
   scrollToGallery(): void {
     this.galleryRef()?.nativeElement.scrollIntoView({ behavior: 'smooth' });
-  }
-
-  toggleFavorite(index: number): void {
-    const current = this.gallery();
-
-    const updatedImages = current.images.map((image, i) =>
-      i === index ? { ...image, isFavorite: !image.isFavorite } : image,
-    );
-
-    this.gallery.update((g) => ({
-      ...g,
-      images: updatedImages,
-    }));
   }
 
   showCurrentImage(index: number): void {

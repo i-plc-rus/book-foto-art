@@ -1,5 +1,5 @@
 import { DatePipe } from '@angular/common';
-import type { ElementRef } from '@angular/core';
+import type { ElementRef, OnInit, WritableSignal } from '@angular/core';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -10,9 +10,12 @@ import {
   viewChild,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { RouterLink } from '@angular/router';
-import { switchMap } from 'rxjs';
+import { ActivatedRoute, RouterLink } from '@angular/router';
+import { catchError, of, switchMap } from 'rxjs';
+import { filter, map } from 'rxjs/operators';
 
+import { CollectionApiService } from '../../../api/collection-api.service';
+import type { ICollectionInfoResponse } from '../../../interfaces/collection.interface';
 import { ModalService } from '../../../shared/service/modal/modal.service';
 import { GalleryImageCardComponent } from '../components/gallery-image-card/gallery-image-card.component';
 
@@ -102,9 +105,16 @@ export const mockGalleries: ISavedGallery = {
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
 })
-export class CollectionSiteComponent {
-  private readonly modalService = inject(ModalService);
-  private readonly destroyRef = inject(DestroyRef);
+export class CollectionSiteComponent implements OnInit {
+  private readonly modalService: ModalService = inject(ModalService);
+  private readonly destroyRef: DestroyRef = inject(DestroyRef);
+  private readonly activatedRoute: ActivatedRoute = inject(ActivatedRoute);
+  private readonly collectionApiService: CollectionApiService = inject(CollectionApiService);
+
+  readonly loading: WritableSignal<boolean> = signal<boolean>(false);
+  readonly error: WritableSignal<string | null> = signal<string | null>(null);
+  readonly collectionInfo: WritableSignal<ICollectionInfoResponse | null> =
+    signal<ICollectionInfoResponse | null>(null);
 
   readonly gallery = signal<ISavedGallery>(mockGalleries);
   readonly images = computed(() => this.gallery().images);
@@ -113,6 +123,37 @@ export class CollectionSiteComponent {
 
   get firstImage(): string {
     return this.gallery()?.images[0]?.link || 'assets/default.jpg';
+  }
+
+  ngOnInit(): void {
+    this.getCollection();
+  }
+
+  getCollection(): void {
+    this.activatedRoute.paramMap
+      .pipe(
+        map((paramMap) => paramMap.get('id')),
+        filter((id): id is string => !!id),
+        switchMap((id: string) => {
+          this.loading.set(true);
+          this.error.set(null);
+
+          return this.collectionApiService.getCollection(id).pipe(
+            catchError((err) => {
+              this.error.set('Не удалось загрузить коллекцию');
+              this.loading.set(false);
+              return of(null);
+            }),
+          );
+        }),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe((resp: ICollectionInfoResponse | null) => {
+        this.loading.set(false);
+        if (resp) {
+          this.collectionInfo.set(resp);
+        }
+      });
   }
 
   scrollToGallery(): void {

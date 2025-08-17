@@ -191,7 +191,7 @@ export class ClientGalleryComponent {
   private loadCollectionsFromAPI(): void {
     this.isLoading = true;
     this.collectionService
-      .getCollection()
+      .getCollectionList()
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (apiResponse) => {

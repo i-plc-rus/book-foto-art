@@ -5,6 +5,7 @@ import { map } from 'rxjs';
 
 import { BASE_API_URL } from '../app.config';
 import type { CollectionCreateDto, CollectionCreateResponse } from '../core/interfaces/collection';
+import type { ICollectionInfoResponse } from '../interfaces/collection.interface';
 
 /**
  * Сервис для работы с коллекциями
@@ -40,7 +41,7 @@ export class CollectionApiService {
     return this.httpClient.delete<any[]>(`${this.baseUrl}/collection/${collectionId}`, { params });
   }
 
-  getCollection(): Observable<any> {
+  getCollectionList(): Observable<any> {
     return this.httpClient.get(`${this.baseUrl}/collection/list`).pipe(
       map((response) => {
         if (typeof response === 'string') {
@@ -54,5 +55,13 @@ export class CollectionApiService {
         return response;
       }),
     );
+  }
+
+  /**
+   * Получить информацию о коллекции
+   * @param id идентификатор коллекции
+   */
+  getCollection(id: string): Observable<ICollectionInfoResponse> {
+    return this.httpClient.get<ICollectionInfoResponse>(`${this.baseUrl}/collection/${id}`);
   }
 }

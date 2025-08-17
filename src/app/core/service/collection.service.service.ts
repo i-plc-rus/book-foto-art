@@ -5,8 +5,11 @@ import { map, Observable } from 'rxjs';
 import { CollectionCreateDto, CollectionCreateResponse } from '../interfaces/collection';
 import { ISavedGallery } from '../../gallery-upload/interface/upload-file';
 
+/**
+ * @deprecated
+ */
 @Injectable()
-export class CollectionService {
+export class CollectionServiceDeprecated {
   constructor(private http: HttpClient) {}
 
   createCollection(data: CollectionCreateDto): Observable<CollectionCreateResponse> {

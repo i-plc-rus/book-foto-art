@@ -6,7 +6,7 @@ import { Router } from '@angular/router';
 import dayjs from 'dayjs';
 
 import { environment as env } from '../../../../environments/environment';
-import { CollectionService } from '../../../core/service/collection.service.service';
+import { CollectionServiceDeprecated } from '../../../core/service/collection.service.service';
 import type { ISavedGallery } from '../../../gallery-upload/interface/upload-file';
 import { ModalService } from '../../../shared/service/modal/modal.service';
 import { CollectionCardComponent } from '../components/collection-card/collection-card.component';
@@ -39,7 +39,7 @@ import { CATEGORY_TAG, EVENT_DATE, EXPIRY_DATE, STARRED, STATUS } from '../model
     NgTemplateOutlet,
     GalleryLayoutComponent,
   ],
-  providers: [CollectionService],
+  providers: [CollectionServiceDeprecated],
 })
 export class ClientGalleryComponent {
   isLoading = false;
@@ -65,7 +65,7 @@ export class ClientGalleryComponent {
   readonly searchTerm = signal('');
 
   private readonly destroyRef = inject(DestroyRef);
-  private readonly collectionService = inject(CollectionService);
+  private readonly collectionService = inject(CollectionServiceDeprecated);
   private readonly router = inject(Router);
   private readonly modalService = inject(ModalService);
 

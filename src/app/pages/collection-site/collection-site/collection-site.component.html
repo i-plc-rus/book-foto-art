@@ -6,7 +6,7 @@
       [alt]="collectionInfo()?.name"
     />
     <div class="collection-site__overlay">
-      <h1 class="collection-site__name">{{ gallery().name }}</h1>
+      <h1 class="collection-site__name">{{ collectionInfo()?.name }}</h1>
       <div class="collection-site__date">
         {{ collectionInfo()?.created_at | date: 'd MMM y' }}
       </div>

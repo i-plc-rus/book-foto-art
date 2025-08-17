@@ -56,12 +56,13 @@
                 }
               ],
               "outputHashing": "all",
-              "index": "src/index.prod.html"
+              "index": "src/index.html"
             },
             "development": {
               "optimization": false,
               "extractLicenses": false,
-              "sourceMap": true
+              "sourceMap": true,
+              "index": "src/index.dev.html"
             }
           },
           "defaultConfiguration": "production"

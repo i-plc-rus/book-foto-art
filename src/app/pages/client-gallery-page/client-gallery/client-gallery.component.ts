@@ -9,7 +9,6 @@ import dayjs from 'dayjs';
 import { DatePickerModule } from 'primeng/datepicker';
 import { InputText } from 'primeng/inputtext';
 
-import { environment as env } from '../../../../environments/environment';
 import { CollectionApiService } from '../../../api/collection-api.service';
 import type { ISavedGallery } from '../../../gallery-upload/interface/upload-file';
 import { ModalService } from '../../../shared/service/modal/modal.service';
@@ -81,7 +80,6 @@ export class ClientGalleryComponent {
   readonly CATEGORY_TAG = CATEGORY_TAG;
   readonly EXPIRY_DATE = EXPIRY_DATE;
   readonly STARRED = STARRED;
-  readonly baseStaticUrl = env.apiUrl;
 
   readonly currentStep = signal(1);
 
@@ -225,7 +223,7 @@ export class ClientGalleryComponent {
             ...c,
             images: [],
             imagesCount: 0,
-            preview: this.baseStaticUrl + c.cover_thumbnail_url,
+            preview: c.cover_thumbnail_url,
             createDate: c.created_at,
           }));
 

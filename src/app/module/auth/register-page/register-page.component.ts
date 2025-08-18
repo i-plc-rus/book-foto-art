@@ -5,12 +5,12 @@ import type { FormControl, FormGroup } from '@angular/forms';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { MessageService } from 'primeng/api';
+import { InputText } from 'primeng/inputtext';
+import { Toast } from 'primeng/toast';
 import { finalize } from 'rxjs';
 
-import type { IAuth } from '../../../core/interfaces/auth.model';
 import { AuthService } from '../../../core/service/auth.service';
-import { Toast } from 'primeng/toast';
-import { InputText } from 'primeng/inputtext';
+import type { IAuthRegister } from '../../../interfaces/auth.interface';
 
 @Component({
   selector: 'app-register-page',
@@ -79,7 +79,7 @@ export class RegisterPageComponent implements OnInit {
       return;
     }
 
-    const payload: IAuth = { email, username, password };
+    const payload: IAuthRegister = { email, username, password };
 
     this.authService
       .register(payload)

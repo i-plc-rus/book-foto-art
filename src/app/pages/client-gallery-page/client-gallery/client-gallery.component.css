@@ -85,7 +85,7 @@
 .form-group {
   display: flex;
   flex-direction: column;
-  margin-bottom: 0.5rem;
+  margin-bottom: 1rem;
   width: 100%;
   max-width: 400px;
   align-items: flex-start; /* выравнивание по левому краю */
@@ -101,7 +101,7 @@
 .form-group input {
   width: 100%;
   padding: 0.75rem;
-  margin-bottom: 1rem;
+  margin-bottom: 0.25rem;
   border: 1px solid #ccc;
   border-radius: 6px;
   font-size: 1rem;
@@ -165,9 +165,17 @@
   color: #666;
 }
 
-:root {
-}
-
 p-datepicker {
   width: 100%;
+  margin-bottom: 0.25rem;
+}
+
+.submit-btn {
+  margin-top: 0;
+}
+
+.step2-form {
+  display: flex;
+  flex-direction: column;
+  width: 400px;
 }

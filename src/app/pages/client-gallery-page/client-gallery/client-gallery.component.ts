@@ -1,9 +1,11 @@
 import { formatDate, NgTemplateOutlet } from '@angular/common';
 import { Component, computed, DestroyRef, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { FormsModule } from '@angular/forms';
+import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import dayjs from 'dayjs';
+import { DatePickerModule } from 'primeng/datepicker';
 
 import { environment as env } from '../../../../environments/environment';
 import { CollectionApiService } from '../../../api/collection-api.service';
@@ -21,7 +23,13 @@ import { ShareCollectionModalComponent } from '../modal/share-collection-modal/s
 import type { CollectionActionPayload, DisplayView } from '../models/collection-display.model';
 import { CollectionActionType, SortOption } from '../models/collection-display.model';
 import { CATEGORY_TAG, EVENT_DATE, EXPIRY_DATE, STARRED, STATUS } from '../models/filter.model';
-import { DatePickerModule } from 'primeng/datepicker';
+
+export type Step2Controls = {
+  name: FormControl<string>;
+  date: FormControl<Date | null>;
+};
+
+export type Step2Form = FormGroup<Step2Controls>;
 
 @Component({
   standalone: true,
@@ -40,13 +48,34 @@ import { DatePickerModule } from 'primeng/datepicker';
     CollectionTableComponent,
     NgTemplateOutlet,
     GalleryLayoutComponent,
+    ReactiveFormsModule,
   ],
   providers: [CollectionApiService],
 })
 export class ClientGalleryComponent {
+  private readonly formBuilder: FormBuilder = inject(FormBuilder);
+  private readonly destroyRef = inject(DestroyRef);
+  private readonly collectionService: CollectionApiService = inject(CollectionApiService);
+  private readonly router = inject(Router);
+  private readonly modalService = inject(ModalService);
+
   isLoading = false;
   isSubmitting = signal(false);
   errorMessage = '';
+
+  readonly formStep2: Step2Form = this.formBuilder.group<Step2Controls>({
+    name: this.formBuilder.control('', {
+      validators: [Validators.required, Validators.maxLength(200)],
+      nonNullable: true,
+    }),
+    date: this.formBuilder.control<Date | null>(null, {
+      validators: [Validators.required],
+    }),
+  });
+
+  readonly step2Invalid = computed(
+    () => this.formStep2.invalid || this.isLoading || this.isSubmitting(),
+  );
 
   readonly STATUS = STATUS;
   readonly EVENT_DATE = EVENT_DATE;
@@ -56,8 +85,6 @@ export class ClientGalleryComponent {
   readonly baseStaticUrl = env.apiUrl;
 
   readonly currentStep = signal(1);
-  readonly galleryName = signal('');
-  readonly galleryDate = signal('');
 
   readonly sortOption = signal<SortOption>(SortOption.CreatedNew);
   readonly dateRange = signal<[dayjs.Dayjs, dayjs.Dayjs] | null>(null);
@@ -65,11 +92,6 @@ export class ClientGalleryComponent {
   readonly collections = signal<ISavedGallery[]>([]);
   readonly isCreatingNewCollection = signal(false);
   readonly searchTerm = signal('');
-
-  private readonly destroyRef = inject(DestroyRef);
-  private readonly collectionService: CollectionApiService = inject(CollectionApiService);
-  private readonly router = inject(Router);
-  private readonly modalService = inject(ModalService);
 
   private readonly sortedCollections = computed(() => {
     const list = [...this.collections()];
@@ -139,6 +161,7 @@ export class ClientGalleryComponent {
   handleNewCollection(): void {
     this.isCreatingNewCollection.set(true);
     this.currentStep.set(2);
+    this.formStep2.reset();
   }
 
   onSortChange(option: SortOption): void {
@@ -214,18 +237,21 @@ export class ClientGalleryComponent {
 
   private handleStepTwo(): void {
     this.errorMessage = '';
+    this.formStep2.markAllAsTouched();
+    if (this.formStep2.invalid) return;
     this.isLoading = true;
     this.isSubmitting.set(true);
-    this.isLoading = true;
-
     this.createCollectionRequest();
   }
 
   private createCollectionRequest(): void {
+    const name: string = this.formStep2.controls.name.value?.trim();
+    const date: Date | null = this.formStep2.controls.date.value;
+
     this.collectionService
       .createCollection({
-        name: this.galleryName(),
-        date: this.formatDateUS(this.galleryDate()),
+        name,
+        date: date ? this.formatDateUS(date?.toString()) : null,
       })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
@@ -236,10 +262,8 @@ export class ClientGalleryComponent {
             return;
           }
 
-          // (Опционально) чтобы не вернуться на шаги при промежуточном ререндере
           this.isCreatingNewCollection.set(false);
 
-          // ВАЖНО: не снимаем isLoading до завершения навигации
           this.router
             .navigate(['/upload'], { queryParams: { collectionId: res.id } })
             .then(() => {
@@ -263,12 +287,15 @@ export class ClientGalleryComponent {
   }
 
   async finalizeWizard(): Promise<void> {
+    const name: string = this.formStep2.controls.name.value?.trim();
+    const date: Date | null = this.formStep2.controls.date.value;
+
     this.isCreatingNewCollection.set(false);
     await this.router
       .navigate(['/upload'], {
         queryParams: {
-          galleryName: this.galleryName(),
-          galleryDate: this.formatDateUS(this.galleryDate()),
+          galleryName: name,
+          galleryDate: date ? this.formatDateUS(date?.toString()) : null,
         },
       })
       .catch();
@@ -276,5 +303,9 @@ export class ClientGalleryComponent {
 
   formatDateUS(date: string): string {
     return formatDate(date, 'yyyy-MM-dd', 'en-US');
+  }
+
+  canContinueStep2(): boolean {
+    return !this.formStep2?.invalid;
   }
 }

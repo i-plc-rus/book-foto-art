@@ -1,6 +1,6 @@
 export interface CollectionCreateDto {
   name: string;
-  date: string;
+  date: string | null;
 }
 
 export interface CollectionCreateResponse {

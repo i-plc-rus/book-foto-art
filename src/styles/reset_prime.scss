@@ -20,7 +20,7 @@ textarea::placeholder,
 input.ng-invalid.ng-touched,
 textarea.ng-invalid.ng-touched,
 select.ng-invalid.ng-touched {
-  border-color: #ef4444 !important;
+  border-color: var(--error-border) !important;
 }
 
 /* 3. Красная рамка для PrimeNG-инпутов с ошибкой */
@@ -29,7 +29,7 @@ select.ng-invalid.ng-touched {
 .p-calendar.p-invalid .p-inputtext,
 .p-password.p-invalid .p-inputtext,
 .p-autocomplete.p-invalid .p-inputtext {
-  border-color: #ef4444 !important;
+  border-color: var(--error-border) !important;
 }
 
 /* 4. Подсветка рамки при фокусе на ошибочном поле */
@@ -37,13 +37,13 @@ input.ng-invalid.ng-touched:focus,
 textarea.ng-invalid.ng-touched:focus,
 select.ng-invalid.ng-touched:focus,
 .p-inputtext.p-invalid:focus {
-  box-shadow: 0 0 0 1px #ef4444 inset !important;
+  box-shadow: 0 0 0 1px var(--error-border) inset !important;
 }
 
 /* 5. Текст сообщений об ошибках */
 .p-error,
 .error-text {
-  color: #ef4444 !important;
+  color: var(--error-border) !important;
   font-size: 0.875rem;
 }
 
@@ -71,14 +71,14 @@ h2,
 input.ng-invalid.ng-touched:focus,
 textarea.ng-invalid.ng-touched:focus,
 select.ng-invalid.ng-touched:focus {
-  border-color: #ef4444 !important;
+  border-color: var(--error-border) !important;
   outline: none !important;
   box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.45) !important; /* внешний красный ринг */
 }
 
 /* PrimeNG InputText */
 :root .p-inputtext.p-invalid:focus {
-  border-color: #ef4444 !important;
+  border-color: var(--error-border) !important;
   outline: none !important;
   /* переопределяем токен фокус-ринга темы на уровне элемента */
   --p-focus-ring-shadow: 0 0 0 2px rgba(239, 68, 68, 0.45);
@@ -90,7 +90,7 @@ select.ng-invalid.ng-touched:focus {
 :root .p-calendar.p-invalid:focus-within,
 :root .p-password.p-invalid:focus-within,
 :root .p-autocomplete.p-invalid:focus-within {
-  border-color: #ef4444 !important;
+  border-color: var(--error-border) !important;
   outline: none !important;
   --p-focus-ring-shadow: 0 0 0 2px rgba(239, 68, 68, 0.45);
   box-shadow: var(--p-focus-ring-shadow) !important;
@@ -100,7 +100,7 @@ select.ng-invalid.ng-touched:focus {
 :root .p-calendar.p-invalid .p-inputtext:focus,
 :root .p-password.p-invalid .p-inputtext:focus,
 :root .p-autocomplete.p-invalid .p-inputtext:focus {
-  border-color: #ef4444 !important;
+  border-color: var(--error-border) !important;
   outline: none !important;
   box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.45) !important;
 }
@@ -109,7 +109,7 @@ select.ng-invalid.ng-touched:focus {
 input.ng-invalid.ng-touched:focus,
 textarea.ng-invalid.ng-touched:focus,
 select.ng-invalid.ng-touched:focus {
-  border-color: #ef4444 !important;
+  border-color: var(--error-border) !important;
   border-width: 2px !important;
   outline: none !important;
   box-shadow: none !important; /* убираем второй контур */
@@ -117,7 +117,7 @@ select.ng-invalid.ng-touched:focus {
 
 /* PrimeNG InputText */
 :root .p-inputtext.p-invalid:focus {
-  border-color: #ef4444 !important;
+  border-color: var(--error-border) !important;
   border-width: 2px !important;
   outline: none !important;
   --p-focus-ring-shadow: none; /* гасим ринг темы */
@@ -130,5 +130,24 @@ select.ng-invalid.ng-touched:focus {
   }
   .p-inputtext:enabled:focus {
     border-color: #000;
+  }
+
+  ng-invalid {
+    .p-inputtext {
+      border: 1px solid var(--error-border);
+      box-shadow: none;
+      width: 100%;
+    }
+  }
+}
+
+p-datepicker.ng-invalid.ng-touched .p-inputtext {
+  border: 1px solid var(--error-border);
+  box-shadow: none;
+}
+
+p-datepicker {
+  .p-inputwrapper {
+    display: flex;
   }
 }

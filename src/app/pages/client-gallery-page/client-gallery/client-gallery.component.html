@@ -98,7 +98,7 @@
         <button
           class="submit-btn"
           (click)="nextStep()"
-          [disabled]="isSubmitting() || isLoading || !canContinueStep2"
+          [disabled]="isSubmitting() || isLoading || formStep2.invalid"
         >
           Создать коллекцию
         </button>

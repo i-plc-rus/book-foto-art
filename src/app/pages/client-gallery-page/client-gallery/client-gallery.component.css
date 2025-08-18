@@ -177,5 +177,5 @@ p-datepicker {
 .step2-form {
   display: flex;
   flex-direction: column;
-  width: 400px;
+  max-width: 400px;
 }

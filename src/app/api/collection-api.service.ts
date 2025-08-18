@@ -5,10 +5,10 @@ import { map } from 'rxjs';
 
 import { BASE_API_URL } from '../app.config';
 import type { CollectionCreateDto, CollectionCreateResponse } from '../core/interfaces/collection';
-import { ICollectionInfo, ICollectionPhoto } from '../interfaces/collection.interface';
+import type { ICollectionInfo, ICollectionPhoto } from '../interfaces/collection.interface';
 
 /**
- * Сервис для работы с коллекциями
+ * API -сервис для работы с коллекциями
  */
 @Injectable({
   providedIn: 'root',

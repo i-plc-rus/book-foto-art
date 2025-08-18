@@ -96,7 +96,11 @@
           }
         </div>
 
-        <button class="submit-btn" (click)="nextStep()" [disabled]="step2Invalid">
+        <button
+          class="submit-btn"
+          (click)="nextStep()"
+          [disabled]="isSubmitting() || isLoading || formStep2.invalid"
+        >
           Создать коллекцию
         </button>
       </form>

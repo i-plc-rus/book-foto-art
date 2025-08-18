@@ -21,6 +21,7 @@ import { ShareCollectionModalComponent } from '../modal/share-collection-modal/s
 import type { CollectionActionPayload, DisplayView } from '../models/collection-display.model';
 import { CollectionActionType, SortOption } from '../models/collection-display.model';
 import { CATEGORY_TAG, EVENT_DATE, EXPIRY_DATE, STARRED, STATUS } from '../models/filter.model';
+import { DatePickerModule } from 'primeng/datepicker';
 
 @Component({
   standalone: true,
@@ -29,6 +30,7 @@ import { CATEGORY_TAG, EVENT_DATE, EXPIRY_DATE, STARRED, STATUS } from '../model
   styleUrls: ['./client-gallery.component.css'],
   imports: [
     FormsModule,
+    DatePickerModule,
     CollectionHeaderComponent,
     FilterDropdownComponent,
     FilterDateComponent,

@@ -65,65 +65,6 @@ h2,
   color: #000 !important;
 }
 
-/* --- Ошибка + фокус: красный должен оставаться --- */
-
-/* Нативные поля (Reactive Forms) */
-input.ng-invalid.ng-touched:focus,
-textarea.ng-invalid.ng-touched:focus,
-select.ng-invalid.ng-touched:focus {
-  border-color: var(--error-border) !important;
-  outline: none !important;
-  box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.45) !important; /* внешний красный ринг */
-}
-
-/* PrimeNG InputText */
-:root .p-inputtext.p-invalid:focus {
-  border-color: var(--error-border) !important;
-  outline: none !important;
-  /* переопределяем токен фокус-ринга темы на уровне элемента */
-  --p-focus-ring-shadow: 0 0 0 2px rgba(239, 68, 68, 0.45);
-  box-shadow: var(--p-focus-ring-shadow) !important;
-}
-
-/* Компоненты-контейнеры с фокусом внутри (у них ринг на обёртке) */
-:root .p-dropdown.p-invalid:focus-within,
-:root .p-calendar.p-invalid:focus-within,
-:root .p-password.p-invalid:focus-within,
-:root .p-autocomplete.p-invalid:focus-within {
-  border-color: var(--error-border) !important;
-  outline: none !important;
-  --p-focus-ring-shadow: 0 0 0 2px rgba(239, 68, 68, 0.45);
-  box-shadow: var(--p-focus-ring-shadow) !important;
-}
-
-/* На всякий случай — внутренний инпут в комбинированных полях */
-:root .p-calendar.p-invalid .p-inputtext:focus,
-:root .p-password.p-invalid .p-inputtext:focus,
-:root .p-autocomplete.p-invalid .p-inputtext:focus {
-  border-color: var(--error-border) !important;
-  outline: none !important;
-  box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.45) !important;
-}
-
-/* ЕДИНАЯ красная рамка для полей с ошибкой во фокусе — без тени */
-input.ng-invalid.ng-touched:focus,
-textarea.ng-invalid.ng-touched:focus,
-select.ng-invalid.ng-touched:focus {
-  border-color: var(--error-border) !important;
-  border-width: 2px !important;
-  outline: none !important;
-  box-shadow: none !important; /* убираем второй контур */
-}
-
-/* PrimeNG InputText */
-:root .p-inputtext.p-invalid:focus {
-  border-color: var(--error-border) !important;
-  border-width: 2px !important;
-  outline: none !important;
-  --p-focus-ring-shadow: none; /* гасим ринг темы */
-  box-shadow: none !important; /* на всякий случай */
-}
-
 .calendar-collection {
   .p-button {
     color: #000;

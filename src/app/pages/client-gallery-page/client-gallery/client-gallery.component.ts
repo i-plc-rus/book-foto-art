@@ -23,6 +23,7 @@ import { ShareCollectionModalComponent } from '../modal/share-collection-modal/s
 import type { CollectionActionPayload, DisplayView } from '../models/collection-display.model';
 import { CollectionActionType, SortOption } from '../models/collection-display.model';
 import { CATEGORY_TAG, EVENT_DATE, EXPIRY_DATE, STARRED, STATUS } from '../models/filter.model';
+import { InputText } from 'primeng/inputtext';
 
 export type Step2Controls = {
   name: FormControl<string>;
@@ -49,6 +50,7 @@ export type Step2Form = FormGroup<Step2Controls>;
     NgTemplateOutlet,
     GalleryLayoutComponent,
     ReactiveFormsModule,
+    InputText,
   ],
   providers: [CollectionApiService],
 })
@@ -138,6 +140,7 @@ export class ClientGalleryComponent {
     const step = this.currentStep();
 
     if (step === 2) {
+      this.formStep2.disable();
       this.handleStepTwo();
       return;
     }
@@ -251,7 +254,7 @@ export class ClientGalleryComponent {
     this.collectionService
       .createCollection({
         name,
-        date: date ? this.formatDateUS(date?.toString()) : null,
+        date: date ? this.formatDateUS(date) : null,
       })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
@@ -295,17 +298,13 @@ export class ClientGalleryComponent {
       .navigate(['/upload'], {
         queryParams: {
           galleryName: name,
-          galleryDate: date ? this.formatDateUS(date?.toString()) : null,
+          galleryDate: date ? this.formatDateUS(date) : null,
         },
       })
       .catch();
   }
 
-  formatDateUS(date: string): string {
+  formatDateUS(date: Date): string {
     return formatDate(date, 'yyyy-MM-dd', 'en-US');
-  }
-
-  canContinueStep2(): boolean {
-    return !this.formStep2?.invalid;
   }
 }

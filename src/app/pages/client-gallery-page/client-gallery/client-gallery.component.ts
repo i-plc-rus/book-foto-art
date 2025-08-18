@@ -138,6 +138,7 @@ export class ClientGalleryComponent {
     const step = this.currentStep();
 
     if (step === 2) {
+      this.formStep2.disable();
       this.handleStepTwo();
       return;
     }

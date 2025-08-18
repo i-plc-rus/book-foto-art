@@ -1,22 +1,24 @@
-import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
-import { tap, map, switchMap, filter, take } from 'rxjs/operators';
-import { Observable, BehaviorSubject, of, throwError, catchError, finalize } from 'rxjs';
+import { inject, Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { environment as env } from '../../../environments/environment';
-import { IAuth } from '../interfaces/auth.model';
+import type { Observable } from 'rxjs';
+import { BehaviorSubject, catchError, finalize, of, throwError } from 'rxjs';
+import { filter, map, switchMap, take, tap } from 'rxjs/operators';
+
+import { AuthApiService } from '../../api/auth-api.service';
+import type {
+  IAuthLogin,
+  IAuthLoginResponse,
+  IAuthRegister,
+} from '../../interfaces/auth.interface';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
-  private isRefreshing = false;
+  private readonly router: Router = inject(Router);
+  private readonly authApiService: AuthApiService = inject(AuthApiService);
   private refreshTokenSubject = new BehaviorSubject<string | null>(null);
-
-  constructor(
-    private http: HttpClient,
-    private router: Router,
-  ) {}
+  private isRefreshing = false;
 
   get accessToken(): string | null {
     return localStorage.getItem('access_token');
@@ -35,34 +37,34 @@ export class AuthService {
     }
   }
 
-  login(credentials: { email: string; password: string }) {
-    return this.http
-      .post<{
-        access_token: string;
-        refresh_token: string;
-      }>(`${env.apiUrl}/auth/login`, credentials)
-      .pipe(
-        tap((response) => {
-          this.saveTokens(response.access_token, response.refresh_token);
-        }),
-        catchError((error) => {
-          console.error('Login failed:', error);
-          return throwError(() => error);
-        }),
-      );
+  /**
+   * Аутентификация
+   * @param credentials логин и пароль
+   */
+  login(credentials: IAuthLogin): Observable<IAuthLoginResponse> {
+    return this.authApiService.login(credentials).pipe(
+      tap((response) => {
+        this.saveTokens(response.access_token, response.refresh_token);
+      }),
+      catchError((error) => {
+        console.error('Login failed:', error);
+        return throwError(() => error);
+      }),
+    );
   }
 
-  register(data: IAuth) {
-    return this.http
-      .post<{ access_token: string; refresh_token: string }>(`${env.apiUrl}/auth/register`, data)
-      .pipe(
-        tap((response) => {
-          this.saveTokens(response.access_token, response.refresh_token);
-        }),
-      );
+  /**
+   * Регистрация
+   * @param data имя пользователя, email и пароль
+   */
+  register(data: IAuthRegister): Observable<IAuthLoginResponse> {
+    return this.authApiService.register(data).pipe(
+      tap((response) => {
+        this.saveTokens(response.access_token, response.refresh_token);
+      }),
+    );
   }
 
-  // auth.service.ts
   refreshToken(): Observable<string> {
     if (this.isRefreshing) {
       return this.refreshTokenSubject.pipe(
@@ -80,23 +82,21 @@ export class AuthService {
     this.isRefreshing = true;
     this.refreshTokenSubject.next(null);
 
-    return this.http
-      .post<{ access_token: string }>(`${env.apiUrl}/auth/refresh`, { refresh_token: refreshToken })
-      .pipe(
-        tap((response) => {
-          this.saveTokens(response.access_token, refreshToken);
-          this.refreshTokenSubject.next(response.access_token);
-        }),
-        map((response) => response.access_token),
-        catchError((err) => {
-          this.refreshTokenSubject.next(null);
-          this.logout();
-          return throwError(() => err);
-        }),
-        finalize(() => {
-          this.isRefreshing = false;
-        }),
-      );
+    return this.authApiService.refreshToken(refreshToken).pipe(
+      tap((response) => {
+        this.saveTokens(response.access_token, refreshToken);
+        this.refreshTokenSubject.next(response.access_token);
+      }),
+      map((response) => response.access_token),
+      catchError((err) => {
+        this.refreshTokenSubject.next(null);
+        this.logout();
+        return throwError(() => err);
+      }),
+      finalize(() => {
+        this.isRefreshing = false;
+      }),
+    );
   }
 
   logout(): void {

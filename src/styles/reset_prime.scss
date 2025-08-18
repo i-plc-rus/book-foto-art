@@ -125,13 +125,10 @@ select.ng-invalid.ng-touched:focus {
 }
 
 .calendar-collection {
-  width: 100% !important;
-  .p-datepicker {
+  .p-button {
+    color: #000;
   }
   .p-inputtext:enabled:focus {
     border-color: #000;
-  }
-  .p-inputtext {
-    width: 100% !important;
   }
 }

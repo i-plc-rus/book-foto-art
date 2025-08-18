@@ -123,3 +123,15 @@ select.ng-invalid.ng-touched:focus {
   --p-focus-ring-shadow: none; /* гасим ринг темы */
   box-shadow: none !important; /* на всякий случай */
 }
+
+.calendar-collection {
+  width: 100% !important;
+  .p-datepicker {
+  }
+  .p-inputtext:enabled:focus {
+    border-color: #000;
+  }
+  .p-inputtext {
+    width: 100% !important;
+  }
+}

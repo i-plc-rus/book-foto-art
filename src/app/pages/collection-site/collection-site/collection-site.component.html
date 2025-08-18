@@ -1,10 +1,6 @@
 <section class="collection-site">
   <div class="collection-site__cover">
-    <img
-      class="collection-site__img"
-      [src]="collectionInfo()?.cover_url"
-      [alt]="collectionInfo()?.name"
-    />
+    <img class="collection-site__img" [src]="collectionInfo()?.cover_url" alt="Обложка коллекции" />
     <div class="collection-site__overlay">
       <h1 class="collection-site__name">{{ collectionInfo()?.name }}</h1>
       <div class="collection-site__date">

@@ -10,11 +10,12 @@ import { finalize } from 'rxjs';
 import type { IAuth } from '../../../core/interfaces/auth.model';
 import { AuthService } from '../../../core/service/auth.service';
 import { Toast } from 'primeng/toast';
+import { InputText } from 'primeng/inputtext';
 
 @Component({
   selector: 'app-register-page',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule, RouterLink, Toast],
+  imports: [ReactiveFormsModule, CommonModule, RouterLink, Toast, InputText],
   templateUrl: './register-page.component.html',
   styleUrl: './register-page.component.scss',
   providers: [MessageService],

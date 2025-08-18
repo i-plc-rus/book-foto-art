@@ -227,7 +227,7 @@ export class GalleryUploadComponent {
                 type: `image/${photo.file_ext.slice(1)}`,
               } as ServerFile,
               progress: 100,
-              previewUrl: this.baseStaticUrl + photo.thumbnail_url,
+              previewUrl: photo.thumbnail_url,
               loaded: true,
             }));
             this.files.set(uploadedFiles);

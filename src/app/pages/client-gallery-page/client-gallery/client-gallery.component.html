@@ -47,7 +47,7 @@
       </div>
     </section>
   } @else {
-    <section class="welcome centered mt-5 md:mt-0">
+    <section class="welcome centered">
       <p class="subtitle">Шаг 2 из 3</p>
 
       @if (isLoading) {
@@ -63,6 +63,7 @@
           <label for="galleryName">Имя коллекции</label>
           <input
             id="galleryName"
+            pInputText
             type="text"
             placeholder="например: Псков - Свадьба"
             formControlName="name"

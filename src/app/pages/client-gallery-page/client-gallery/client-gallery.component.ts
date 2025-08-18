@@ -23,6 +23,7 @@ import { ShareCollectionModalComponent } from '../modal/share-collection-modal/s
 import type { CollectionActionPayload, DisplayView } from '../models/collection-display.model';
 import { CollectionActionType, SortOption } from '../models/collection-display.model';
 import { CATEGORY_TAG, EVENT_DATE, EXPIRY_DATE, STARRED, STATUS } from '../models/filter.model';
+import { InputText } from 'primeng/inputtext';
 
 export type Step2Controls = {
   name: FormControl<string>;
@@ -49,6 +50,7 @@ export type Step2Form = FormGroup<Step2Controls>;
     NgTemplateOutlet,
     GalleryLayoutComponent,
     ReactiveFormsModule,
+    InputText,
   ],
   providers: [CollectionApiService],
 })

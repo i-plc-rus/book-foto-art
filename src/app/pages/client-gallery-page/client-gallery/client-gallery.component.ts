@@ -1,11 +1,13 @@
 import { formatDate, NgTemplateOutlet } from '@angular/common';
 import { Component, computed, DestroyRef, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import type { FormControl, FormGroup } from '@angular/forms';
+import { ReactiveFormsModule } from '@angular/forms';
 import { FormBuilder, FormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import dayjs from 'dayjs';
 import { DatePickerModule } from 'primeng/datepicker';
+import { InputText } from 'primeng/inputtext';
 
 import { environment as env } from '../../../../environments/environment';
 import { CollectionApiService } from '../../../api/collection-api.service';
@@ -23,7 +25,6 @@ import { ShareCollectionModalComponent } from '../modal/share-collection-modal/s
 import type { CollectionActionPayload, DisplayView } from '../models/collection-display.model';
 import { CollectionActionType, SortOption } from '../models/collection-display.model';
 import { CATEGORY_TAG, EVENT_DATE, EXPIRY_DATE, STARRED, STATUS } from '../models/filter.model';
-import { InputText } from 'primeng/inputtext';
 
 export type Step2Controls = {
   name: FormControl<string>;
@@ -74,10 +75,6 @@ export class ClientGalleryComponent {
       validators: [Validators.required],
     }),
   });
-
-  readonly step2Invalid = computed(
-    () => this.formStep2.invalid || this.isLoading || this.isSubmitting(),
-  );
 
   readonly STATUS = STATUS;
   readonly EVENT_DATE = EVENT_DATE;

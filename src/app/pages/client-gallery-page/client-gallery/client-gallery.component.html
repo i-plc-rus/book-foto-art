@@ -58,34 +58,52 @@
       >
         Введите наименование коллекции
       </h1>
+      <form [formGroup]="formStep2">
+        <div class="form-group">
+          <label for="galleryName">Имя коллекции</label>
+          <input
+            id="galleryName"
+            type="text"
+            placeholder="например: Псков - Свадьба"
+            formControlName="name"
+            name="galleryName"
+            autocomplete="off"
+            [disabled]="isSubmitting() || isLoading"
+          />
+          @if (formStep2.controls.name.touched && formStep2.controls.name.invalid) {
+            <div class="error">
+              @if (formStep2.controls.name.errors?.['required']) {
+                <span>Укажите название.</span>
+              }
+              @if (formStep2.controls.name.errors?.['maxlength']) {
+                <span>Слишком длинное название.</span>
+              }
+            </div>
+          }
+        </div>
 
-      <div class="form-group">
-        <label for="galleryName">Имя коллекции</label>
-        <input
-          id="galleryName"
-          type="text"
-          placeholder="например: Псков - Свадьба"
-          [(ngModel)]="galleryName"
-          name="galleryName"
-          [disabled]="isSubmitting() || isLoading"
-        />
-      </div>
-
-      <div class="form-group">
-        <label for="galleryDate">Дата события</label>
-        <p-datepicker
-          styleClass="calendar-collection"
-          [disabled]="isSubmitting() || isLoading"
-          id="galleryDate"
-          name="galleryDate"
-          [(ngModel)]="galleryDate"
-        ></p-datepicker>
-      </div>
-      <div class="form-group">
-        <button class="submit-btn" (click)="nextStep()" [disabled]="isSubmitting() || isLoading">
-          Создать коллекцию
-        </button>
-      </div>
+        <div class="form-group">
+          <label for="galleryDate">Дата события</label>
+          <p-datepicker
+            styleClass="calendar-collection"
+            [disabled]="isSubmitting() || isLoading"
+            name="galleryDate"
+            formControlName="date"
+          ></p-datepicker>
+          @if (formStep2.controls.date.touched && formStep2.controls.date.invalid) {
+            <div class="error">
+              @if (formStep2.controls.date.errors?.['required']) {
+                <span>Укажите дату события.</span>
+              }
+            </div>
+          }
+        </div>
+        <div class="form-group">
+          <button class="submit-btn" (click)="nextStep()" [disabled]="isSubmitting() || isLoading">
+            Создать коллекцию
+          </button>
+        </div>
+      </form>
     </section>
   }
 </ng-template>

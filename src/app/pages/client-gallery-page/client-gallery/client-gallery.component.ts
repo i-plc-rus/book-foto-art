@@ -304,4 +304,8 @@ export class ClientGalleryComponent {
   formatDateUS(date: string): string {
     return formatDate(date, 'yyyy-MM-dd', 'en-US');
   }
+
+  canContinueStep2(): boolean {
+    return !this.formStep2?.invalid;
+  }
 }

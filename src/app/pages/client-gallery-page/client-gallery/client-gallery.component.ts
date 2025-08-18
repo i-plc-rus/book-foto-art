@@ -254,7 +254,7 @@ export class ClientGalleryComponent {
     this.collectionService
       .createCollection({
         name,
-        date: date ? this.formatDateUS(date?.toString()) : null,
+        date: date ? this.formatDateUS(date) : null,
       })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
@@ -298,13 +298,13 @@ export class ClientGalleryComponent {
       .navigate(['/upload'], {
         queryParams: {
           galleryName: name,
-          galleryDate: date ? this.formatDateUS(date?.toString()) : null,
+          galleryDate: date ? this.formatDateUS(date) : null,
         },
       })
       .catch();
   }
 
-  formatDateUS(date: string): string {
+  formatDateUS(date: Date): string {
     return formatDate(date, 'yyyy-MM-dd', 'en-US');
   }
 }

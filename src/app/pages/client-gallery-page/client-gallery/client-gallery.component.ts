@@ -1,4 +1,4 @@
-import { NgTemplateOutlet } from '@angular/common';
+import { formatDate, NgTemplateOutlet } from '@angular/common';
 import { Component, computed, DestroyRef, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
@@ -225,7 +225,7 @@ export class ClientGalleryComponent {
     this.collectionService
       .createCollection({
         name: this.galleryName(),
-        date: this.galleryDate(),
+        date: this.formatDateUS(this.galleryDate()),
       })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
@@ -268,9 +268,13 @@ export class ClientGalleryComponent {
       .navigate(['/upload'], {
         queryParams: {
           galleryName: this.galleryName(),
-          galleryDate: this.galleryDate(),
+          galleryDate: this.formatDateUS(this.galleryDate()),
         },
       })
       .catch();
+  }
+
+  formatDateUS(date: string): string {
+    return formatDate(date, 'yyyy-MM-dd', 'en-US');
   }
 }

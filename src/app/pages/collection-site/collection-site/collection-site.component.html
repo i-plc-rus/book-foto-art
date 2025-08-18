@@ -10,7 +10,7 @@
         Посмотреть галерею
       </button>
       <a [routerLink]="[]" class="collection-site__user-name">
-        {{ collectionInfo()?.name }}
+        {{ collectionInfo()?.username }}
       </a>
     </div>
   </div>
@@ -21,7 +21,7 @@
         {{ collectionInfo()?.name }}
       </a>
       <a [routerLink]="[]" class="collection-site__info-user">
-        {{ collectionInfo()?.user_id }}
+        {{ collectionInfo()?.username }}
       </a>
     </div>
     <div class="collection-site__actions">

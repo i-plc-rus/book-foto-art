@@ -6,6 +6,7 @@ export interface ICollectionInfo {
   id: string;
   name: string;
   user_id: string;
+  username: string;
 }
 
 export interface ICollectionPhoto {

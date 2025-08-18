@@ -7,11 +7,12 @@ import { provideRouter } from '@angular/router';
 import Aura from '@primeng/themes/aura';
 import { NgxDaterangepickerMd } from 'ngx-daterangepicker-material';
 import { providePrimeNG } from 'primeng/config';
+import ruPrime from '../assets/locale/prime/ru.json';
 
+import { environment } from '../environments/environment';
 import { routes } from './app.routes';
 import { AuthInterceptor } from './core/interceptor/auth.interceptor';
 import { SidebarService } from './core/service/sidebar.service';
-import { environment } from '../environments/environment';
 
 export const BASE_API_URL = new InjectionToken<string>('BASE_API_URL');
 
@@ -25,6 +26,7 @@ export const appConfig: ApplicationConfig = {
           darkModeSelector: '.dark',
         },
       },
+      translation: ruPrime.ru,
     }),
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),

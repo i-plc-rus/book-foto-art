@@ -1,4 +1,10 @@
-<p-toast position="top-right" />
+<p-toast position="top-right" styleClass="app-toast desktop-only" />
+@if (showLoginError) {
+  <p-message severity="error" icon="pi pi-times-circle" styleClass="mb-2 mobile-only">
+    {{ loginError }}
+  </p-message>
+}
+
 <div class="login-page">
   <header class="login-header">
     <img src="../../../../assets/icons/logo.svg" alt="Логотип" class="logo" />

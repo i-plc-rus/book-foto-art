@@ -16,13 +16,14 @@ import { catchError, finalize, tap } from 'rxjs/operators';
 import { AuthService } from '../../../core/service/auth.service';
 import { Toast } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
+import { Message } from 'primeng/message';
 
 @Component({
   standalone: true,
   selector: 'app-login-page',
   templateUrl: './login-page.component.html',
   styleUrl: './login-page.component.css',
-  imports: [ReactiveFormsModule, RouterModule, FormsModule, Checkbox, InputText, Toast],
+  imports: [ReactiveFormsModule, RouterModule, FormsModule, Checkbox, InputText, Toast, Message],
   providers: [MessageService],
 })
 export class LoginPageComponent {
@@ -44,6 +45,8 @@ export class LoginPageComponent {
     remember: new FormControl(false, { nonNullable: true }),
   });
   loading = false;
+  loginError: string = '';
+  showLoginError = false;
 
   get emailCtrl(): FormControl<string> {
     return this.form.controls.email;
@@ -78,18 +81,25 @@ export class LoginPageComponent {
     }
 
     this.loading = true;
+    this.showLoginError = false;
+    this.loginError = '';
 
     this.authService
       .login({ email, password })
       .pipe(
         tap(() => {
+          this.showLoginError = false;
+          this.loginError = '';
           this.router.navigate(['/client-gallery']);
         }),
         catchError((err) => {
-          let detail = 'Произошла ошибка, попробуйте ещё раз';
-          if (err.status === 401) {
-            detail = 'Неправильная пара email- пароль';
-          }
+          const detail =
+            err?.status === 401
+              ? 'Неправильная пара email-пароль'
+              : 'Произошла ошибка, попробуйте ещё раз';
+
+          this.loginError = detail;
+          this.showLoginError = true;
           this.messageService.add({
             severity: 'error',
             summary: 'Ошибка входа',

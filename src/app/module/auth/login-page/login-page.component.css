@@ -160,9 +160,6 @@ input.invalid {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  . p-checkbox {
-    order: 0;
-  }
 
   label {
     cursor: pointer;

@@ -1,5 +1,9 @@
-import { Component, EventEmitter, Output, signal } from '@angular/core';
 import { NgClass } from '@angular/common';
+import { Component, EventEmitter, inject, Output, signal } from '@angular/core';
+import type { MenuItem } from 'primeng/api';
+
+import { AuthService } from '../../../core/service/auth.service';
+import { Menu } from 'primeng/menu';
 
 export type SidebarMenu = 'collections' | 'favorites' | 'home' | 'settings';
 
@@ -7,10 +11,12 @@ export type SidebarMenu = 'collections' | 'favorites' | 'home' | 'settings';
   standalone: true,
   selector: 'app-mobile-header',
   templateUrl: './mobile-header.component.html',
-  imports: [NgClass],
+  imports: [NgClass, Menu],
   styleUrls: ['./mobile-header.component.css'],
 })
 export class MobileHeaderComponent {
+  private readonly authService: AuthService = inject(AuthService);
+
   activeTab = signal<any>('collections');
 
   tabs = [
@@ -20,10 +26,18 @@ export class MobileHeaderComponent {
     { id: 'homepage', title: 'Homepage' },
   ];
 
+  readonly profileMenuItems: MenuItem[] = [
+    { label: 'Выход', icon: 'pi pi-sign-out', command: () => this.logout() },
+  ];
+
   @Output() tabChange = new EventEmitter<any>();
 
-  selectTab(tab: any) {
+  selectTab(tab: any): void {
     this.activeTab.set(tab);
     this.tabChange.emit(tab);
+  }
+
+  logout(): void {
+    this.authService.logout();
   }
 }

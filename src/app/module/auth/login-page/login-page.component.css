@@ -93,7 +93,6 @@ form input[type='email'],
 form input[type='password'] {
   width: 100%;
   padding: 0.75rem;
-  margin-bottom: 1rem;
   border: 1px solid #ccc;
   border-radius: 6px;
   font-size: 1rem;
@@ -169,4 +168,8 @@ input.invalid {
     cursor: pointer;
     margin-top: 1px;
   }
+}
+
+.input-area {
+  margin-bottom: 1rem;
 }

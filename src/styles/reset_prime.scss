@@ -45,6 +45,7 @@ select.ng-invalid.ng-touched:focus,
 .error-text {
   color: var(--error-border) !important;
   font-size: 0.875rem;
+  margin-top: 0.25rem;
 }
 
 /* 6. Убираем белый текст из кнопок PrimeNG, если тема поставила */

@@ -64,7 +64,7 @@
 .register-subtitle {
   font-size: 0.9rem;
   color: #666;
-  margin-bottom: 2rem;
+  margin: 1.5rem 0;
 }
 
 .register-subtitle a {
@@ -145,5 +145,15 @@ input.invalid {
 
   .register-left {
     width: 100%;
+    padding: 1rem;
+  }
+
+  .register-content {
+    max-width: none;
+    width: 100%;
+  }
+
+  .register-subtitle {
+    margin-bottom: 1.5rem;
   }
 }

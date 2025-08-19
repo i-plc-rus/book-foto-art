@@ -86,10 +86,14 @@ export class LoginPageComponent {
           this.router.navigate(['/client-gallery']);
         }),
         catchError((err) => {
+          let detail = 'Произошла ошибка, попробуйте ещё раз';
+          if (err.status === 401) {
+            detail = 'Неправильная пара email- пароль';
+          }
           this.messageService.add({
             severity: 'error',
             summary: 'Ошибка входа',
-            detail: err?.message || 'Неверный email или пароль',
+            detail,
             life: 4000,
           });
           console.error('Login error:', err);

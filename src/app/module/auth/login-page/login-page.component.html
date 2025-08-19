@@ -1,3 +1,4 @@
+<p-toast position="top-right" />
 <div class="login-page">
   <header class="login-header">
     <img src="../../../../assets/icons/logo.svg" alt="Логотип" class="logo" />
@@ -26,22 +27,63 @@
       <span class="line"></span>
     </div>-->
 
-    <form [formGroup]="form" (submit)="onSubmit()">
-      <input type="email" autocomplete="email" formControlName="email" placeholder="Email" />
+    <form [formGroup]="form">
+      <div class="input-area">
+        <input
+          pInputText
+          type="email"
+          autocomplete="email"
+          formControlName="email"
+          placeholder="Email"
+          required
+          [class.invalid]="isEmailTouched() && (hasEmailRequired() || hasEmailFormatError())"
+        />
+        @if (isEmailTouched() && hasEmailRequired()) {
+          <div class="error-text">Укажите email</div>
+        } @else if (isEmailTouched() && hasEmailFormatError()) {
+          <div class="error-text">Введён некорректный email</div>
+        }
+      </div>
 
-      <input type="password" formControlName="password" placeholder="Пароль" />
+      <div class="input-area">
+        <input
+          pInputText
+          type="password"
+          formControlName="password"
+          placeholder="Пароль"
+          required
+          [class.invalid]="isPasswordTouched() && hasPasswordRequired()"
+        />
+        @if (isPasswordTouched() && hasPasswordRequired()) {
+          <div class="error-text">Укажите пароль</div>
+        }
+      </div>
 
       <div class="login-options">
-        <label>
-          <input type="checkbox" formControlName="remember" />
-          Запомнить меня
-        </label>
+        <div class="remember-wrap">
+          <p-checkbox
+            formControlName="remember"
+            binary="true"
+            inputId="rememberMe"
+            name="rememberMe"
+          ></p-checkbox>
+          <label for="rememberMe">Запомнить меня</label>
+        </div>
+
         <a routerLink="/reset-password">Забыли пароль?</a>
       </div>
 
-      <button type="submit" class="submit-btn" [disabled]="loading">
-        <span *ngIf="!loading">Войти</span>
-        <span *ngIf="loading">Загрузка...</span>
+      <button
+        type="submit"
+        class="submit-btn"
+        (click)="onSubmit()"
+        [disabled]="loading || form.invalid"
+      >
+        @if (!loading) {
+          <span>Войти</span>
+        } @else {
+          <span>Загрузка...</span>
+        }
       </button>
     </form>
   </main>

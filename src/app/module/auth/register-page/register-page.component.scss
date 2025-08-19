@@ -137,3 +137,13 @@ input.invalid {
 .input-area {
   margin-bottom: 1rem;
 }
+
+@media (max-width: 768px) {
+  .register-right {
+    display: none;
+  }
+
+  .register-left {
+    width: 100%;
+  }
+}

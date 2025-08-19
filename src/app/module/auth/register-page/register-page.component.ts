@@ -11,11 +11,12 @@ import { finalize } from 'rxjs';
 
 import { AuthService } from '../../../core/service/auth.service';
 import type { IAuthRegister } from '../../../interfaces/auth.interface';
+import { Message } from 'primeng/message';
 
 @Component({
   selector: 'app-register-page',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule, RouterLink, Toast, InputText],
+  imports: [ReactiveFormsModule, CommonModule, RouterLink, Toast, InputText, Message],
   templateUrl: './register-page.component.html',
   styleUrl: './register-page.component.scss',
   providers: [MessageService],
@@ -33,6 +34,8 @@ export class RegisterPageComponent implements OnInit {
   }>;
   step: number = 1;
   isSubmitting: boolean = false;
+  registerError: string = '';
+  showRegisterError = false;
 
   ngOnInit(): void {
     this.form = this.fb.group<{
@@ -60,10 +63,24 @@ export class RegisterPageComponent implements OnInit {
     this.form.get('password')?.updateValueAndValidity();
   }
 
+  showError(detail: string): void {
+    this.registerError = detail;
+    this.showRegisterError = true;
+
+    this.messageService.add({
+      severity: 'error',
+      summary: 'Ошибка регистрации',
+      detail,
+      life: 4000,
+    });
+  }
+
   onSubmit(): void {
     if (this.isSubmitting || this.form.invalid) return;
 
     this.isSubmitting = true;
+    this.showRegisterError = false;
+    this.registerError = '';
     const { email, username, password } = this.form.getRawValue();
     this.form.disable();
 
@@ -107,6 +124,7 @@ export class RegisterPageComponent implements OnInit {
         error: (err: any) => {
           if (err?.status === 409) {
             const msg = typeof err?.error === 'string' ? err.error : 'Пользователь уже существует';
+            this.showError(msg);
             this.messageService.add({
               severity: 'error',
               summary: 'Регистрация',

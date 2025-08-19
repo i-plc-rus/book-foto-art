@@ -14,18 +14,22 @@ import { throwError } from 'rxjs';
 import { catchError, finalize, tap } from 'rxjs/operators';
 
 import { AuthService } from '../../../core/service/auth.service';
+import { Toast } from 'primeng/toast';
+import { MessageService } from 'primeng/api';
 
 @Component({
   standalone: true,
   selector: 'app-login-page',
   templateUrl: './login-page.component.html',
   styleUrl: './login-page.component.css',
-  imports: [ReactiveFormsModule, RouterModule, FormsModule, Checkbox, InputText],
+  imports: [ReactiveFormsModule, RouterModule, FormsModule, Checkbox, InputText, Toast],
+  providers: [MessageService],
 })
 export class LoginPageComponent {
   private authService = inject(AuthService);
   private router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly messageService = inject(MessageService);
 
   form: FormGroup<{
     email: FormControl<string>;
@@ -40,7 +44,6 @@ export class LoginPageComponent {
     remember: new FormControl(false, { nonNullable: true }),
   });
   loading = false;
-  errorMsg = '';
 
   get emailCtrl(): FormControl<string> {
     return this.form.controls.email;
@@ -74,7 +77,6 @@ export class LoginPageComponent {
       return;
     }
 
-    this.errorMsg = '';
     this.loading = true;
 
     this.authService
@@ -84,7 +86,12 @@ export class LoginPageComponent {
           this.router.navigate(['/client-gallery']);
         }),
         catchError((err) => {
-          this.errorMsg = 'Ошибка входа. Проверьте email и пароль.';
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Ошибка входа',
+            detail: err?.message || 'Неверный email или пароль',
+            life: 4000,
+          });
           console.error('Login error:', err);
           return throwError(() => err);
         }),

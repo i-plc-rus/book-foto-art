@@ -12,13 +12,14 @@ import { catchError, tap, finalize } from 'rxjs/operators';
 import { throwError } from 'rxjs';
 import { NgIf } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Checkbox } from 'primeng/checkbox';
 
 @Component({
   standalone: true,
   selector: 'app-login-page',
   templateUrl: './login-page.component.html',
   styleUrl: './login-page.component.css',
-  imports: [ReactiveFormsModule, RouterModule, NgIf, FormsModule],
+  imports: [ReactiveFormsModule, RouterModule, NgIf, FormsModule, Checkbox],
 })
 export class LoginPageComponent implements OnInit {
   form!: FormGroup;

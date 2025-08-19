@@ -156,3 +156,17 @@ input.invalid {
     margin-bottom: 1.5rem;
   }
 }
+
+.remember-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  . p-checkbox {
+    order: 0;
+  }
+
+  label {
+    cursor: pointer;
+    margin-top: 1px;
+  }
+}

@@ -32,10 +32,15 @@
       <input type="password" formControlName="password" placeholder="Пароль" />
 
       <div class="login-options">
-        <label>
-          <input type="checkbox" formControlName="remember" />
-          Запомнить меня
-        </label>
+        <div class="remember-wrap">
+          <p-checkbox
+            formControlName="remember"
+            binary="true"
+            inputId="rememberMe"
+            name="rememberMe"
+          ></p-checkbox>
+          <label for="rememberMe"> Запомнить меня</label>
+        </div>
         <a routerLink="/reset-password">Забыли пароль?</a>
       </div>
 

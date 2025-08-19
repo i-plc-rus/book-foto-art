@@ -97,7 +97,7 @@ export class MainLayoutComponent {
     const cover = this.collectionData()?.cover_url ?? null;
     if (!cover) return null;
     if (cover.startsWith('http')) return cover;
-    return env.apiUrl + cover;
+    return cover;
   }
 
   updateFocalPoint(position: { x: number; y: number }): void {

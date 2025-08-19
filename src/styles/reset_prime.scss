@@ -97,3 +97,23 @@ p-datepicker {
     display: flex;
   }
 }
+
+.desktop-only {
+  display: block;
+}
+.mobile-only {
+  display: none;
+  .p-message {
+    width: 100%;
+    box-sizing: border-box;
+  }
+}
+
+@media (max-width: 768px) {
+  .desktop-only {
+    display: none !important;
+  }
+  .mobile-only {
+    display: block !important;
+  }
+}

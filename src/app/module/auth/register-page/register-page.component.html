@@ -1,5 +1,10 @@
+<p-toast position="top-right" styleClass="app-toast desktop-only" />
+@if (showRegisterError) {
+  <p-message severity="error" icon="pi pi-times-circle" styleClass="mb-2 mobile-only">
+    {{ registerError }}
+  </p-message>
+}
 <div class="register-page">
-  <p-toast position="top-right" />
   <div class="register-left">
     <header class="register-header">
       <img src="assets/icons/logo.svg" alt="Логотип" class="logo" />

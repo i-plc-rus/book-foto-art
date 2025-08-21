@@ -29,10 +29,10 @@ export class TabsComponent {
   currentCollectionId = signal<string | null>(null);
 
   tabs = [
-    { icon: 'assets/icons/images.svg', tooltip: 'Photos', link: '/upload' },
-    { icon: 'assets/icons/icon-design.svg', tooltip: 'Design', link: '/design/cover' },
-    { icon: 'assets/icons/setting.svg', tooltip: 'Settings', link: '/gallery/settings' },
-    { icon: 'assets/icons/wifi.svg', tooltip: 'Activities', link: '/gallery/active' },
+    /*   { icon: 'assets/icons/images.svg', tooltip: 'Photos', link: '/upload' },*/
+    { icon: 'assets/icons/icon-design.svg', tooltip: 'Дизайн', link: '/design/cover' },
+    /*   { icon: 'assets/icons/setting.svg', tooltip: 'Settings', link: '/gallery/settings' },
+    { icon: 'assets/icons/wifi.svg', tooltip: 'Activities', link: '/gallery/active' },*/
   ];
 
   constructor() {

@@ -108,24 +108,6 @@ form input[type='password'] {
   color: #555;
 }
 
-.submit-btn {
-  margin-top: 1.5rem;
-  background-color: #1abc9c;
-  color: white;
-  border: none;
-  padding: 0.6rem 0.6rem;
-  font-size: 1rem;
-  font-weight: 600;
-  border-radius: 2px;
-  cursor: pointer;
-  width: 250px;
-  height: 50px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  transition: background-color 0.2s ease;
-}
-
 .error {
   color: #ff3b30;
   font-size: 12px;
@@ -145,10 +127,6 @@ input.invalid {
     max-width: none;
     width: 100%;
     text-align: left;
-  }
-
-  .submit-btn {
-    width: 100%;
   }
 
   .login-subtitle {

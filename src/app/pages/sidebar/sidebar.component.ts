@@ -18,9 +18,9 @@ export class SidebarComponent {
 
   menuItems = [
     { id: 'collections', title: 'Коллекции', icon: 'collections' },
-    { id: 'favorites', title: 'Избранное', icon: 'favorites' },
+    /* { id: 'favorites', title: 'Избранное', icon: 'favorites' },
     { id: 'home', title: 'Домашняя страница', icon: 'home' },
-    { id: 'settings', title: 'Настройки', icon: 'settings' },
+    { id: 'settings', title: 'Настройки', icon: 'settings' },*/
   ];
 
   readonly profileMenuItems: MenuItem[] = [

@@ -50,4 +50,11 @@ export const routes: Routes = [
         (c) => c.CollectionSiteComponent,
       ),
   },
+  {
+    path: 'yandex-oauth',
+    loadComponent: () =>
+      import('./pages/yandex-callback/yandex-callback.component').then(
+        (m) => m.YandexCallbackComponent,
+      ),
+  },
 ];

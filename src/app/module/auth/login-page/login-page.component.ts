@@ -8,15 +8,15 @@ import {
   Validators,
 } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
+import { MessageService } from 'primeng/api';
 import { Checkbox } from 'primeng/checkbox';
 import { InputText } from 'primeng/inputtext';
-import { throwError } from 'rxjs';
-import { catchError, finalize, tap } from 'rxjs/operators';
+import { Message } from 'primeng/message';
+import { Toast } from 'primeng/toast';
+import { EMPTY, from, takeUntil } from 'rxjs';
+import { catchError, finalize, switchMap, take } from 'rxjs/operators';
 
 import { AuthService } from '../../../core/service/auth.service';
-import { Toast } from 'primeng/toast';
-import { MessageService } from 'primeng/api';
-import { Message } from 'primeng/message';
 
 @Component({
   standalone: true,
@@ -73,7 +73,8 @@ export class LoginPageComponent {
   }
 
   onSubmit(): void {
-    const { email, password } = this.form.value;
+    const { email, password } = this.form.value as { email: string; password: string };
+
     if (this.form.invalid || !email || !password) {
       console.warn('Form is invalid!');
       this.form.markAllAsTouched();
@@ -87,10 +88,11 @@ export class LoginPageComponent {
     this.authService
       .login({ email, password })
       .pipe(
-        tap(() => {
+        take(1),
+        switchMap(() => {
           this.showLoginError = false;
           this.loginError = '';
-          this.router.navigate(['/client-gallery']);
+          return from(this.router.navigate(['/client-gallery']));
         }),
         catchError((err) => {
           const detail =
@@ -107,11 +109,23 @@ export class LoginPageComponent {
             life: 4000,
           });
           console.error('Login error:', err);
-          return throwError(() => err);
+          return EMPTY;
         }),
         finalize(() => (this.loading = false)),
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe();
+  }
+
+  /**
+   * Аутентифицируемся через Yandex OAuth
+   */
+  loginWithYandex(): void {
+    this.authService
+      .goYandexOauth()
+      .pipe(take(1), takeUntilDestroyed(this.destroyRef))
+      .subscribe((url: string) => {
+        window.location.assign(url);
+      });
   }
 }

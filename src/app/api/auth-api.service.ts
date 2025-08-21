@@ -45,4 +45,22 @@ export class AuthApiService {
       refresh_token: token,
     });
   }
+
+  /**
+   * Кнопка "Войти через Яндекс"
+   */
+  goYandexOauth(): Observable<string> {
+    return this.httpClient.get<string>(`${this.baseUrl}/auth/yandex/login`);
+  }
+
+  /**
+   * Обрабатывает ответ от Яндекса после успешной аутентификации
+   * @param code Код авторизации от Яндекса
+   * @param state State параметр для безопасности
+   */
+  yandexCallback(code: string, state: string): Observable<IAuthLoginResponse> {
+    return this.httpClient.get<IAuthLoginResponse>(`${this.baseUrl}/auth/yandex/callback`, {
+      params: { code, state },
+    });
+  }
 }

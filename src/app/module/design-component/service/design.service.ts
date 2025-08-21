@@ -14,7 +14,7 @@ export interface DesignSection {
 
 @Injectable()
 export class DesignService {
-  private _sectionTitle = signal<string>('DESIGN');
+  private _sectionTitle = signal<string>('ДИЗАЙН');
   private _sections = signal<DesignSection[]>([]);
   sections = this._sections.asReadonly();
   sectionTitle = this._sectionTitle.asReadonly();
@@ -23,29 +23,29 @@ export class DesignService {
     this.registerSections();
   }
 
-  private registerSections() {
+  private registerSections(): void {
     this._sections.set([
       {
         id: 'cover',
-        name: 'Cover',
+        name: 'Обложка',
         icon: 'assets/icons/images.svg',
         component: DesignCoverComponent,
       },
       {
         id: 'fontset',
-        name: 'Typography',
+        name: 'Типографика',
         icon: 'assets/icons/t.svg',
         component: DesignTypographyComponent,
       },
       {
         id: 'color',
-        name: 'Color',
+        name: 'Цвет',
         icon: 'assets/icons/color.svg',
         component: DesignColorComponent,
       },
       {
         id: 'grid',
-        name: 'Grid',
+        name: 'Сетка',
         icon: 'assets/icons/grid.svg',
         component: DesignGridComponent,
       },

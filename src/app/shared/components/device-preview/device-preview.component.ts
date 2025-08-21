@@ -11,7 +11,7 @@ import { NgClass } from '@angular/common';
 export class DevicePreviewComponent {
   @Input() previewImage: string | null = null;
   @Input() viewMode: 'desktop' | 'icon-m' = 'desktop';
-  @Input() placeholderText = 'Select a template to preview';
+  @Input() placeholderText = 'Выберите шаблон для предпросмотра';
   @Input() desktopWidth = 'w-[420px]';
   @Input() mobileWidth = 'w-[280px]';
 

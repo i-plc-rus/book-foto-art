@@ -7,6 +7,7 @@ import { EasyChoiceComponent } from './easy-choice/easy-choice.component';
 import { ShopSectionComponent } from './shop-section/shop-section.component';
 import { GetStartedComponent } from './get-started/get-started.component';
 import { FooterComponent } from './footer/footer.component';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-home',
@@ -19,6 +20,7 @@ import { FooterComponent } from './footer/footer.component';
     ShopSectionComponent,
     GetStartedComponent,
     FooterComponent,
+    RouterLink,
   ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css',

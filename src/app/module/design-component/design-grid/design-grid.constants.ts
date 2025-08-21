@@ -1,60 +1,63 @@
-import { IActionBarItem } from '../../../shared/components/editor-action-bar/action-bar-item';
-import { CoverTemplate } from '../design-cover/cover-template';
-import { GridGroup } from './grid-group';
+import type { IActionBarItem } from '../../../shared/components/editor-action-bar/action-bar-item';
+import type { GridGroup } from './grid-group';
 
 export const GRID_GROUPS: GridGroup[] = [
   {
-    title: 'Grid Style',
+    title: 'Стиль сетки',
     items: [
       {
         id: 'vertical',
-        name: 'Vertical',
+        name: 'Вертикальная',
         image: 'assets/images/grid/gallery_layout-vertical-DLlFPzGn.png',
       },
       {
         id: 'horizontal',
-        name: 'Horizontal',
+        name: 'Горизонтальная',
         image: 'assets/images/grid/gallery_layout-horizontal-BGGebzQ7.png',
       },
     ],
   },
   {
-    title: 'Thumbnail Size',
+    title: 'Размер миниатюр',
     items: [
       {
         id: 'regular',
-        name: 'Regular',
+        name: 'Обычный',
         image: 'assets/images/grid/thumbnail_size-regular-DsRmKk5_.png',
       },
-      { id: 'large', name: 'Large', image: 'assets/images/grid/thumbnail_size-large-D--Q95q6.png' },
+      {
+        id: 'large',
+        name: 'Крупный',
+        image: 'assets/images/grid/thumbnail_size-large-D--Q95q6.png',
+      },
     ],
   },
   {
-    title: 'Grid Spacing',
+    title: 'Отступы сетки',
     items: [
       {
         id: 'spacing-regular',
-        name: 'Regular',
+        name: 'Обычные',
         image: 'assets/images/grid/spacing-regular-bW27bkSv.png',
       },
       {
         id: 'spacing-large',
-        name: 'Large',
+        name: 'Большие',
         image: 'assets/images/grid/spacing-large-DNQiE_vy.png',
       },
     ],
   },
   {
-    title: 'Navigation Style',
+    title: 'Стиль навигации',
     items: [
       {
         id: 'icon-only',
-        name: 'Icon Only',
+        name: 'Только иконки',
         image: 'assets/images/grid/navigation_style-icon_only-Dq73LRIX.png',
       },
       {
         id: 'icon-text',
-        name: 'Icon & Text',
+        name: 'Иконки и текст',
         image: 'assets/images/grid/navigation_style-icon_text-CychTCGY.png',
       },
     ],
@@ -62,11 +65,11 @@ export const GRID_GROUPS: GridGroup[] = [
 ];
 
 export const ACTION_BAR_ITEMS: IActionBarItem[] = [
-  { id: 'get-link', label: 'Get direct link' },
-  { id: 'email-history', label: 'View email history' },
-  { id: 'manage-presets', label: 'Manage presets' },
-  { id: 'move-to', label: 'Move to' },
-  { id: 'duplicate', label: 'Duplicate' },
+  { id: 'get-link', label: 'Получить прямую ссылку' },
+  { id: 'email-history', label: 'История отправки по email' },
+  { id: 'manage-presets', label: 'Управление пресетами' },
+  { id: 'move-to', label: 'Переместить' },
+  { id: 'duplicate', label: 'Дублировать' },
   { id: 'divider', divider: true },
-  { id: 'delete', label: 'Delete collection', disabled: true },
+  { id: 'delete', label: 'Удалить коллекцию', disabled: true },
 ];

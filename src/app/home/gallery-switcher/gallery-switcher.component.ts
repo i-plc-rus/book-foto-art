@@ -9,9 +9,9 @@ import { Component } from '@angular/core';
 })
 export class GallerySwitcherComponent {
   images = [
-    { src: 'assets/personal.jpg', label: 'ВАШ СТИЛЬ' },
-    { src: 'assets/gallery.jpg', label: 'ГАЛЕРЕИ' },
-    { src: 'assets/space.jpg', label: 'ПОРТФОЛИО' },
+    { src: 'assets/icons/personal.jpg', label: 'ВАШ СТИЛЬ' },
+    { src: 'assets/icons/gallery.jpg', label: 'ГАЛЕРЕИ' },
+    { src: 'assets/icons/space.jpg', label: 'ПОРТФОЛИО' },
   ];
 
   selectedIndex = 0;

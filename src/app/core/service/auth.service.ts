@@ -116,6 +116,8 @@ export class AuthService {
    * Обрабатывает ответ от Яндекса после успешной аутентификации
    */
   yandexCallback(code: string, state: string): Observable<IAuthLoginResponse> {
-    return this.authApiService.yandexCallback(code, state);
+    return this.authApiService
+      .yandexCallback(code, state)
+      .pipe(tap((r) => this.saveTokens(r.access_token, r.refresh_token)));
   }
 }

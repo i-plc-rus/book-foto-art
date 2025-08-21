@@ -13,7 +13,7 @@ import { Checkbox } from 'primeng/checkbox';
 import { InputText } from 'primeng/inputtext';
 import { Message } from 'primeng/message';
 import { Toast } from 'primeng/toast';
-import { EMPTY, from } from 'rxjs';
+import { EMPTY, from, takeUntil } from 'rxjs';
 import { catchError, finalize, switchMap, take } from 'rxjs/operators';
 
 import { AuthService } from '../../../core/service/auth.service';
@@ -115,5 +115,12 @@ export class LoginPageComponent {
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe();
+  }
+
+  /**
+   * Аутентифицируемся через Yandex OAuth
+   */
+  loginWithYandex(): void {
+    this.authService.goYandexOauth().pipe(takeUntilDestroyed(this.destroyRef)).subscribe();
   }
 }

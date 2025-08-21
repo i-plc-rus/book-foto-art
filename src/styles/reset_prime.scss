@@ -74,10 +74,6 @@ h2,
     border-color: #000;
   }
 
-  .p-inputtext {
-    height: 3.125rem;
-  }
-
   ng-invalid {
     .p-inputtext {
       border: 1px solid var(--error-border);
@@ -116,4 +112,8 @@ p-datepicker {
   .mobile-only {
     display: block !important;
   }
+}
+
+.p-inputtext {
+  height: 3.125rem;
 }

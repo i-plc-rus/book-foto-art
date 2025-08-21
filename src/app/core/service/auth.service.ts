@@ -104,4 +104,18 @@ export class AuthService {
     localStorage.removeItem('refresh_token');
     this.router.navigate(['/login']).catch(() => {});
   }
+
+  /**
+   * Кнопка "Войти через Яндекс"
+   */
+  goYandexOauth(): Observable<void> {
+    return this.authApiService.goYandexOauth();
+  }
+
+  /**
+   * Обрабатывает ответ от Яндекса после успешной аутентификации
+   */
+  yandexCallback(code: string, state: string): Observable<IAuthLoginResponse> {
+    return this.authApiService.yandexCallback(code, state);
+  }
 }

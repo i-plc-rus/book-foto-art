@@ -49,8 +49,8 @@ export class AuthApiService {
   /**
    * Кнопка "Войти через Яндекс"
    */
-  goYandexOauth(): Observable<void> {
-    return this.httpClient.get<void>(`${this.baseUrl}/auth/yandex/login`);
+  goYandexOauth(): Observable<string> {
+    return this.httpClient.get<string>(`${this.baseUrl}/auth/yandex/login`);
   }
 
   /**

@@ -121,6 +121,11 @@ export class LoginPageComponent {
    * Аутентифицируемся через Yandex OAuth
    */
   loginWithYandex(): void {
-    this.authService.goYandexOauth().pipe(takeUntilDestroyed(this.destroyRef)).subscribe();
+    this.authService
+      .goYandexOauth()
+      .pipe(take(1), takeUntilDestroyed(this.destroyRef))
+      .subscribe((url: string) => {
+        window.location.assign(url);
+      });
   }
 }

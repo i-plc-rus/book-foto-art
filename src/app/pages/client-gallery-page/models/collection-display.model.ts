@@ -24,8 +24,8 @@ export const SORT_OPTIONS: SortOptionItem[] = [
 ];
 
 export enum CollectionActionType {
-  Publish = 'publish',
-  Delete = 'delete',
+  Publish = 'опубликовать',
+  Delete = 'удалить',
 }
 
 export interface CollectionAction {

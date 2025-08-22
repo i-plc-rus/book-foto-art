@@ -40,6 +40,9 @@ export class YandexCallbackComponent implements OnInit {
           code: qp.get('code') ?? '',
           state: qp.get('state') ?? '',
         })),
+        tap(({ code, state }) => {
+          console.log('колбэк компонент /verification', code, state);
+        }),
         this.tapParamsGuard(),
         switchMap(({ code, state }) =>
           this.authService.yandexCallback(code, state).pipe(

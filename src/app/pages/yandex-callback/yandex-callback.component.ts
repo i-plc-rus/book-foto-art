@@ -16,6 +16,7 @@ import { AuthService } from '../../core/service/auth.service';
   templateUrl: './yandex-callback.component.html',
   styleUrl: './yandex-callback.component.scss',
   standalone: true,
+  providers: [MessageService],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class YandexCallbackComponent implements OnInit {

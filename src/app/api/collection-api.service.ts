@@ -5,7 +5,13 @@ import { map } from 'rxjs';
 
 import { BASE_API_URL } from '../app.config';
 import type { CollectionCreateDto, CollectionCreateResponse } from '../core/interfaces/collection';
-import type { ICollectionInfo, ICollectionPhoto } from '../interfaces/collection.interface';
+import type {
+  ICollectionInfo,
+  ICollectionPhoto,
+  IPublishResponse,
+  IShortLinkInfo,
+  IUnpublishResponse,
+} from '../interfaces/collection.interface';
 
 /**
  * API -сервис для работы с коллекциями
@@ -71,5 +77,34 @@ export class CollectionApiService {
    */
   getCollectionPhotos(id: string): Observable<ICollectionPhoto> {
     return this.httpClient.get<ICollectionPhoto>(`${this.baseUrl}/collection/${id}/photos`).pipe();
+  }
+
+  /**
+   * Публикация коллекции → возвращает короткую ссылку
+   * @param id идентификатор коллекции
+   */
+  publishCollection(id: string): Observable<IPublishResponse> {
+    return this.httpClient.put<IPublishResponse>(`${this.baseUrl}/collection/${id}/publish`, {});
+  }
+
+  /**
+   * Снятие публикации (отзыв доступа)
+   * @param id идентификатор коллекции
+   */
+  unpublishCollection(id: string): Observable<IUnpublishResponse> {
+    return this.httpClient.put<IUnpublishResponse>(
+      `${this.baseUrl}/collection/${id}/unpublish`,
+      {},
+    );
+  }
+
+  /**
+   * Получить информацию о короткой ссылке
+   * @param token токен короткой ссылки
+   */
+  getShortLinkInfo(token: string): Observable<IShortLinkInfo> {
+    return this.httpClient.get<IShortLinkInfo>(
+      `${this.baseUrl}/collection/short_link_info/${token}`,
+    );
   }
 }

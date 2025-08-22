@@ -109,7 +109,7 @@ export class AuthService {
    * Кнопка "Войти через Яндекс"
    */
   goYandexOauth(): Observable<string> {
-    return this.authApiService.goYandexOauth();
+    return this.authApiService.getYandexLoginUrl().pipe(map((r) => r.url));
   }
 
   /**

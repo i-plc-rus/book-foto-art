@@ -49,8 +49,8 @@ export class AuthApiService {
   /**
    * Кнопка "Войти через Яндекс"
    */
-  goYandexOauth(): Observable<string> {
-    return this.httpClient.get<string>(`${this.baseUrl}/auth/yandex/login`);
+  getYandexLoginUrl(): Observable<{ url: string }> {
+    return this.httpClient.get<{ url: string }>('https://api.bookfoto.art/auth/yandex/login');
   }
 
   /**

@@ -51,7 +51,7 @@ export const routes: Routes = [
       ),
   },
   {
-    path: 'yandex-oauth',
+    path: 'verification',
     loadComponent: () =>
       import('./pages/yandex-callback/yandex-callback.component').then(
         (m) => m.YandexCallbackComponent,

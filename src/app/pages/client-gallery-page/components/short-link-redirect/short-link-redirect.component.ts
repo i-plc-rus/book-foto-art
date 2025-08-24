@@ -59,7 +59,7 @@ export class ShortLinkRedirectComponent implements OnInit {
         // если тот же домен — мягкий SPA-переход
         if (this.isSameOrigin(fullUrl)) {
           const u = new URL(fullUrl, window.location.origin);
-          this.router.navigateByUrl(u.pathname + u.search + u.hash);
+          void this.router.navigateByUrl(u.pathname + u.search + u.hash);
         } else {
           window.location.href = fullUrl; // внешний домен
         }
@@ -77,6 +77,6 @@ export class ShortLinkRedirectComponent implements OnInit {
   private go404(message: string): void {
     this.error.set(message);
     this.loading.set(false);
-    this.router.navigateByUrl('/not-found');
+    void this.router.navigateByUrl('/not-found');
   }
 }

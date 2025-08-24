@@ -13,6 +13,8 @@ import type {
   IUnpublishResponse,
 } from '../interfaces/collection.interface';
 
+export type PublicPhotosSort = 'uploaded_new' | 'uploaded_old' | 'name_az' | 'name_za' | 'random';
+
 /**
  * API -сервис для работы с коллекциями
  */
@@ -105,6 +107,22 @@ export class CollectionApiService {
   getShortLinkInfo(token: string): Observable<IShortLinkInfo> {
     return this.httpClient.get<IShortLinkInfo>(
       `${this.baseUrl}/collection/short_link_info/${token}`,
+    );
+  }
+
+  /**
+   * Фотографии публичной коллекции по токену короткой ссылки
+   * @param token
+   * @param sort
+   */
+  getPublicCollectionPhotos(
+    token: string,
+    sort: PublicPhotosSort = 'uploaded_new',
+  ): Observable<ICollectionPhoto> {
+    const params = new HttpParams().set('sort', sort);
+    return this.httpClient.get<ICollectionPhoto>(
+      `${this.baseUrl}/public/collection/${token}/photos`,
+      { params },
     );
   }
 }

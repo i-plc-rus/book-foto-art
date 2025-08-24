@@ -25,7 +25,6 @@ import { SortMenuComponent } from '../../../../shared/components/sort-menu/sort-
   ],
   templateUrl: './public-collection-info.component.html',
   styleUrl: './public-collection-info.component.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PublicCollectionInfoComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);

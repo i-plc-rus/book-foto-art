@@ -125,6 +125,9 @@ export class CollectionCardComponent {
    */
   closePublishPopup(): void {
     this.isPublishPopupVisible.set(false);
+  }
+
+  onPopupHide(): void {
     this.publishResponse.set(null);
   }
 }

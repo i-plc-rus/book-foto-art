@@ -13,11 +13,11 @@ import { catchError, EMPTY, finalize, tap } from 'rxjs';
 
 import { CollectionApiService } from '../../../../api/collection-api.service';
 import type { ISavedGallery } from '../../../../gallery-upload/interface/upload-file';
+import type { IPublishResponse } from '../../../../interfaces/collection.interface';
 import type { CollectionActionPayload } from '../../models/collection-display.model';
 import { CollectionActionType } from '../../models/collection-display.model';
 import { CollectionListService } from '../../service/collection-list.service';
 import { PublishConfirmDialogComponent } from '../publish-confirm-dialog/publish-confirm-dialog.component';
-import { IPublishResponse } from '../../../../interfaces/collection.interface';
 
 @Component({
   selector: 'app-collection-card',

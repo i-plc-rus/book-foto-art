@@ -19,7 +19,7 @@ export class PublishConfirmDialogComponent {
   readonly cancelAction = output<void>();
 
   // путь к иллюстрации — поменяешь на свой
-  private readonly illustrationSrc: string = 'assets/images/publish/ready-to-publish.png';
+  private readonly illustrationSrc: string = 'assets/images/publish/woman-reading.jpg';
 
   onCancel(): void {
     this.cancelAction.emit();

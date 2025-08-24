@@ -3,6 +3,9 @@ import { PrimeTemplate } from 'primeng/api';
 import { Button } from 'primeng/button';
 import { Dialog } from 'primeng/dialog';
 
+/**
+ * Диалоговое окно перед публикацией
+ */
 @Component({
   selector: 'app-publish-confirm-dialog',
   imports: [Dialog, Button, PrimeTemplate, Dialog],
@@ -11,14 +14,11 @@ import { Dialog } from 'primeng/dialog';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PublishConfirmDialogComponent {
-  // управляется только родителем
   readonly visible = input<boolean>(false);
 
-  // не используем имена нативных событий
   readonly publishAction = output<void>();
   readonly cancelAction = output<void>();
 
-  // путь к иллюстрации — поменяешь на свой
   private readonly illustrationSrc: string = 'assets/images/publish/woman-reading.jpg';
 
   onCancel(): void {
@@ -35,7 +35,6 @@ export class PublishConfirmDialogComponent {
 
   onVisibleChange(isVisible: boolean): void {
     if (!isVisible) {
-      // сработает по крестику или клику по маске
       this.onCancel();
     }
   }

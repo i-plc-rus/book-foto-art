@@ -1,21 +1,24 @@
-import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
-import { PrimeTemplate } from 'primeng/api';
+import { ChangeDetectionStrategy, Component, inject, input, output } from '@angular/core';
+import { MessageService, PrimeTemplate } from 'primeng/api';
 import { Button } from 'primeng/button';
 import { Dialog } from 'primeng/dialog';
 
 import type { IPublishResponse } from '../../../../interfaces/collection.interface';
+import { Toast } from 'primeng/toast';
 
 /**
  * Диалоговое окно перед публикацией
  */
 @Component({
   selector: 'app-publish-confirm-dialog',
-  imports: [Dialog, Button, PrimeTemplate, Dialog],
+  imports: [Dialog, Button, PrimeTemplate, Dialog, Toast],
   templateUrl: './publish-confirm-dialog.component.html',
   styleUrl: './publish-confirm-dialog.component.scss',
+  providers: [MessageService],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PublishConfirmDialogComponent {
+  private readonly messageService: MessageService = inject(MessageService);
   readonly visible = input<boolean>(false);
   readonly loading = input<boolean>(false);
   readonly publishResponse = input<IPublishResponse | null>(null);
@@ -46,9 +49,19 @@ export class PublishConfirmDialogComponent {
   copyLink(): void {
     const link = this.publishResponse()?.link;
     if (link) {
-      navigator.clipboard.writeText(link).catch(() => {
-        console.warn('Не удалось скопировать ссылку');
-      });
+      navigator.clipboard
+        .writeText(link)
+        .then(() => {
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Скопировано',
+            detail: 'Ссылка успешно скопирована в буфер обмена',
+            life: 2000,
+          });
+        })
+        .catch(() => {
+          console.warn('Не удалось скопировать ссылку');
+        });
     }
   }
 }

@@ -28,8 +28,19 @@
 
   <ng-template pTemplate="footer">
     <div class="actions">
-      <p-button label="Отмена" severity="secondary" (onClick)="onCancel()" [text]="true" />
-      <p-button label="Опубликовать" (onClick)="onPublish()" />
+      <p-button
+        label="Отмена"
+        severity="secondary"
+        (onClick)="onCancel()"
+        [text]="true"
+        [disabled]="loading()"
+      />
+      <p-button
+        [label]="loading() ? 'Публикуем…' : 'Опубликовать'"
+        (onClick)="onPublish()"
+        [disabled]="loading()"
+        [loading]="loading()"
+      />
     </div>
   </ng-template>
 </p-dialog>

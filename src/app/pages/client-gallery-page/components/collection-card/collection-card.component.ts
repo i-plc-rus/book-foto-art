@@ -1,3 +1,4 @@
+import { DatePipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -7,15 +8,14 @@ import {
   output,
   signal,
 } from '@angular/core';
-import { ISavedGallery } from '../../../../gallery-upload/interface/upload-file';
-import { DatePipe } from '@angular/common';
 import { NgClickOutsideDirective } from 'ng-click-outside2';
-import {
-  CollectionActionPayload,
-  CollectionActionType,
-} from '../../models/collection-display.model';
+import { catchError, EMPTY, finalize, tap } from 'rxjs';
+
+import { CollectionApiService } from '../../../../api/collection-api.service';
+import type { ISavedGallery } from '../../../../gallery-upload/interface/upload-file';
+import type { CollectionActionPayload } from '../../models/collection-display.model';
+import { CollectionActionType } from '../../models/collection-display.model';
 import { CollectionListService } from '../../service/collection-list.service';
-import { catchError, EMPTY, tap } from 'rxjs';
 import { PublishConfirmDialogComponent } from '../publish-confirm-dialog/publish-confirm-dialog.component';
 
 @Component({
@@ -27,6 +27,7 @@ import { PublishConfirmDialogComponent } from '../publish-confirm-dialog/publish
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CollectionCardComponent {
+  private readonly collectionApiService: CollectionApiService = inject(CollectionApiService);
   readonly collection = input.required<ISavedGallery>();
   readonly action = output<CollectionActionPayload>();
   readonly navigate = output<string>();
@@ -38,7 +39,8 @@ export class CollectionCardComponent {
 
   readonly actionType = CollectionActionType;
   private collectionService = inject(CollectionListService);
-  isPublishPopupVisible: boolean = false;
+  readonly isPublishPopupVisible = signal(false);
+  readonly publishing = signal(false);
 
   toggleMenu(): void {
     this.isMenuOpen.update((open) => !open);
@@ -85,7 +87,7 @@ export class CollectionCardComponent {
         )
         .subscribe();
     } else {
-      this.isPublishPopupVisible = true;
+      this.isPublishPopupVisible.set(true);
       // this.action.emit({ actionKey, item: this.collection() });
     }
   }
@@ -94,7 +96,26 @@ export class CollectionCardComponent {
    * Опубликовать коллекцию
    */
   handlePublish(): void {
-    console.log('Опубликовать');
+    if (this.publishing()) return;
+
+    this.publishing.set(true);
+    this.collectionApiService
+      .publishCollection(this.collection().id)
+      .pipe(
+        tap(() => {
+          // сообщаем родителю, что коллекция опубликована
+          this.action.emit({ actionKey: CollectionActionType.Publish, item: this.collection() });
+        }),
+        catchError((err) => {
+          console.error('Ошибка при публикации коллекции', err);
+          return EMPTY;
+        }),
+        finalize(() => {
+          this.publishing.set(false);
+          this.isPublishPopupVisible.set(false);
+        }),
+      )
+      .subscribe();
     this.closePublishPopup();
   }
 
@@ -102,6 +123,6 @@ export class CollectionCardComponent {
    * Закрыть попап "Опубликовать коллекцию"
    */
   closePublishPopup(): void {
-    this.isPublishPopupVisible = false;
+    this.isPublishPopupVisible.set(false);
   }
 }

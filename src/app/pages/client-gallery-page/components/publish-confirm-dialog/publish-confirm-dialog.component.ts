@@ -15,6 +15,7 @@ import { Dialog } from 'primeng/dialog';
 })
 export class PublishConfirmDialogComponent {
   readonly visible = input<boolean>(false);
+  readonly loading = input<boolean>(false);
 
   readonly publishAction = output<void>();
   readonly cancelAction = output<void>();

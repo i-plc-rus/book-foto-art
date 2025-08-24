@@ -1,0 +1,34 @@
+<p-dialog
+  [visible]="visible()"
+  [modal]="true"
+  [closable]="true"
+  [dismissableMask]="true"
+  [draggable]="false"
+  [resizable]="false"
+  [breakpoints]="{ '960px': '90vw', '640px': '96vw' }"
+  styleClass="publish-popup"
+  (onHide)="onCancel()"
+  [style]="{ width: '520px' }"
+>
+  <ng-template pTemplate="header"> Готовы опубликовать? </ng-template>
+
+  <div class="content">
+    @defer {
+      <img class="illustration" [src]="imageSrc" alt="Превью публикации" />
+    } @placeholder {
+      <div class="illustration skeleton"></div>
+    }
+
+    <p class="text">
+      После публикации коллекция станет доступна онлайн, и вы сможете делиться ссылкой с клиентами.
+      Вы в любой момент можете отредактировать коллекцию из личного кабинета.
+    </p>
+  </div>
+
+  <ng-template pTemplate="footer">
+    <div class="actions">
+      <p-button label="Отмена" severity="secondary" (onClick)="onCancel()" [text]="true" />
+      <p-button label="Опубликовать" (onClick)="onPublish()" />
+    </div>
+  </ng-template>
+</p-dialog>

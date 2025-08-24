@@ -45,3 +45,9 @@
     </div>
   }
 </div>
+
+<app-publish-confirm-dialog
+  [visible]="isPublishPopupVisible"
+  (publishAction)="handlePublish()"
+  (cancelAction)="closePublishPopup()"
+/>

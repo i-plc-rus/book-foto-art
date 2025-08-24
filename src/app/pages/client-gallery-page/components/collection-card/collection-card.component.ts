@@ -16,12 +16,13 @@ import {
 } from '../../models/collection-display.model';
 import { CollectionListService } from '../../service/collection-list.service';
 import { catchError, EMPTY, tap } from 'rxjs';
+import { PublishConfirmDialogComponent } from '../publish-confirm-dialog/publish-confirm-dialog.component';
 
 @Component({
   selector: 'app-collection-card',
   templateUrl: './collection-card.component.html',
   styleUrls: ['./collection-card.component.scss'],
-  imports: [DatePipe, NgClickOutsideDirective],
+  imports: [DatePipe, NgClickOutsideDirective, PublishConfirmDialogComponent],
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -37,8 +38,9 @@ export class CollectionCardComponent {
 
   readonly actionType = CollectionActionType;
   private collectionService = inject(CollectionListService);
+  isPublishPopupVisible: boolean = false;
 
-  toggleMenu() {
+  toggleMenu(): void {
     this.isMenuOpen.update((open) => !open);
   }
 
@@ -83,7 +85,22 @@ export class CollectionCardComponent {
         )
         .subscribe();
     } else {
-      this.action.emit({ actionKey, item: this.collection() });
+      this.isPublishPopupVisible = true;
+      // this.action.emit({ actionKey, item: this.collection() });
     }
+  }
+
+  /**
+   * Опубликовать коллекцию
+   */
+  handlePublish(): void {
+    this.closePublishPopup();
+  }
+
+  /**
+   * Закрыть попап "Опубликовать коллекцию"
+   */
+  closePublishPopup(): void {
+    this.isPublishPopupVisible = false;
   }
 }

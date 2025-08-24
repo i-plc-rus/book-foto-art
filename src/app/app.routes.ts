@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { AuthGuard } from './guards/auth.guard';
+import { ShortLinkRedirectComponent } from './pages/client-gallery-page/components/short-link-redirect/short-link-redirect.component';
 
 export const routes: Routes = [
   {
@@ -50,6 +51,7 @@ export const routes: Routes = [
         (c) => c.CollectionSiteComponent,
       ),
   },
+  { path: 's/:token', component: ShortLinkRedirectComponent, pathMatch: 'full' },
   {
     path: 'verification',
     loadComponent: () =>

@@ -49,6 +49,7 @@
 <app-publish-confirm-dialog
   [visible]="isPublishPopupVisible()"
   [loading]="publishing()"
+  [publishResponse]="publishResponse()"
   (publishAction)="handlePublish()"
   (cancelAction)="closePublishPopup()"
 />

@@ -17,6 +17,7 @@ import type { CollectionActionPayload } from '../../models/collection-display.mo
 import { CollectionActionType } from '../../models/collection-display.model';
 import { CollectionListService } from '../../service/collection-list.service';
 import { PublishConfirmDialogComponent } from '../publish-confirm-dialog/publish-confirm-dialog.component';
+import { IPublishResponse } from '../../../../interfaces/collection.interface';
 
 @Component({
   selector: 'app-collection-card',
@@ -32,6 +33,7 @@ export class CollectionCardComponent {
   readonly action = output<CollectionActionPayload>();
   readonly navigate = output<string>();
   readonly isMenuOpen = signal(false);
+  readonly publishResponse = signal<IPublishResponse | null>(null);
 
   readonly itemCount = computed(
     () => this.collection().imagesCount ?? this.collection().images?.length ?? 0,
@@ -102,8 +104,8 @@ export class CollectionCardComponent {
     this.collectionApiService
       .publishCollection(this.collection().id)
       .pipe(
-        tap(() => {
-          // сообщаем родителю, что коллекция опубликована
+        tap((response) => {
+          this.publishResponse.set(response); // сохраняем короткую ссылку
           this.action.emit({ actionKey: CollectionActionType.Publish, item: this.collection() });
         }),
         catchError((err) => {
@@ -112,11 +114,10 @@ export class CollectionCardComponent {
         }),
         finalize(() => {
           this.publishing.set(false);
-          this.isPublishPopupVisible.set(false);
+          this.isPublishPopupVisible.set(true);
         }),
       )
       .subscribe();
-    this.closePublishPopup();
   }
 
   /**
@@ -124,5 +125,6 @@ export class CollectionCardComponent {
    */
   closePublishPopup(): void {
     this.isPublishPopupVisible.set(false);
+    this.publishResponse.set(null);
   }
 }

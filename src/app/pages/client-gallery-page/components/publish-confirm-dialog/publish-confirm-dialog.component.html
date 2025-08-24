@@ -11,36 +11,50 @@
   (onHide)="onCancel()"
   [style]="{ width: '520px' }"
 >
-  <ng-template pTemplate="header"> Готовы опубликовать? </ng-template>
+  <ng-template pTemplate="header">
+    @if (!publishResponse()) {
+      Готовы опубликовать?
+    } @else {
+      Коллекция опубликована 🎉
+    }
+  </ng-template>
 
   <div class="content">
-    @defer {
-      <img class="illustration" [src]="imageSrc" alt="Превью публикации" />
-    } @placeholder {
-      <div class="illustration skeleton"></div>
+    @if (!publishResponse()) {
+      <p class="text">
+        После публикации коллекция станет доступна онлайн, и вы сможете делиться ссылкой с
+        клиентами. Редактировать можно в любое время из личного кабинета.
+      </p>
+    } @else {
+      <p class="text">
+        Ваша коллекция опубликована. Скопируйте короткую ссылку и отправьте её клиентам:
+      </p>
+      <div class="short-link">
+        <input class="short-link-input" [value]="publishResponse()?.link" readonly />
+        <p-button label="Копировать" (onClick)="copyLink()" />
+      </div>
     }
-
-    <p class="text">
-      После публикации коллекция станет доступна онлайн, и вы сможете делиться ссылкой с клиентами.
-      Вы в любой момент можете отредактировать коллекцию из личного кабинета.
-    </p>
   </div>
 
   <ng-template pTemplate="footer">
     <div class="actions">
-      <p-button
-        label="Отмена"
-        severity="secondary"
-        (onClick)="onCancel()"
-        [text]="true"
-        [disabled]="loading()"
-      />
-      <p-button
-        [label]="loading() ? 'Публикуем…' : 'Опубликовать'"
-        (onClick)="onPublish()"
-        [disabled]="loading()"
-        [loading]="loading()"
-      />
+      @if (!publishResponse()) {
+        <p-button
+          label="Отмена"
+          severity="secondary"
+          [text]="true"
+          (onClick)="onCancel()"
+          [disabled]="loading()"
+        />
+        <p-button
+          [label]="loading() ? 'Публикуем…' : 'Опубликовать'"
+          (onClick)="onPublish()"
+          [loading]="loading()"
+          [disabled]="loading()"
+        />
+      } @else {
+        <p-button label="Закрыть" (onClick)="onCancel()" />
+      }
     </div>
   </ng-template>
 </p-dialog>

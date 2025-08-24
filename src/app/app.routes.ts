@@ -1,4 +1,5 @@
-import { Routes } from '@angular/router';
+import type { Routes } from '@angular/router';
+
 import { AuthGuard } from './guards/auth.guard';
 import { ShortLinkRedirectComponent } from './pages/client-gallery-page/components/short-link-redirect/short-link-redirect.component';
 

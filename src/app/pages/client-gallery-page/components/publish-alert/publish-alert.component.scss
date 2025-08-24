@@ -1,0 +1,48 @@
+.dlg-title {
+  font-weight: 600;
+}
+
+.cover {
+  background: #e9eff3;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  margin: -0.5rem -0.5rem 1rem; /* растянуть под шапку */
+  border-radius: 4px;
+  overflow: hidden;
+
+  img {
+    display: block;
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+  }
+}
+
+.dlg-body {
+  padding: 0 0.25rem 0.5rem;
+}
+
+.dlg-question {
+  margin: 0 0 0.5rem;
+  font-size: 1.05rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.dlg-text {
+  margin: 0 0 0.75rem;
+  color: #5f6368;
+  line-height: 1.5;
+}
+
+.dlg-note {
+  margin: 0;
+  color: #444;
+}
+
+.dlg-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}

@@ -1,0 +1,8 @@
+<div class="wrap">
+  @if (loading()) {
+    <p-progressSpinner ariaLabel="Загрузка" />
+    <div class="msg">Открываем ссылку…</div>
+  } @else if (error()) {
+    <div class="msg">{{ error() }}</div>
+  }
+</div>

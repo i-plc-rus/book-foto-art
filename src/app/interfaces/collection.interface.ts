@@ -27,3 +27,20 @@ export interface IUploadedPhoto {
 }
 
 export type PreviewItem = { link: string; isFavorite: boolean };
+
+export interface IPublishResponse {
+  link: string; // короткая ссылка
+}
+
+export interface IUnpublishResponse {
+  success: boolean;
+}
+
+export interface IShortLinkInfo {
+  click_count: number;
+  collection_id: string;
+  created_at: string;
+  id: string;
+  token: string;
+  url: string;
+}

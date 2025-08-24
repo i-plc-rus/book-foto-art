@@ -45,3 +45,10 @@
     </div>
   }
 </div>
+
+<app-publish-confirm-dialog
+  [visible]="isPublishPopupVisible()"
+  [loading]="publishing()"
+  (publishAction)="handlePublish()"
+  (cancelAction)="closePublishPopup()"
+/>

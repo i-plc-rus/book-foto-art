@@ -1,0 +1,28 @@
+.publish-popup {
+  border-radius: 16px;
+  max-width: 520px;
+}
+.content {
+  display: grid;
+  gap: 16px;
+}
+.illustration {
+  width: 100%;
+  max-height: 220px;
+  object-fit: cover;
+  border-radius: 12px;
+}
+.skeleton {
+  height: 220px;
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.06);
+}
+.text {
+  margin: 0;
+  line-height: 1.6;
+}
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}

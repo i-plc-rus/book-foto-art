@@ -3,6 +3,8 @@ import { PrimeTemplate } from 'primeng/api';
 import { Button } from 'primeng/button';
 import { Dialog } from 'primeng/dialog';
 
+import type { IPublishResponse } from '../../../../interfaces/collection.interface';
+
 /**
  * Диалоговое окно перед публикацией
  */
@@ -16,6 +18,7 @@ import { Dialog } from 'primeng/dialog';
 export class PublishConfirmDialogComponent {
   readonly visible = input<boolean>(false);
   readonly loading = input<boolean>(false);
+  readonly publishResponse = input<IPublishResponse | null>(null);
 
   readonly publishAction = output<void>();
   readonly cancelAction = output<void>();
@@ -37,6 +40,15 @@ export class PublishConfirmDialogComponent {
   onVisibleChange(isVisible: boolean): void {
     if (!isVisible) {
       this.onCancel();
+    }
+  }
+
+  copyLink(): void {
+    const link = this.publishResponse()?.link;
+    if (link) {
+      navigator.clipboard.writeText(link).catch(() => {
+        console.warn('Не удалось скопировать ссылку');
+      });
     }
   }
 }

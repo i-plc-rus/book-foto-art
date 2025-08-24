@@ -26,6 +26,8 @@ export class PublishConfirmDialogComponent {
   readonly publishAction = output<void>();
   readonly cancelAction = output<void>();
 
+  readonly hideCompleted = output<void>();
+
   private readonly illustrationSrc: string = 'assets/images/publish/woman-reading.jpg';
 
   onCancel(): void {
@@ -43,6 +45,7 @@ export class PublishConfirmDialogComponent {
   onVisibleChange(isVisible: boolean): void {
     if (!isVisible) {
       this.onCancel();
+      setTimeout(() => this.hideCompleted.emit(), 100);
     }
   }
 

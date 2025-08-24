@@ -32,4 +32,11 @@ export class PublishConfirmDialogComponent {
   get imageSrc(): string {
     return this.illustrationSrc;
   }
+
+  onVisibleChange(isVisible: boolean): void {
+    if (!isVisible) {
+      // сработает по крестику или клику по маске
+      this.onCancel();
+    }
+  }
 }

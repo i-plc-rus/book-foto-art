@@ -1,5 +1,6 @@
 <p-dialog
   [visible]="visible()"
+  (visibleChange)="onVisibleChange($event)"
   [modal]="true"
   [closable]="true"
   [dismissableMask]="true"

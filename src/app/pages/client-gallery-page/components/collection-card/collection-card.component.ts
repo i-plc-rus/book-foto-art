@@ -94,6 +94,7 @@ export class CollectionCardComponent {
    * Опубликовать коллекцию
    */
   handlePublish(): void {
+    console.log('Опубликовать');
     this.closePublishPopup();
   }
 

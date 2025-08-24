@@ -1,0 +1,34 @@
+<div class="page">
+  <header class="toolbar">
+    <div class="title">Публичная коллекция</div>
+    <p-dropdown
+      [options]="sortOptions"
+      optionLabel="label"
+      optionValue="value"
+      [ngModel]="sort()"
+      (onChange)="onSortChange($event.value)"
+      placeholder="Сортировка"
+      class="sort"
+    />
+  </header>
+
+  @if (loading()) {
+    <div class="center">
+      <p-progressSpinner ariaLabel="Загрузка" />
+      <div class="hint">Загружаем фотографии…</div>
+    </div>
+  } @else if (error()) {
+    <div class="center error">{{ error() }}</div>
+  } @else {
+    <section class="grid">
+      @for (p of photos(); track p.url) {
+        <figure class="card">
+          <img [ngSrc]="p.url" width="400" height="300" alt="{{ p.name || 'Фото' }}" />
+          @if (p.name) {
+            <figcaption class="name">{{ p.name }}</figcaption>
+          }
+        </figure>
+      }
+    </section>
+  }
+</div>

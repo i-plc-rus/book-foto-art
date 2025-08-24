@@ -1,34 +1,30 @@
-<div class="page">
-  <header class="toolbar">
-    <div class="title">Публичная коллекция</div>
-    <p-dropdown
-      [options]="sortOptions"
-      optionLabel="label"
-      optionValue="value"
-      [ngModel]="sort()"
-      (onChange)="onSortChange($event.value)"
-      placeholder="Сортировка"
-      class="sort"
-    />
-  </header>
+<section class="public-collection p-[1rem] md:p-4">
+  <div class="w-full py-3 flex items-center justify-between">
+    <h1 class="text-xl font-medium tracking-normal leading-[1.3]">Публичная коллекция</h1>
 
-  @if (loading()) {
-    <div class="center">
-      <p-progressSpinner ariaLabel="Загрузка" />
-      <div class="hint">Загружаем фотографии…</div>
+    <div class="flex justify-end gap-2">
+      <app-sort-menu (sortChange)="onSortChange($event)" class="hidden md:block"></app-sort-menu>
+      <app-grid-settings
+        class="hidden md:block"
+        (gridSizeChange)="onGridSizeChange($event)"
+        (showFilenameChange)="onShowFilenameChange($event)"
+      ></app-grid-settings>
     </div>
-  } @else if (error()) {
-    <div class="center error">{{ error() }}</div>
-  } @else {
-    <section class="grid">
-      @for (p of photos(); track p.url) {
-        <figure class="card">
-          <img [ngSrc]="p.url" width="400" height="300" alt="{{ p.name || 'Фото' }}" />
-          @if (p.name) {
-            <figcaption class="name">{{ p.name }}</figcaption>
-          }
-        </figure>
-      }
-    </section>
+  </div>
+
+  <app-file-grid
+    [files]="files()"
+    [gridSize]="gridSize()"
+    [showFilename]="showFilename()"
+    [showEmptyState]="showEmptyState()"
+    [menuOptions]="[]"
+    (imageError)="handleImageError($event.event, $event.file)"
+    class="w-full h-[-webkit-fill-available]"
+  ></app-file-grid>
+
+  @if (isLoading()) {
+    <div class="fixed left-0 right-0 bottom-4 flex justify-center pointer-events-none">
+      <div class="bg-black/70 text-white text-[14px] px-4 py-2 rounded">Загружаем фотографии…</div>
+    </div>
   }
-</div>
+</section>

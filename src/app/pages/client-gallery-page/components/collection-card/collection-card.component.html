@@ -7,9 +7,11 @@
   <div class="collection-card__content">
     <div class="collection-card__title" (click)="onCardClick()">{{ collection().name }}</div>
     <div class="collection-card__meta">
-      <span class="collection-card__dot"></span>
+      <span
+        class="collection-card__dot"
+        [style.background-color]="collection().is_published ? '#22c55e' : '#9ca3af'"
+      ></span>
       <span>{{ itemCount() }} {{ itemWord() }}</span>
-      <span class="collection-card__dot"></span>
       <span>{{ collection().date | date: 'd MMM y' }}</span>
     </div>
   </div>
@@ -37,9 +39,23 @@
       class="absolute top-[34px] right-[0] z-50 bg-white/70 backdrop-blur-md shadow-lg min-w-[160px]"
       (clickOutside)="onClickedOutside()"
     >
-      <button class="collection-card__menu-item w-full" (click)="onActionClick(actionType.Publish)">
-        Опубликовать
-      </button>
+      @if (collection().is_published) {
+        <button
+          class="collection-card__menu-item w-full"
+          (click)="onUnpublish()"
+          [disabled]="unpublishing()"
+        >
+          Снять с публикации
+        </button>
+      } @else {
+        <button
+          class="collection-card__menu-item w-full"
+          (click)="onActionClick(actionType.Publish)"
+        >
+          Опубликовать
+        </button>
+      }
+
       <button class="collection-card__menu-item w-full" (click)="onActionClick(actionType.Delete)">
         Удалить
       </button>

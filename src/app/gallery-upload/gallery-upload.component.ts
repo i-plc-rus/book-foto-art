@@ -434,4 +434,23 @@ export class GalleryUploadComponent {
     this.viewerIndex = index;
     this.viewerVisible = true;
   }
+
+  @HostListener('document:click', ['$event'])
+  onDocClickCloseGallery(e: MouseEvent) {
+    if (!this.viewerVisible) return;
+    const el = e.target as HTMLElement;
+
+    const clickedMask = el.classList.contains('p-galleria-mask');
+    const insideItem = !!el.closest('.p-galleria-item-wrapper');
+    const onCloseBtn = !!el.closest('.p-galleria-close');
+
+    if (clickedMask && !insideItem && !onCloseBtn) {
+      this.viewerVisible = false;
+    }
+  }
+
+  @HostListener('document:keydown.escape')
+  onEscCloseGallery() {
+    if (this.viewerVisible) this.viewerVisible = false;
+  }
 }

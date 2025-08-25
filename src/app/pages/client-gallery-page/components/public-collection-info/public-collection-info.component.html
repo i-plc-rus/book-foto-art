@@ -1,7 +1,9 @@
 <section class="public-collection p-4 md:p-6">
   <!-- Top -->
   <div class="w-full mb-4 md:mb-6 flex items-center justify-between gap-3">
-    <h1 class="text-xl font-medium leading-[1.3]">Медиа файлы</h1>
+    <h1 class="text-xl font-medium leading-[1.3]">
+      {{ (albumTitle$ | async) ?? 'Медиа файлы' }}
+    </h1>
 
     <div class="flex items-center gap-2">
       <app-sort-menu (sortChange)="onSortChange($event)"></app-sort-menu>

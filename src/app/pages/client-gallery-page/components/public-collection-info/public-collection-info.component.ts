@@ -44,6 +44,8 @@ export class PublicCollectionInfoComponent {
   readonly showFilename$ = new BehaviorSubject<boolean>(false);
   private readonly isLoadingSubject = new BehaviorSubject<boolean>(true);
   readonly isLoading$ = this.isLoadingSubject.asObservable();
+  private readonly albumTitleSubject = new BehaviorSubject<string>('Медиа файлы');
+  readonly albumTitle$ = this.albumTitleSubject.asObservable();
 
   // token из маршрута
   readonly token$ = this.route.paramMap.pipe(
@@ -59,6 +61,9 @@ export class PublicCollectionInfoComponent {
       return this.api.getPublicCollectionPhotos(token, sort).pipe(
         map((res: any) => {
           const list: any[] = res?.files ?? [];
+          const title: string =
+            res?.collection?.name ?? res?.album?.name ?? res?.title ?? 'Медиа файлы';
+          this.albumTitleSubject.next(title);
           return list
             .map((photo: any) => {
               const name: string = photo.file_name ?? photo.name ?? '';
@@ -97,12 +102,6 @@ export class PublicCollectionInfoComponent {
         finalize(() => this.isLoadingSubject.next(false)),
       );
     }),
-    shareReplay({ bufferSize: 1, refCount: true }),
-  );
-
-  // пустое состояние
-  readonly showEmptyState$ = combineLatest([this.files$, this.isLoading$]).pipe(
-    map(([files, loading]) => files.length === 0 && !loading),
     shareReplay({ bufferSize: 1, refCount: true }),
   );
 

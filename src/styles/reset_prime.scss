@@ -117,3 +117,28 @@ p-datepicker {
 .p-inputtext {
   height: 3.125rem;
 }
+
+//крестик закрытия для галереи
+.public-galleria .p-galleria-close {
+  display: none !important;
+}
+
+/* Наш внешний крестик — чуть ниже и правее */
+.viewer-close-btn {
+  position: fixed;
+  top: 14px;
+  right: 14px;
+  z-index: 10001; /* выше baseZIndex галереи */
+  width: 40px;
+  height: 40px;
+  border-radius: 9999px;
+  background: rgba(0, 0, 0, 0.6);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+.viewer-close-btn:hover {
+  background: rgba(0, 0, 0, 0.7);
+}

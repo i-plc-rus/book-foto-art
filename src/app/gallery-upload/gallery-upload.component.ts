@@ -21,6 +21,7 @@ import type { SortType } from '../core/types/sort-type';
 import { environment } from '../../environments/environment';
 import { CollectionStateService } from './service/collection-state.service';
 import { FileGridComponent } from '../shared/components/cover-image/file-grid.component';
+import { GalleriaModule } from 'primeng/galleria';
 
 interface UploadFile {
   id: string;
@@ -62,6 +63,7 @@ interface SubMenuOption {
     GridSettingsComponent,
     UploadModalComponent,
     FileGridComponent,
+    GalleriaModule,
   ],
   providers: [SidebarService, CollectionService, UploadService],
 })
@@ -96,6 +98,8 @@ export class GalleryUploadComponent {
   readonly isLoading = signal(true);
 
   isPremium = signal(false);
+  viewerVisible: boolean = false;
+  viewerIndex: number = 0;
 
   readonly uploadStats = {
     totalFiles: signal(0),
@@ -229,6 +233,8 @@ export class GalleryUploadComponent {
               progress: 100,
               previewUrl: photo.thumbnail_url,
               loaded: true,
+              originalUrl:
+                photo.url ?? photo.original_url ?? photo.public_url ?? photo.thumbnail_url,
             }));
             this.files.set(uploadedFiles);
           }),
@@ -422,5 +428,10 @@ export class GalleryUploadComponent {
           return sorted;
       }
     });
+  }
+
+  openViewer(index: number): void {
+    this.viewerIndex = index;
+    this.viewerVisible = true;
   }
 }

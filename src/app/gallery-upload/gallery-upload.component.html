@@ -37,6 +37,7 @@
     [showFilename]="showFilename()"
     [showEmptyState]="showEmptyState()"
     [menuOptions]="menuOptions()"
+    (cardClick)="openViewer($event.index)"
     (filesDropped)="processFiles($event)"
     (fileSelected)="handleFileSelect($event)"
     (imageError)="handleImageError($event.event, $event.file)"
@@ -98,4 +99,42 @@
   >
     <div>{{ notification().message }}</div>
   </div>
+}
+
+<p-galleria
+  [value]="files()"
+  [(visible)]="viewerVisible"
+  [(activeIndex)]="viewerIndex"
+  [fullScreen]="true"
+  [circular]="true"
+  [showThumbnails]="true"
+  [showItemNavigators]="true"
+  [showItemNavigatorsOnHover]="true"
+  [numVisible]="5"
+  [baseZIndex]="10000"
+  containerStyleClass="public-galleria"
+>
+  <ng-template pTemplate="item" let-file>
+    <img
+      [src]="file['originalUrl'] ?? file.previewUrl"
+      class="w-full h-auto max-h-[90vh] object-contain"
+      alt=""
+    />
+  </ng-template>
+
+  <ng-template pTemplate="thumbnail" let-file>
+    <img [src]="file.previewUrl" class="w-full h-full object-cover" alt="" />
+  </ng-template>
+</p-galleria>
+
+<!-- наш крестик поверх (если встроенный не работает/не нужен) -->
+@if (viewerVisible) {
+  <button
+    type="button"
+    class="fixed top-3 right-3 z-[10001] w-10 h-10 rounded-full bg-black/60 text-white flex items-center justify-center hover:bg-black/70 transition"
+    aria-label="Закрыть"
+    (click)="viewerVisible = false"
+  >
+    ✕
+  </button>
 }

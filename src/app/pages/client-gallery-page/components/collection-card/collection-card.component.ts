@@ -10,6 +10,7 @@ import {
 } from '@angular/core';
 import { NgClickOutsideDirective } from 'ng-click-outside2';
 import { MessageService } from 'primeng/api';
+import { Toast } from 'primeng/toast';
 import { catchError, EMPTY, finalize, tap } from 'rxjs';
 
 import { CollectionApiService } from '../../../../api/collection-api.service';
@@ -19,7 +20,6 @@ import type { CollectionActionPayload } from '../../models/collection-display.mo
 import { CollectionActionType } from '../../models/collection-display.model';
 import { CollectionListService } from '../../service/collection-list.service';
 import { PublishConfirmDialogComponent } from '../publish-confirm-dialog/publish-confirm-dialog.component';
-import { Toast } from 'primeng/toast';
 
 @Component({
   selector: 'app-collection-card',
@@ -47,6 +47,7 @@ export class CollectionCardComponent {
   private collectionService = inject(CollectionListService);
   readonly isPublishPopupVisible = signal(false);
   readonly publishing = signal(false);
+  readonly unpublishing = signal(false);
 
   toggleMenu(): void {
     this.isMenuOpen.update((open) => !open);
@@ -139,5 +140,39 @@ export class CollectionCardComponent {
 
   onPopupHide(): void {
     this.publishResponse.set(null);
+  }
+
+  onUnpublish(): void {
+    if (this.unpublishing()) return;
+
+    this.isMenuOpen.set(false);
+    this.unpublishing.set(true);
+
+    this.collectionApiService
+      .unpublishCollection(this.collection().id)
+      .pipe(
+        tap(() => {
+          this.action.emit({ actionKey: CollectionActionType.Unpublish, item: this.collection() });
+          // тостер успеха
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Снято с публикации',
+            detail: 'Галерея больше не опубликована',
+            life: 2500,
+          });
+        }),
+        catchError((err) => {
+          console.error('Ошибка при снятии публикации коллекции', err);
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Ошибка',
+            detail: 'Не удалось снять публикацию',
+            life: 3000,
+          });
+          return EMPTY;
+        }),
+        finalize(() => this.unpublishing.set(false)),
+      )
+      .subscribe();
   }
 }

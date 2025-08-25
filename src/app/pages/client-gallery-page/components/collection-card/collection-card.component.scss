@@ -102,3 +102,11 @@
     }
   }
 }
+
+.collection-card__dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #9ca3af; // gray по умолчанию
+}

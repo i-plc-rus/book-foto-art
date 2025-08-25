@@ -50,6 +50,8 @@ export class PublicCollectionInfoComponent {
   readonly albumTitle$ = this.albumTitleSubject.asObservable();
   readonly viewerVisible$ = new BehaviorSubject<boolean>(false);
   readonly viewerIndex$ = new BehaviorSubject<number>(0);
+  viewerVisible: boolean = false;
+  viewerIndex: number = 0;
 
   // token из маршрута
   readonly token$ = this.route.paramMap.pipe(
@@ -133,8 +135,8 @@ export class PublicCollectionInfoComponent {
   }
 
   openViewer(index: number): void {
-    this.viewerIndex$.next(index);
-    this.viewerVisible$.next(true);
+    this.viewerIndex = index;
+    this.viewerVisible = true;
   }
 
   getViewerSrc(file: UploadFile): string {

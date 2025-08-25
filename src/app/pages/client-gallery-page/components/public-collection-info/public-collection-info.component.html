@@ -93,6 +93,7 @@
   (visibleChange)="viewerVisible$.next($event)"
   [activeIndex]="viewerIndex"
   (activeIndexChange)="viewerIndex$.next($event)"
+  class="public-galleria"
 >
   <ng-template pTemplate="item" let-file>
     <img [src]="getViewerSrc(file)" class="w-full h-auto max-h-[90vh] object-contain" alt="" />
@@ -101,4 +102,15 @@
   <ng-template pTemplate="thumbnail" let-file>
     <img [src]="file.previewUrl" class="w-full h-full object-cover" alt="" />
   </ng-template>
+
+  @if (viewerVisible) {
+    <button
+      type="button"
+      class="viewer-close-btn"
+      aria-label="Закрыть"
+      (click)="viewerVisible = false"
+    >
+      ✕
+    </button>
+  }
 </p-galleria>

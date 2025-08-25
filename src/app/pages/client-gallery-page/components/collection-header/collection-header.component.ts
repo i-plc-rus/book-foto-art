@@ -1,16 +1,16 @@
+import { NgIf } from '@angular/common';
 import { ChangeDetectionStrategy, Component, model, output, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+
+import type { SortOption } from '../../models/collection-display.model';
 import { CollectionSortComponent } from '../collection-sort/collection-sort.component';
-import { SortOption } from '../../models/collection-display.model';
-import { NgIf } from '@angular/common';
 
 @Component({
   standalone: true,
   selector: 'app-collection-header',
   styleUrls: ['./collection-header.component.scss'],
   templateUrl: './collection-header.component.html',
-  imports: [RouterLink, FormsModule, CollectionSortComponent, NgIf],
+  imports: [FormsModule, CollectionSortComponent, NgIf],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CollectionHeaderComponent {

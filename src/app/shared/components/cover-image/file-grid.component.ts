@@ -10,7 +10,7 @@ import { MenuOption, UploadFile } from '../../../gallery-upload/interface/upload
   imports: [CommonModule],
 })
 export class FileGridComponent {
-  @Input() files: UploadFile[] | null = [];
+  @Input({ required: true }) files: UploadFile[] = [];
   @Input() gridSize: 'small' | 'large' = 'small';
   @Input() showFilename = false;
   @Input() showEmptyState = false;

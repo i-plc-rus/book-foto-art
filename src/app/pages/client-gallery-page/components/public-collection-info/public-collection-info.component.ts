@@ -1,6 +1,6 @@
 import type { OnInit } from '@angular/core';
 import { computed, effect } from '@angular/core';
-import { ChangeDetectionStrategy, Component, DestroyRef, inject, signal } from '@angular/core';
+import { Component, DestroyRef, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
@@ -48,13 +48,14 @@ export class PublicCollectionInfoComponent implements OnInit {
 
     // загрузка фотографий при изменении токена или сортировки
     effect(() => {
-      const t = this.token();
+      const token = this.token();
       const sort = this.sortType();
-      if (!t) return;
+      console.log('token', token);
+      if (!token) return;
 
       this.isLoading.set(true);
       this.api
-        .getPublicCollectionPhotos(t, sort)
+        .getPublicCollectionPhotos(token, sort)
         .pipe(
           tap((res: any) => {
             const list: any[] = res?.files ?? [];
@@ -91,6 +92,7 @@ export class PublicCollectionInfoComponent implements OnInit {
                 return uf;
               })
               .filter((f) => !!f.previewUrl);
+            console.log('mapped', mapped);
 
             this.files.set(mapped);
           }),

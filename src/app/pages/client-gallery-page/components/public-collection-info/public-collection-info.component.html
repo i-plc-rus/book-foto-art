@@ -89,9 +89,9 @@
   [showItemNavigatorsOnHover]="true"
   [numVisible]="5"
   [baseZIndex]="10000"
-  [visible]="(viewerVisible$ | async) === true"
+  [visible]="viewerVisible"
   (visibleChange)="viewerVisible$.next($event)"
-  [activeIndex]="(viewerIndex$ | async) ?? 0"
+  [activeIndex]="viewerIndex"
   (activeIndexChange)="viewerIndex$.next($event)"
 >
   <ng-template pTemplate="item" let-file>

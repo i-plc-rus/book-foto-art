@@ -1,11 +1,19 @@
-import type { OnInit } from '@angular/core';
-import { computed, effect } from '@angular/core';
-import { Component, DestroyRef, inject, signal } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { AsyncPipe } from '@angular/common';
+import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { DropdownModule } from 'primeng/dropdown';
-import { catchError, EMPTY, finalize, tap } from 'rxjs';
+import {
+  BehaviorSubject,
+  catchError,
+  combineLatest,
+  distinctUntilChanged,
+  finalize,
+  of,
+  shareReplay,
+  tap,
+} from 'rxjs';
+import { map, switchMap } from 'rxjs/operators';
 
 import type { PublicPhotosSort } from '../../../../api/collection-api.service';
 import { CollectionApiService } from '../../../../api/collection-api.service';
@@ -22,107 +30,98 @@ import { SortMenuComponent } from '../../../../shared/components/sort-menu/sort-
     SortMenuComponent,
     GridSettingsComponent,
     FileGridComponent,
+    AsyncPipe,
   ],
   templateUrl: './public-collection-info.component.html',
   styleUrl: './public-collection-info.component.scss',
 })
-export class PublicCollectionInfoComponent implements OnInit {
+export class PublicCollectionInfoComponent {
   private readonly route = inject(ActivatedRoute);
   private readonly api = inject(CollectionApiService);
-  private readonly destroyRef = inject(DestroyRef);
 
-  readonly token = signal<string | null>(null);
-  readonly files = signal<UploadFile[]>([]);
-  readonly sortType = signal<PublicPhotosSort>('uploaded_new');
-  readonly gridSize = signal<'small' | 'large'>('small');
-  readonly showFilename = signal(false);
-  readonly isLoading = signal(true);
+  readonly sort$ = new BehaviorSubject<PublicPhotosSort>('uploaded_new');
+  readonly gridSize$ = new BehaviorSubject<'small' | 'large'>('small');
+  readonly showFilename$ = new BehaviorSubject<boolean>(false);
+  private readonly isLoadingSubject = new BehaviorSubject<boolean>(true);
+  readonly isLoading$ = this.isLoadingSubject.asObservable();
 
-  readonly showEmptyState = computed(() => this.files().length === 0 && !this.isLoading());
+  // token из маршрута
+  readonly token$ = this.route.paramMap.pipe(
+    map((pm) => pm.get('token')),
+    distinctUntilChanged(),
+  );
 
-  ngOnInit(): void {
-    // токен из маршрута
-    this.route.paramMap.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((pm) => {
-      this.token.set(pm.get('token'));
-    });
+  // поток с файлами
+  readonly files$ = combineLatest([this.token$, this.sort$]).pipe(
+    tap(() => this.isLoadingSubject.next(true)),
+    switchMap(([token, sort]) => {
+      if (!token) return of<UploadFile[]>([]);
+      return this.api.getPublicCollectionPhotos(token, sort).pipe(
+        map((res: any) => {
+          const list: any[] = res?.files ?? [];
+          return list
+            .map((photo: any) => {
+              const name: string = photo.file_name ?? photo.name ?? '';
+              const ext: string = String(photo.file_ext ?? '').replace('.', '');
+              const uploadedAt: number = new Date(photo.uploaded_at ?? Date.now()).getTime();
+              const size: number = Number(photo.size ?? 0);
 
-    // загрузка фотографий при изменении токена или сортировки
-    effect(() => {
-      const token = this.token();
-      const sort = this.sortType();
-      console.log('token', token);
-      if (!token) return;
+              const thumb: string | undefined =
+                photo.thumbnail_url ?? photo.thumb_url ?? photo.preview_url;
+              const original: string | undefined =
+                photo.url ?? photo.original_url ?? photo.public_url;
 
-      this.isLoading.set(true);
-      this.api
-        .getPublicCollectionPhotos(token, sort)
-        .pipe(
-          tap((res: any) => {
-            const list: any[] = res?.files ?? [];
+              const serverFile: ServerFile = {
+                name,
+                lastModified: uploadedAt,
+                size,
+                type: ext ? `image/${ext}` : 'image/*',
+                hash: photo.hash ?? String(photo.id ?? name + uploadedAt),
+              };
 
-            const mapped: UploadFile[] = list
-              .map((photo: any) => {
-                const name: string = photo.file_name ?? photo.name ?? '';
-                const ext: string = String(photo.file_ext ?? '').replace('.', '');
-                const uploadedAt: number = new Date(photo.uploaded_at ?? Date.now()).getTime();
-                const size: number = Number(photo.size ?? 0);
+              const uf: UploadFile = {
+                id: String(photo.id ?? crypto?.randomUUID?.() ?? `${name}-${uploadedAt}`),
+                file: serverFile,
+                progress: 100,
+                previewUrl: thumb ?? original ?? '',
+                loaded: true,
+              };
+              return uf;
+            })
+            .filter((f: UploadFile) => !!f.previewUrl);
+        }),
+        catchError((err) => {
+          console.error('public photos error', err);
+          return of<UploadFile[]>([]);
+        }),
+        finalize(() => this.isLoadingSubject.next(false)),
+      );
+    }),
+    shareReplay({ bufferSize: 1, refCount: true }),
+  );
 
-                const thumb: string | undefined =
-                  photo.thumbnail_url ?? photo.thumb_url ?? photo.preview_url;
-                const original: string | undefined =
-                  photo.url ?? photo.original_url ?? photo.public_url;
+  // пустое состояние
+  readonly showEmptyState$ = combineLatest([this.files$, this.isLoading$]).pipe(
+    map(([files, loading]) => files.length === 0 && !loading),
+    shareReplay({ bufferSize: 1, refCount: true }),
+  );
 
-                const serverFile: ServerFile = {
-                  name,
-                  lastModified: uploadedAt,
-                  size,
-                  type: ext ? `image/${ext}` : 'image/*',
-                  // обязательное поле для ServerFile в вашем проекте
-                  hash: photo.hash ?? String(photo.id ?? name + uploadedAt),
-                };
-
-                const uf: UploadFile = {
-                  id: String(photo.id ?? crypto.randomUUID()),
-                  file: serverFile, // строго ServerFile
-                  progress: 100,
-                  previewUrl: thumb ?? original ?? '',
-                  loaded: true,
-                };
-
-                return uf;
-              })
-              .filter((f) => !!f.previewUrl);
-            console.log('mapped', mapped);
-
-            this.files.set(mapped);
-          }),
-          catchError((err) => {
-            console.error('public photos error', err);
-            this.files.set([]);
-            return EMPTY;
-          }),
-          finalize(() => this.isLoading.set(false)),
-          takeUntilDestroyed(this.destroyRef),
-        )
-        .subscribe();
-    });
-  }
-
+  // --- UI handlers ----
   onSortChange(sort: string): void {
-    if (isPublicSort(sort)) this.sortType.set(sort);
+    if (isPublicSort(sort)) this.sort$.next(sort);
   }
 
   onGridSizeChange(size: 'small' | 'large'): void {
-    this.gridSize.set(size);
+    this.gridSize$.next(size);
   }
 
   onShowFilenameChange(value: boolean): void {
-    this.showFilename.set(value);
+    this.showFilename$.next(value);
   }
 
-  handleImageError(event: Event, file: UploadFile): void {
-    const img = event.target as HTMLImageElement;
-    // если превью не загрузилось — пробуем оригинал
+  handleImageError(payload: { event: Event; file: UploadFile }): void {
+    const img = payload.event.target as HTMLImageElement;
+    const file = payload.file;
     const originalUrl = file.previewUrl.replace('/thumbs/', '/');
     if (originalUrl && originalUrl !== file.previewUrl) {
       img.src = originalUrl;
@@ -130,6 +129,7 @@ export class PublicCollectionInfoComponent implements OnInit {
   }
 }
 
+// type guard для сортировки
 function isPublicSort(v: string): v is PublicPhotosSort {
   return ['uploaded_new', 'uploaded_old', 'name_az', 'name_za', 'random'].includes(v);
 }

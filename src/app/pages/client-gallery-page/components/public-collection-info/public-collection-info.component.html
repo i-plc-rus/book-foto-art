@@ -1,30 +1,52 @@
-<section class="public-collection p-[1rem] md:p-4">
-  <div class="w-full py-3 flex items-center justify-between">
-    <h1 class="text-xl font-medium tracking-normal leading-[1.3]">Публичная коллекция</h1>
+<section class="public-collection p-4 md:p-6">
+  <div class="w-full mb-4 md:mb-6 flex items-center justify-between gap-3">
+    <h1 class="text-xl font-medium leading-[1.3]">Медиа файлы</h1>
 
-    <div class="flex justify-end gap-2">
-      <app-sort-menu (sortChange)="onSortChange($event)" class="hidden md:block"></app-sort-menu>
+    <div class="flex items-center gap-2">
+      <app-sort-menu (sortChange)="onSortChange($event)"></app-sort-menu>
+
       <app-grid-settings
-        class="hidden md:block"
         (gridSizeChange)="onGridSizeChange($event)"
         (showFilenameChange)="onShowFilenameChange($event)"
       ></app-grid-settings>
     </div>
   </div>
 
-  <app-file-grid
-    [files]="files()"
-    [gridSize]="gridSize()"
-    [showFilename]="showFilename()"
-    [showEmptyState]="showEmptyState()"
-    [menuOptions]="[]"
-    (imageError)="handleImageError($event.event, $event.file)"
-    class="w-full h-[-webkit-fill-available]"
-  ></app-file-grid>
+  @defer (when (isLoading$ | async) === false; prefetch on idle) {
+    @let files = files$ | async;
 
-  @if (isLoading()) {
-    <div class="fixed left-0 right-0 bottom-4 flex justify-center pointer-events-none">
-      <div class="bg-black/70 text-white text-[14px] px-4 py-2 rounded">Загружаем фотографии…</div>
+    @if ((files?.length ?? 0) === 0) {
+      <div class="empty-state flex flex-col items-center justify-center py-16 text-center">
+        <img src="assets/images/empty/empty-photos.svg" alt="" class="w-24 h-24 opacity-70 mb-4" />
+        <div class="text-lg font-medium mb-1">Здесь пока пусто</div>
+        <div class="text-sm opacity-70">Добавьте фотографии или поменяйте сортировку</div>
+      </div>
+    } @else {
+      <div class="grid-wrapper" [class.grid-large]="(gridSize$ | async) === 'large'">
+        <app-file-grid
+          [files]="files"
+          [showFilename]="(showFilename$ | async) === true"
+          (imageError)="handleImageError($event)"
+        ></app-file-grid>
+      </div>
+    }
+  } @placeholder {
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
+      <div class="skeleton h-32 md:h-44 rounded-xl"></div>
+      <div class="skeleton h-32 md:h-44 rounded-xl"></div>
+      <div class="skeleton h-32 md:h-44 rounded-xl"></div>
+      <div class="skeleton h-32 md:h-44 rounded-xl"></div>
+    </div>
+  } @loading {
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 animate-pulse">
+      <div class="skeleton h-32 md:h-44 rounded-xl"></div>
+      <div class="skeleton h-32 md:h-44 rounded-xl"></div>
+      <div class="skeleton h-32 md:h-44 rounded-xl"></div>
+      <div class="skeleton h-32 md:h-44 rounded-xl"></div>
+    </div>
+  } @error {
+    <div class="p-4 rounded-xl border border-red-300 bg-red-50 text-red-800">
+      Не удалось отрисовать медиа-галерею. Обновите страницу или попробуйте позже.
     </div>
   }
 </section>

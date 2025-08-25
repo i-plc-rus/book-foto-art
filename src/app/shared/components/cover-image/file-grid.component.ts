@@ -23,6 +23,7 @@ export class FileGridComponent {
     optionId: string;
     file: UploadFile;
   }>();
+  @Output() cardClick = new EventEmitter<{ index: number; file: UploadFile }>();
 
   menuOpenId = signal<string | null>(null);
   menuHoverId = signal<string | null>(null);
@@ -65,5 +66,9 @@ export class FileGridComponent {
     if (!(event.target as HTMLElement).closest('.menu-container')) {
       this.menuOpenId.set(null);
     }
+  }
+
+  onCardClick(file: UploadFile, index: number): void {
+    this.cardClick.emit({ index, file });
   }
 }

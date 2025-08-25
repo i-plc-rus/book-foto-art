@@ -112,14 +112,9 @@
   [showItemNavigatorsOnHover]="true"
   [numVisible]="5"
   [baseZIndex]="10000"
-  containerStyleClass="public-galleria"
 >
   <ng-template pTemplate="item" let-file>
-    <img
-      [src]="file['originalUrl'] ?? file.previewUrl"
-      class="w-full h-auto max-h-[90vh] object-contain"
-      alt=""
-    />
+    <img [src]="file['originalUrl'] ?? file.previewUrl" class="public-galleria" alt="" />
   </ng-template>
 
   <ng-template pTemplate="thumbnail" let-file>

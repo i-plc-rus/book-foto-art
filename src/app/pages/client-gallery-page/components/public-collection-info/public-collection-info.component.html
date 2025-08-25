@@ -13,30 +13,50 @@
     </div>
   </div>
 
-  @defer (when (isLoading$ | async) === false; prefetch on idle) {
-    <!-- Нормализуем: files всегда массив -->
+  <!-- Не блокируем defer по isLoading$ -->
+  @defer (prefetch on idle) {
     @let files = (files$ | async) ?? [];
+    @let loading = (isLoading$ | async) === true;
     @let showNames = (showFilename$ | async) === true;
     @let isLarge = (gridSize$ | async) === 'large';
 
-    @if (files.length === 0) {
-      <!-- Empty -->
-      <div class="empty-state flex flex-col items-center justify-center py-16 text-center">
-        <img src="assets/images/empty/empty-photos.svg" alt="" class="w-24 h-24 opacity-70 mb-4" />
-        <div class="text-lg font-medium mb-1">Здесь пока пусто</div>
-        <div class="text-sm opacity-70">Добавьте фотографии или поменяйте сортировку</div>
+    @if (loading) {
+      <!-- Скелетоны пока грузится API -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 animate-pulse">
+        <div class="skeleton h-32 md:h-44 rounded-xl"></div>
+        <div class="skeleton h-32 md:h-44 rounded-xl"></div>
+        <div class="skeleton h-32 md:h-44 rounded-xl"></div>
+        <div class="skeleton h-32 md:h-44 rounded-xl"></div>
+        <div class="skeleton h-32 md:h-44 rounded-xl"></div>
+        <div class="skeleton h-32 md:h-44 rounded-xl"></div>
+        <div class="skeleton h-32 md:h-44 rounded-xl"></div>
+        <div class="skeleton h-32 md:h-44 rounded-xl"></div>
       </div>
     } @else {
-      <!-- Grid -->
-      <div class="grid-wrapper" [class.grid-large]="isLarge">
-        <app-file-grid
-          [files]="files"
-          [showFilename]="showNames"
-          (imageError)="handleImageError($event)"
-        ></app-file-grid>
-      </div>
+      @if (files.length === 0) {
+        <!-- Empty -->
+        <div class="empty-state flex flex-col items-center justify-center py-16 text-center">
+          <img
+            src="assets/images/empty/empty-photos.svg"
+            alt=""
+            class="w-24 h-24 opacity-70 mb-4"
+          />
+          <div class="text-lg font-medium mb-1">Здесь пока пусто</div>
+          <div class="text-sm opacity-70">Добавьте фотографии или поменяйте сортировку</div>
+        </div>
+      } @else {
+        <!-- Grid -->
+        <div class="grid-wrapper" [class.grid-large]="isLarge">
+          <app-file-grid
+            [files]="files"
+            [showFilename]="showNames"
+            (imageError)="handleImageError($event)"
+          ></app-file-grid>
+        </div>
+      }
     }
   } @placeholder {
+    <!-- Первый кадр (до загрузки отложенного представления) -->
     <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
       <div class="skeleton h-32 md:h-44 rounded-xl"></div>
       <div class="skeleton h-32 md:h-44 rounded-xl"></div>
@@ -49,6 +69,10 @@
       <div class="skeleton h-32 md:h-44 rounded-xl"></div>
       <div class="skeleton h-32 md:h-44 rounded-xl"></div>
       <div class="skeleton h-32 md:h-44 rounded-xl"></div>
+    </div>
+  } @error {
+    <div class="p-4 rounded-xl border border-red-300 bg-red-50 text-red-800">
+      Не удалось отрисовать медиа-галерею. Обновите страницу или попробуйте позже.
     </div>
   }
 </section>

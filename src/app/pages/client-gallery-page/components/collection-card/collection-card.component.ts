@@ -9,6 +9,7 @@ import {
   signal,
 } from '@angular/core';
 import { NgClickOutsideDirective } from 'ng-click-outside2';
+import { MessageService } from 'primeng/api';
 import { catchError, EMPTY, finalize, tap } from 'rxjs';
 
 import { CollectionApiService } from '../../../../api/collection-api.service';
@@ -18,16 +19,19 @@ import type { CollectionActionPayload } from '../../models/collection-display.mo
 import { CollectionActionType } from '../../models/collection-display.model';
 import { CollectionListService } from '../../service/collection-list.service';
 import { PublishConfirmDialogComponent } from '../publish-confirm-dialog/publish-confirm-dialog.component';
+import { Toast } from 'primeng/toast';
 
 @Component({
   selector: 'app-collection-card',
   templateUrl: './collection-card.component.html',
   styleUrls: ['./collection-card.component.scss'],
-  imports: [DatePipe, NgClickOutsideDirective, PublishConfirmDialogComponent],
+  imports: [DatePipe, NgClickOutsideDirective, PublishConfirmDialogComponent, Toast],
   standalone: true,
+  providers: [MessageService],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CollectionCardComponent {
+  private readonly messageService: MessageService = inject(MessageService);
   private readonly collectionApiService: CollectionApiService = inject(CollectionApiService);
   readonly collection = input.required<ISavedGallery>();
   readonly action = output<CollectionActionPayload>();
@@ -107,6 +111,12 @@ export class CollectionCardComponent {
         tap((response) => {
           this.publishResponse.set(response); // сохраняем короткую ссылку
           this.action.emit({ actionKey: CollectionActionType.Publish, item: this.collection() });
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Опубликовано',
+            detail: 'Галерея опубликована',
+            life: 2000,
+          });
         }),
         catchError((err) => {
           console.error('Ошибка при публикации коллекции', err);

@@ -95,6 +95,7 @@ export class PublicCollectionInfoComponent {
                 previewUrl: thumb ?? original ?? '',
                 loaded: true,
               };
+              (uf as any).originalUrl = original ?? uf.previewUrl;
               return uf;
             })
             .filter((f: UploadFile) => !!f.previewUrl);

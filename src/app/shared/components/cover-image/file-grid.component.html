@@ -16,7 +16,7 @@
       [class.grid-small]="gridSize === 'small'"
       [class.grid-large]="gridSize === 'large'"
     >
-      @for (file of files; track file.id) {
+      @for (file of files; track file.id; let i = $index) {
         <div class="file-tile group relative">
           <div class="media-container">
             @if (!file.loaded) {
@@ -24,6 +24,7 @@
             }
             <div class="media-content relative">
               <img
+                (click)="onCardClick(file, i)"
                 [src]="file.previewUrl"
                 [alt]="file.file.name"
                 [class.hidden]="!file.loaded"

@@ -53,6 +53,7 @@
             [files]="files"
             [showFilename]="showNames"
             (imageError)="handleImageError($event)"
+            (cardClick)="openViewer($event.index)"
           ></app-file-grid>
         </div>
       }
@@ -78,3 +79,26 @@
     </div>
   }
 </section>
+@let galleryFiles = (files$ | async) ?? [];
+<p-galleria
+  [value]="galleryFiles"
+  [fullScreen]="true"
+  [circular]="true"
+  [showThumbnails]="true"
+  [showItemNavigators]="true"
+  [showItemNavigatorsOnHover]="true"
+  [numVisible]="5"
+  [baseZIndex]="10000"
+  [visible]="(viewerVisible$ | async) === true"
+  (visibleChange)="viewerVisible$.next($event)"
+  [activeIndex]="(viewerIndex$ | async) ?? 0"
+  (activeIndexChange)="viewerIndex$.next($event)"
+>
+  <ng-template pTemplate="item" let-file>
+    <img [src]="getViewerSrc(file)" class="w-full h-auto max-h-[90vh] object-contain" alt="" />
+  </ng-template>
+
+  <ng-template pTemplate="thumbnail" let-file>
+    <img [src]="file.previewUrl" class="w-full h-full object-cover" alt="" />
+  </ng-template>
+</p-galleria>

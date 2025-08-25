@@ -3,6 +3,7 @@ import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { DropdownModule } from 'primeng/dropdown';
+import { GalleriaModule } from 'primeng/galleria';
 import {
   BehaviorSubject,
   catchError,
@@ -31,6 +32,7 @@ import { SortMenuComponent } from '../../../../shared/components/sort-menu/sort-
     GridSettingsComponent,
     FileGridComponent,
     AsyncPipe,
+    GalleriaModule,
   ],
   templateUrl: './public-collection-info.component.html',
   styleUrl: './public-collection-info.component.scss',
@@ -46,6 +48,8 @@ export class PublicCollectionInfoComponent {
   readonly isLoading$ = this.isLoadingSubject.asObservable();
   private readonly albumTitleSubject = new BehaviorSubject<string>('Медиа файлы');
   readonly albumTitle$ = this.albumTitleSubject.asObservable();
+  readonly viewerVisible$ = new BehaviorSubject<boolean>(false);
+  readonly viewerIndex$ = new BehaviorSubject<number>(0);
 
   // token из маршрута
   readonly token$ = this.route.paramMap.pipe(
@@ -125,6 +129,15 @@ export class PublicCollectionInfoComponent {
     if (originalUrl && originalUrl !== file.previewUrl) {
       img.src = originalUrl;
     }
+  }
+
+  openViewer(index: number): void {
+    this.viewerIndex$.next(index);
+    this.viewerVisible$.next(true);
+  }
+
+  getViewerSrc(file: UploadFile): string {
+    return (file as any).originalUrl ?? file.previewUrl;
   }
 }
 

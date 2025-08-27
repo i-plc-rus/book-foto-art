@@ -15,7 +15,7 @@ export interface ISavedGallery {
   cover_url: string;
   cover_thumbnail_url: string;
   images?: any[];
-  imagesCount?: number;
+  count_photos: number;
   preview?: string;
   createDate?: string;
   is_published: boolean;

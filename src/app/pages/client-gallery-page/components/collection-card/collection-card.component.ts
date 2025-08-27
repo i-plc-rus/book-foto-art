@@ -39,9 +39,7 @@ export class CollectionCardComponent {
   readonly isMenuOpen = signal(false);
   readonly publishResponse = signal<IPublishResponse | null>(null);
 
-  readonly itemCount = computed(
-    () => this.collection().imagesCount ?? this.collection().images?.length ?? 0,
-  );
+  readonly itemCount = computed(() => this.collection().count_photos ?? 0);
 
   readonly actionType = CollectionActionType;
   private collectionService = inject(CollectionListService);

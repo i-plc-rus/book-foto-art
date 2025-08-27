@@ -4,7 +4,7 @@
 >
   <div class="bg-white w-[100%] md:w-[70%] overflow-hidden p-4 md:p-8 shadow-xl">
     <div class="flex items-center justify-between pb-2 md:py-4">
-      <h2 class="text-[0.8rem] md:text-[18px] font-bold text-center">Add media</h2>
+      <h2 class="text-[0.8rem] md:text-[18px] font-bold text-center">Добавление медиа</h2>
 
       <button
         (click)="close.emit()"
@@ -37,14 +37,14 @@
           </svg>
         </div>
         <p class="text-[0.8rem] md:text-[1.1rem] text-[#777777] m-[3px]">
-          Drag photos and videos here to upload
+          Перетащите сюда фото и видео для загрузки
         </p>
         <p class="text-[0.8rem] md:text-[1.1rem] text-[#777777] m-[3px]">or</p>
         <label
           for="modalFileInput"
           class="file-label text-[0.8rem] md:text-[1.1rem] text-[# 1abc9c] cursor-pointer"
         >
-          Browse files
+          Выберите файлы
         </label>
         <input type="file" multiple hidden id="modalFileInput" (change)="onFileSelect($event)" />
       </div>

@@ -34,7 +34,7 @@
 
               @if (!file.loaded && !file.error) {
                 <div class="loader-overlay">
-                  <div class="percentage">Processing</div>
+                  <div class="percentage">{{ file.progress | number: '1.0-0' }}%</div>
                 </div>
               }
 

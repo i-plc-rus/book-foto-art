@@ -1,4 +1,6 @@
+import { CommonModule } from '@angular/common';
 import {
+  ChangeDetectorRef,
   Component,
   computed,
   DestroyRef,
@@ -7,23 +9,22 @@ import {
   inject,
   signal,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { SortMenuComponent } from '../shared/components/sort-menu/sort-menu.component';
-import { GridSettingsComponent } from '../shared/components/grid-settings/grid-settings.component';
-import { UploadModalComponent } from '../shared/modal/upload-modal/upload-modal.component';
-import { SidebarService } from '../core/service/sidebar.service';
-import { catchError, finalize, from, mergeMap, of, tap } from 'rxjs';
-import { UploadService } from '../core/service/upload.service';
-import { ActivatedRoute, Router } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { CollectionService } from './service/collection.service';
-import type { SortType } from '../core/types/sort-type';
-import { environment } from '../../environments/environment';
-import { CollectionStateService } from './service/collection-state.service';
-import { FileGridComponent } from '../shared/components/cover-image/file-grid.component';
-import { GalleriaModule } from 'primeng/galleria';
+import { ActivatedRoute, Router } from '@angular/router';
 import { MessageService } from 'primeng/api';
+import { GalleriaModule } from 'primeng/galleria';
 import { Toast } from 'primeng/toast';
+import { catchError, finalize, from, mergeMap, of, tap } from 'rxjs';
+
+import { SidebarService } from '../core/service/sidebar.service';
+import { UploadService } from '../core/service/upload.service';
+import type { SortType } from '../core/types/sort-type';
+import { FileGridComponent } from '../shared/components/cover-image/file-grid.component';
+import { GridSettingsComponent } from '../shared/components/grid-settings/grid-settings.component';
+import { SortMenuComponent } from '../shared/components/sort-menu/sort-menu.component';
+import { UploadModalComponent } from '../shared/modal/upload-modal/upload-modal.component';
+import { CollectionService } from './service/collection.service';
+import { CollectionStateService } from './service/collection-state.service';
 
 interface UploadFile {
   id: string;
@@ -79,6 +80,7 @@ export class GalleryUploadComponent {
   private readonly router = inject(Router);
   private readonly collectionStateService = inject(CollectionStateService);
   private readonly messageService = inject(MessageService);
+  private currentBatchIds = new Set<string>();
 
   private readonly MAX_PARALLEL_UPLOADS = 3;
   readonly collectionId = signal<string | null>(null);
@@ -88,7 +90,6 @@ export class GalleryUploadComponent {
   readonly gridSize = signal<'small' | 'large'>('small');
   readonly showFilename = signal(false);
   readonly showUploadModal = signal(false);
-  readonly baseStaticUrl = environment.staticUrl;
   private readonly currentlyUploading = new Set<string>();
   readonly showEmptyState = computed(() => {
     return this.files().length === 0 && this.currentlyUploading.size === 0 && !this.isLoading();
@@ -329,6 +330,7 @@ export class GalleryUploadComponent {
     newFiles.forEach((f) => this.currentlyUploading.add(f.id));
     this.files.update((prev) => [...prev, ...newFiles]);
     const batchTotalSize = newFiles.reduce((acc, f) => acc + (f.file?.size ?? 0), 0);
+    this.currentBatchIds = new Set(newFiles.map((f) => f.id));
     this.uploadStats.totalFiles.set(newFiles.length);
     this.uploadStats.totalSize.set(batchTotalSize);
     this.uploadStats.uploadedFiles.set(0);
@@ -370,18 +372,17 @@ export class GalleryUploadComponent {
                     f.id === file.id ? { ...f, progress, loaded: progress === 100 } : f,
                   ),
                 );
-                const uploadedFiles = this.files().filter((f) => f.progress === 100).length;
+                const batch = this.files().filter((f) => this.currentBatchIds.has(f.id));
+                const uploadedFiles = batch.filter((f) => (f.progress ?? 0) >= 100).length;
                 this.uploadStats.uploadedFiles.set(uploadedFiles);
                 if (this.uploadStats.totalSize() > 0) {
-                  const uploadedSize = this.files()
-                    .filter((f) => f.progress > 0)
-                    .reduce((acc, f) => acc + ((f.file?.size ?? 0) * (f.progress ?? 0)) / 100, 0);
+                  const uploadedSize = batch.reduce(
+                    (acc, f) => acc + ((f.file?.size ?? 0) * (f.progress ?? 0)) / 100,
+                    0,
+                  );
                   this.uploadStats.uploadedSize.set(uploadedSize);
                 } else {
-                  // фоллбек: считаем «массу» как 100 на файл
-                  const sumPct = this.files()
-                    .filter((f) => this.currentlyUploading.has(f.id))
-                    .reduce((acc, f) => acc + (f.progress ?? 0), 0);
+                  const sumPct = batch.reduce((acc, f) => acc + (f.progress ?? 0), 0);
                   this.uploadStats.totalSize.set(Math.max(this.uploadStats.totalFiles(), 1) * 100);
                   this.uploadStats.uploadedSize.set(sumPct);
                 }
@@ -411,6 +412,7 @@ export class GalleryUploadComponent {
           this.uploadStats.uploadedSize.set(this.uploadStats.totalSize());
           this.uploadStats.allFilesUploaded.set(true);
           this.uploadStats.batchActive.set(false);
+          this.currentBatchIds.clear();
 
           this.messageService.add({
             severity: 'success',
@@ -418,6 +420,7 @@ export class GalleryUploadComponent {
             detail: 'Все фото загружены',
             life: 4000,
           });
+          this.currentBatchIds.clear();
           setTimeout(() => this.showStatus.set(false), 2500);
         },
       });

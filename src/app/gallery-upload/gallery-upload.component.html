@@ -1,3 +1,4 @@
+<p-toast position="top-right" />
 <section class="welcome full-width p-[1rem] md:p-4">
   <div class="w-full py-3 flex items-center justify-between">
     <h1 class="text-xl font-medium tracking-normal leading-[1.3]">Медиа файлы</h1>
@@ -25,7 +26,7 @@
         </svg>
         <span
           class="text-sm font-medium tracking-normal leading-[1] md:text-base md:font-normal md:leading-normal"
-          >Add Media</span
+          >Добавить медиа</span
         >
       </div>
     </div>
@@ -44,12 +45,16 @@
     class="w-full h-[-webkit-fill-available]"
   ></app-file-grid>
 
-  @if (uploadStats.totalFiles() > 0 && !uploadStats.allFilesUploaded() && showStatus()) {
+  @if (uploadStats.totalFiles() > 0 && showStatus()) {
     <div class="upload-status">
       <div class="upload-info">
         <div class="upload-header">
           <div class="upload-text">
-            Uploading {{ uploadStats.uploadedFiles() }} of {{ uploadStats.totalFiles() }} items
+            @if (!uploadStats.allFilesUploaded()) {
+              Загрузка {{ uploadStats.uploadedFiles() }} из {{ uploadStats.totalFiles() }} файлов
+            } @else {
+              Все загрузки завершены
+            }
           </div>
           <button class="close-button" (click)="closeStatus()">
             <svg
@@ -69,16 +74,24 @@
             </svg>
           </button>
         </div>
-        <div class="upload-stats">
-          {{ uploadStats.formatBytes(uploadStats.uploadedSize()) }} /
-          {{ uploadStats.formatBytes(uploadStats.totalSize()) }} •
-          {{ uploadStats.formatBytes(uploadStats.uploadSpeed()) }}/s
-        </div>
+        @if (!uploadStats.allFilesUploaded()) {
+          <div class="upload-stats">
+            {{ uploadStats.formatBytes(uploadStats.uploadedSize()) }} /
+            {{ uploadStats.formatBytes(uploadStats.totalSize()) }} •
+            {{ uploadStats.formatBytes(uploadStats.uploadSpeed()) }}/s
+          </div>
+        } @else {
+          <div class="upload-stats">Вы можете безопасно закрыть эту панель</div>
+        }
       </div>
       <div class="progress-container">
         <div
           class="progress-bar"
-          [style.width.%]="(uploadStats.uploadedSize() / uploadStats.totalSize()) * 100"
+          [style.width.%]="
+            uploadStats.totalSize() > 0
+              ? (uploadStats.uploadedSize() / uploadStats.totalSize()) * 100
+              : (uploadStats.uploadedFiles() / Math.max(uploadStats.totalFiles(), 1)) * 100
+          "
         ></div>
       </div>
     </div>

@@ -22,6 +22,8 @@ import { environment } from '../../environments/environment';
 import { CollectionStateService } from './service/collection-state.service';
 import { FileGridComponent } from '../shared/components/cover-image/file-grid.component';
 import { GalleriaModule } from 'primeng/galleria';
+import { MessageService } from 'primeng/api';
+import { Toast } from 'primeng/toast';
 
 interface UploadFile {
   id: string;
@@ -64,8 +66,9 @@ interface SubMenuOption {
     UploadModalComponent,
     FileGridComponent,
     GalleriaModule,
+    Toast,
   ],
-  providers: [SidebarService, CollectionService, UploadService],
+  providers: [SidebarService, CollectionService, UploadService, MessageService],
 })
 export class GalleryUploadComponent {
   private readonly destroyRef = inject(DestroyRef);
@@ -73,8 +76,11 @@ export class GalleryUploadComponent {
   private readonly uploadService = inject(UploadService);
   private readonly photoService = inject(CollectionService);
   private readonly route = inject(ActivatedRoute);
-  private router = inject(Router);
+  private readonly router = inject(Router);
   private readonly collectionStateService = inject(CollectionStateService);
+  private readonly messageService = inject(MessageService);
+
+  private readonly MAX_PARALLEL_UPLOADS = 3;
   readonly collectionId = signal<string | null>(null);
   readonly files = signal<UploadFile[]>([]);
   readonly showStatus = signal(true);
@@ -109,6 +115,18 @@ export class GalleryUploadComponent {
     uploadSpeed: signal(0),
     allFilesUploaded: signal(false),
     startTime: signal(0),
+    batchActive: signal(false),
+
+    reset: (): void => {
+      this.uploadStats.totalFiles.set(0);
+      this.uploadStats.uploadedFiles.set(0);
+      this.uploadStats.totalSize.set(0);
+      this.uploadStats.uploadedSize.set(0);
+      this.uploadStats.uploadSpeed.set(0);
+      this.uploadStats.allFilesUploaded.set(false);
+      this.uploadStats.startTime.set(0);
+      this.uploadStats.batchActive.set(false);
+    },
 
     formatBytes(bytes: number, decimals = 2): string {
       if (bytes === 0) return '0 Bytes';
@@ -310,7 +328,15 @@ export class GalleryUploadComponent {
 
     newFiles.forEach((f) => this.currentlyUploading.add(f.id));
     this.files.update((prev) => [...prev, ...newFiles]);
-    this.updateUploadStats();
+    const batchTotalSize = newFiles.reduce((acc, f) => acc + (f.file?.size ?? 0), 0);
+    this.uploadStats.totalFiles.set(newFiles.length);
+    this.uploadStats.totalSize.set(batchTotalSize);
+    this.uploadStats.uploadedFiles.set(0);
+    this.uploadStats.uploadedSize.set(0);
+    this.uploadStats.uploadSpeed.set(0);
+    this.uploadStats.allFilesUploaded.set(false);
+    this.uploadStats.startTime.set(Date.now());
+    this.uploadStats.batchActive.set(true);
     this.uploadFiles(newFiles);
   }
 
@@ -335,50 +361,66 @@ export class GalleryUploadComponent {
     from(filesToUpload)
       .pipe(
         tap((file) => this.currentlyUploading.add(file.id)),
-        mergeMap((file) =>
-          this.uploadService.uploadFile(file.file, collectionId).pipe(
-            tap(({ progress }) => {
-              this.files.update((prev) =>
-                prev.map((f) =>
-                  f.id === file.id ? { ...f, progress, loaded: progress === 100 } : f,
-                ),
-              );
-              this.updateUploadStats();
-            }),
-            catchError((err) => {
-              console.error('Upload error:', err);
-              this.files.update((prev) =>
-                prev.map((f) => (f.id === file.id ? { ...f, error: true, loaded: true } : f)),
-              );
-              return of(null);
-            }),
-            finalize(() => this.currentlyUploading.delete(file.id)),
-          ),
+        mergeMap(
+          (file) =>
+            this.uploadService.uploadFile(file.file, collectionId).pipe(
+              tap(({ progress }) => {
+                this.files.update((prev) =>
+                  prev.map((f) =>
+                    f.id === file.id ? { ...f, progress, loaded: progress === 100 } : f,
+                  ),
+                );
+                const uploadedFiles = this.files().filter((f) => f.progress === 100).length;
+                this.uploadStats.uploadedFiles.set(uploadedFiles);
+                if (this.uploadStats.totalSize() > 0) {
+                  const uploadedSize = this.files()
+                    .filter((f) => f.progress > 0)
+                    .reduce((acc, f) => acc + ((f.file?.size ?? 0) * (f.progress ?? 0)) / 100, 0);
+                  this.uploadStats.uploadedSize.set(uploadedSize);
+                } else {
+                  // фоллбек: считаем «массу» как 100 на файл
+                  const sumPct = this.files()
+                    .filter((f) => this.currentlyUploading.has(f.id))
+                    .reduce((acc, f) => acc + (f.progress ?? 0), 0);
+                  this.uploadStats.totalSize.set(Math.max(this.uploadStats.totalFiles(), 1) * 100);
+                  this.uploadStats.uploadedSize.set(sumPct);
+                }
+                const elapsed = (Date.now() - this.uploadStats.startTime()) / 1000;
+                const uploadedBytes = this.uploadStats.uploadedSize();
+                this.uploadStats.uploadSpeed.set(elapsed > 0 ? uploadedBytes / elapsed : 0);
+              }),
+              catchError((err) => {
+                console.error('Upload error:', err);
+                this.files.update((prev) =>
+                  prev.map((f) => (f.id === file.id ? { ...f, error: true, loaded: true } : f)),
+                );
+                return of(null);
+              }),
+              finalize(() => this.currentlyUploading.delete(file.id)),
+            ),
+          this.MAX_PARALLEL_UPLOADS,
         ),
       )
       .subscribe({
         complete: () => {
           this.currentlyUploading.clear();
-          this.updateUploadStats();
+          this.uploadStats.uploadedFiles.set(this.uploadStats.totalFiles());
+          if (this.uploadStats.totalSize() === 0) {
+            this.uploadStats.totalSize.set(Math.max(this.uploadStats.totalFiles(), 1) * 100);
+          }
+          this.uploadStats.uploadedSize.set(this.uploadStats.totalSize());
+          this.uploadStats.allFilesUploaded.set(true);
+          this.uploadStats.batchActive.set(false);
+
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Готово!',
+            detail: 'Все фото загружены',
+            life: 4000,
+          });
+          setTimeout(() => this.showStatus.set(false), 2500);
         },
       });
-  }
-
-  private updateUploadStats() {
-    const uploading = this.files().filter((f) => this.currentlyUploading.has(f.id));
-    const uploaded = uploading.filter((f) => f.loaded);
-
-    const totalSize = uploading.reduce((acc, f) => acc + f.file.size, 0);
-    const uploadedSize = uploading.reduce((acc, f) => acc + (f.file.size * f.progress) / 100, 0);
-
-    this.uploadStats.totalFiles.set(uploading.length);
-    this.uploadStats.uploadedFiles.set(uploaded.length);
-    this.uploadStats.totalSize.set(totalSize);
-    this.uploadStats.uploadedSize.set(uploadedSize);
-
-    const elapsed = (Date.now() - this.uploadStats.startTime()) / 1000;
-    this.uploadStats.uploadSpeed.set(elapsed > 0 ? uploadedSize / elapsed : 0);
-    this.uploadStats.allFilesUploaded.set(uploading.every((f) => f.loaded));
   }
 
   private createUploadFile(file: File): UploadFile {
@@ -453,4 +495,6 @@ export class GalleryUploadComponent {
   onEscCloseGallery() {
     if (this.viewerVisible) this.viewerVisible = false;
   }
+
+  protected readonly Math = Math;
 }

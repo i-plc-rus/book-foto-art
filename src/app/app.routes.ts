@@ -46,13 +46,14 @@ export const routes: Routes = [
     canActivate: [AuthGuard],
   },
   {
-    path: 'show/:id',
+    path: 's/:token',
     loadComponent: () =>
       import('./pages/collection-site/collection-site/collection-site.component').then(
         (c) => c.CollectionSiteComponent,
       ),
+    pathMatch: 'full',
   },
-  { path: 's/:token', component: PublicCollectionInfoComponent, pathMatch: 'full' },
+  { path: 'sss/:token', component: PublicCollectionInfoComponent, pathMatch: 'full' },
   {
     path: 'verification',
     loadComponent: () =>

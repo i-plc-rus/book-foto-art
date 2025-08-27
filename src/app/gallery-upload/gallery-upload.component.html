@@ -44,12 +44,16 @@
     class="w-full h-[-webkit-fill-available]"
   ></app-file-grid>
 
-  @if (uploadStats.totalFiles() > 0 && !uploadStats.allFilesUploaded() && showStatus()) {
+  @if (uploadStats.totalFiles() > 0 && showStatus()) {
     <div class="upload-status">
       <div class="upload-info">
         <div class="upload-header">
           <div class="upload-text">
-            Uploading {{ uploadStats.uploadedFiles() }} of {{ uploadStats.totalFiles() }} items
+            @if (!uploadStats.allFilesUploaded()) {
+              Uploading {{ uploadStats.uploadedFiles() }} of {{ uploadStats.totalFiles() }} items
+            } @else {
+              All uploads complete
+            }
           </div>
           <button class="close-button" (click)="closeStatus()">
             <svg
@@ -69,16 +73,24 @@
             </svg>
           </button>
         </div>
-        <div class="upload-stats">
-          {{ uploadStats.formatBytes(uploadStats.uploadedSize()) }} /
-          {{ uploadStats.formatBytes(uploadStats.totalSize()) }} •
-          {{ uploadStats.formatBytes(uploadStats.uploadSpeed()) }}/s
-        </div>
+        @if (!uploadStats.allFilesUploaded()) {
+          <div class="upload-stats">
+            {{ uploadStats.formatBytes(uploadStats.uploadedSize()) }} /
+            {{ uploadStats.formatBytes(uploadStats.totalSize()) }} •
+            {{ uploadStats.formatBytes(uploadStats.uploadSpeed()) }}/s
+          </div>
+        } @else {
+          <div class="upload-stats">You can safely close this panel.</div>
+        }
       </div>
       <div class="progress-container">
         <div
           class="progress-bar"
-          [style.width.%]="(uploadStats.uploadedSize() / uploadStats.totalSize()) * 100"
+          [style.width.%]="
+            uploadStats.totalSize() > 0
+              ? (uploadStats.uploadedSize() / uploadStats.totalSize()) * 100
+              : (uploadStats.uploadedFiles() / Math.max(uploadStats.totalFiles(), 1)) * 100
+          "
         ></div>
       </div>
     </div>

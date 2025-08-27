@@ -1,25 +1,26 @@
 import { DatePipe } from '@angular/common';
 import type { ElementRef, OnInit, WritableSignal } from '@angular/core';
-import { viewChild } from '@angular/core';
-import { computed, DestroyRef, inject, signal } from '@angular/core';
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { computed } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  DestroyRef,
+  inject,
+  signal,
+  viewChild,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import {
-  BehaviorSubject,
-  catchError,
-  combineLatest,
-  distinctUntilChanged,
-  finalize,
-  of,
-  tap,
-} from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
+import { catchError, of, switchMap } from 'rxjs';
+import { filter, map } from 'rxjs/operators';
 
-import type { PublicPhotosSort } from '../../../api/collection-api.service';
 import { CollectionApiService } from '../../../api/collection-api.service';
-import type { UploadFile } from '../../../gallery-upload/interface/upload-file';
-import type { ICollectionInfo, PreviewItem } from '../../../interfaces/collection.interface';
+import type {
+  ICollectionInfo,
+  ICollectionPhoto,
+  IUploadedPhoto,
+  PreviewItem,
+} from '../../../interfaces/collection.interface';
 import { ModalService } from '../../../shared/service/modal/modal.service';
 import { GalleryImageCardComponent } from '../components/gallery-image-card/gallery-image-card.component';
 
@@ -32,33 +33,28 @@ import { GalleryImageCardComponent } from '../components/gallery-image-card/gall
   standalone: true,
 })
 export class CollectionSiteComponent implements OnInit {
-  private readonly modalService = inject(ModalService);
-  private readonly destroyRef = inject(DestroyRef);
-  private readonly route = inject(ActivatedRoute);
-  private readonly api = inject(CollectionApiService);
+  private readonly modalService: ModalService = inject(ModalService);
+  private readonly destroyRef: DestroyRef = inject(DestroyRef);
+  private readonly activatedRoute: ActivatedRoute = inject(ActivatedRoute);
+  private readonly collectionApiService: CollectionApiService = inject(CollectionApiService);
 
-  // state
-  readonly loading: WritableSignal<boolean> = signal(false);
-  readonly error: WritableSignal<string | null> = signal(null);
-  readonly collectionInfo: WritableSignal<ICollectionInfo | null> = signal(null);
-
-  // ключевое — оставляем UploadFile[]
-  readonly images: WritableSignal<UploadFile[]> = signal<UploadFile[]>([]);
-  private readonly favorite = signal<Set<number>>(new Set());
-
-  // sort/controls (задел под будущие кнопки)
-  readonly sort$ = new BehaviorSubject<PublicPhotosSort>('uploaded_new');
-
+  readonly loading: WritableSignal<boolean> = signal<boolean>(false);
+  readonly error: WritableSignal<string | null> = signal<string | null>(null);
+  readonly collectionInfo: WritableSignal<ICollectionInfo | null> = signal<ICollectionInfo | null>(
+    null,
+  );
+  readonly images: WritableSignal<IUploadedPhoto[]> = signal<IUploadedPhoto[]>([]);
+  private readonly favorite: WritableSignal<Set<number>> = signal<Set<number>>(new Set());
   readonly previewImages = computed<PreviewItem[]>(() =>
-    this.images().map((f, i) => ({
-      link: (f as any).originalUrl ?? f.previewUrl, // берём оригинал, иначе превью
+    this.images().map((photo, i) => ({
+      link: photo.original_url,
       isFavorite: this.favorite().has(i),
     })),
   );
 
   readonly thumbImages = computed<PreviewItem[]>(() =>
-    this.images().map((f, i) => ({
-      link: f.previewUrl,
+    this.images().map((photo, i) => ({
+      link: photo.thumbnail_url,
       isFavorite: this.favorite().has(i),
     })),
   );
@@ -66,49 +62,41 @@ export class CollectionSiteComponent implements OnInit {
   private readonly galleryRef = viewChild<ElementRef>('galleryRef');
 
   ngOnInit(): void {
-    this.loadPublic();
+    this.getCollection();
   }
 
-  private loadPublic(): void {
-    const token$ = this.route.paramMap.pipe(
-      map((pm) => pm.get('token')),
-      distinctUntilChanged(),
-    );
-
-    combineLatest([token$, this.sort$])
+  /**
+   * Загрузить данные о коллекции
+   */
+  getCollection(): void {
+    this.activatedRoute.paramMap
       .pipe(
-        tap(() => {
+        map((paramMap) => paramMap.get('id')),
+        filter((id): id is string => !!id),
+        switchMap((id: string) => {
           this.loading.set(true);
           this.error.set(null);
-          this.images.set([]);
-        }),
-        switchMap(([token, sort]) => {
-          if (!token) {
-            this.loading.set(false);
-            this.error.set('Коллекция не найдена');
-            return of<UploadFile[]>([]);
-          }
 
-          return this.api.getPublicCollectionPhotos(token, sort).pipe(
-            // если API уже возвращает именно UploadFile[], ничего не трогаем
-            map((res: any) =>
-              Array.isArray(res)
-                ? (res as UploadFile[])
-                : Array.isArray(res?.files)
-                  ? (res.files as UploadFile[])
-                  : [],
-            ),
-            catchError((err) => {
-              console.error('public photos error', err);
-              this.error.set('Не удалось загрузить коллекцию');
-              return of<UploadFile[]>([]);
+          return this.collectionApiService.getCollection(id).pipe(
+            switchMap((info) => {
+              this.collectionInfo.set(info);
+              return this.collectionApiService.getCollectionPhotos(id);
             }),
-            finalize(() => this.loading.set(false)),
+            catchError(() => {
+              this.error.set('Не удалось загрузить коллекцию');
+              this.loading.set(false);
+              return of(null);
+            }),
           );
         }),
         takeUntilDestroyed(this.destroyRef),
       )
-      .subscribe((files: UploadFile[]) => this.images.set(files));
+      .subscribe((photos: ICollectionPhoto | null) => {
+        this.loading.set(false);
+        if (photos) {
+          this.images.set(photos.files); // кладём список фоток
+        }
+      });
   }
 
   scrollToGallery(): void {
@@ -117,21 +105,34 @@ export class CollectionSiteComponent implements OnInit {
 
   showCurrentImage(index: number): void {
     this.modalService
-      .previewImage({ images: this.previewImages, currentIndex: index })
+      .previewImage({
+        images: this.previewImages, // Signal<{link,isFavorite}[]>
+        currentIndex: index,
+      })
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((favIndex) => this.toggleFavoriteIndex(favIndex));
+      .subscribe((favIndex) => {
+        this.toggleFavoriteIndex(favIndex);
+      });
   }
 
   showSlider(): void {
     this.modalService
-      .openImageSlider({ images: this.previewImages, currentIndex: signal(0) })
+      .openImageSlider({
+        images: this.previewImages, // тот же адаптер
+        currentIndex: signal(0),
+      })
       .pipe(
         switchMap((currentIndex) =>
-          this.modalService.previewImage({ images: this.previewImages, currentIndex }),
+          this.modalService.previewImage({
+            images: this.previewImages,
+            currentIndex,
+          }),
         ),
         takeUntilDestroyed(this.destroyRef),
       )
-      .subscribe((finalIndex) => this.toggleFavoriteIndex(finalIndex));
+      .subscribe((finalIndex) => {
+        this.toggleFavoriteIndex(finalIndex);
+      });
   }
 
   private toggleFavoriteIndex(index: number): void {

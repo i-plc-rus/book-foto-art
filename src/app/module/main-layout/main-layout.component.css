@@ -153,3 +153,16 @@
 .cover-image-wrapper .absolute {
   transition: opacity 0.3s ease-in-out;
 }
+
+.main-tab {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+
+  .main-item {
+    display: flex;
+    padding: 16px 24px;
+    background-color: #f6f7f7;
+    width: 100%;
+  }
+}

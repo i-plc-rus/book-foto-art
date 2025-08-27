@@ -38,6 +38,14 @@
       }
 
       <app-tabs></app-tabs>
+      @if (isPhotosRoute()) {
+        <div class="main-tab">
+          <div class="section-header">
+            <h3 class="section-title">Фото</h3>
+          </div>
+          <div class="main-item">Основное ({{ itemCount() }})</div>
+        </div>
+      }
 
       @if (isDesignRoute()) {
         <app-design-sections class="hidden md:block"></app-design-sections>

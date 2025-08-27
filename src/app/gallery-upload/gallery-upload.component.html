@@ -26,7 +26,7 @@
         </svg>
         <span
           class="text-sm font-medium tracking-normal leading-[1] md:text-base md:font-normal md:leading-normal"
-          >Add Media</span
+          >Добавить медиа</span
         >
       </div>
     </div>
@@ -51,9 +51,9 @@
         <div class="upload-header">
           <div class="upload-text">
             @if (!uploadStats.allFilesUploaded()) {
-              Uploading {{ uploadStats.uploadedFiles() }} of {{ uploadStats.totalFiles() }} items
+              Загрузка {{ uploadStats.uploadedFiles() }} из {{ uploadStats.totalFiles() }} файлов
             } @else {
-              All uploads complete
+              Все загрузки завершены
             }
           </div>
           <button class="close-button" (click)="closeStatus()">
@@ -81,7 +81,7 @@
             {{ uploadStats.formatBytes(uploadStats.uploadSpeed()) }}/s
           </div>
         } @else {
-          <div class="upload-stats">You can safely close this panel.</div>
+          <div class="upload-stats">Вы можете безопасно закрыть эту панель</div>
         }
       </div>
       <div class="progress-container">

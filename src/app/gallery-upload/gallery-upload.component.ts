@@ -370,13 +370,11 @@ export class GalleryUploadComponent {
                     f.id === file.id ? { ...f, progress, loaded: progress === 100 } : f,
                   ),
                 );
-                const uploadedFiles = this.files().filter(
-                  (f) => this.currentlyUploading.has(f.id) && f.loaded,
-                ).length;
+                const uploadedFiles = this.files().filter((f) => f.progress === 100).length;
                 this.uploadStats.uploadedFiles.set(uploadedFiles);
                 if (this.uploadStats.totalSize() > 0) {
                   const uploadedSize = this.files()
-                    .filter((f) => this.currentlyUploading.has(f.id))
+                    .filter((f) => f.progress > 0)
                     .reduce((acc, f) => acc + ((f.file?.size ?? 0) * (f.progress ?? 0)) / 100, 0);
                   this.uploadStats.uploadedSize.set(uploadedSize);
                 } else {
@@ -418,7 +416,7 @@ export class GalleryUploadComponent {
             severity: 'success',
             summary: 'Готово!',
             detail: 'Все фото загружены',
-            life: 2000,
+            life: 4000,
           });
           setTimeout(() => this.showStatus.set(false), 2500);
         },

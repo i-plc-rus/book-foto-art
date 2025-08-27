@@ -23,6 +23,7 @@ import { CollectionStateService } from './service/collection-state.service';
 import { FileGridComponent } from '../shared/components/cover-image/file-grid.component';
 import { GalleriaModule } from 'primeng/galleria';
 import { MessageService } from 'primeng/api';
+import { Toast } from 'primeng/toast';
 
 interface UploadFile {
   id: string;
@@ -65,6 +66,7 @@ interface SubMenuOption {
     UploadModalComponent,
     FileGridComponent,
     GalleriaModule,
+    Toast,
   ],
   providers: [SidebarService, CollectionService, UploadService, MessageService],
 })
@@ -412,7 +414,12 @@ export class GalleryUploadComponent {
           this.uploadStats.allFilesUploaded.set(true);
           this.uploadStats.batchActive.set(false);
 
-          this.showNotification('Все фото загружены ✅');
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Готово!',
+            detail: 'Все фото загружены',
+            life: 2000,
+          });
           setTimeout(() => this.showStatus.set(false), 2500);
         },
       });

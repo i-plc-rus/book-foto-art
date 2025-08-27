@@ -1,10 +1,9 @@
 import { DatePipe, Location } from '@angular/common';
-import { Component, DestroyRef, inject, signal } from '@angular/core';
+import { Component, computed, DestroyRef, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { filter } from 'rxjs';
 
-import { environment as env } from '../../../environments/environment';
 import { CollectionService } from '../../gallery-upload/service/collection.service';
 import { CollectionStateService } from '../../gallery-upload/service/collection-state.service';
 import { DesignSectionsComponent } from '../../shared/components/design-sections/design-sections.component';
@@ -17,6 +16,8 @@ interface CollectionData {
   date: string;
   cover_url: string;
   focal_point?: { x: number; y: number };
+  is_published: boolean;
+  count_photos: number;
 }
 
 @Component({
@@ -39,6 +40,7 @@ export class MainLayoutComponent {
   collectionId = signal<string | null>(null);
   isDesignRoute = signal(false);
   isPhotosRoute = signal(false);
+  readonly itemCount = computed(() => this.collectionData()!.count_photos ?? 0);
 
   constructor() {
     this.router.events

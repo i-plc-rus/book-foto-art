@@ -1,4 +1,4 @@
-import { ISavedGallery } from '../../../gallery-upload/interface/upload-file';
+import type { ISavedGallery } from '../../../gallery-upload/interface/upload-file';
 
 export type DisplayView = 'grid' | 'list';
 

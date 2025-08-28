@@ -9,43 +9,32 @@ import {
   signal,
 } from '@angular/core';
 import { NgClickOutsideDirective } from 'ng-click-outside2';
-import { MessageService } from 'primeng/api';
 import { Toast } from 'primeng/toast';
-import { catchError, EMPTY, finalize, tap } from 'rxjs';
 
-import { CollectionApiService } from '../../../../api/collection-api.service';
 import type { ISavedGallery } from '../../../../gallery-upload/interface/upload-file';
-import type { IPublishResponse } from '../../../../interfaces/collection.interface';
 import type { CollectionActionPayload } from '../../models/collection-display.model';
 import { CollectionActionType } from '../../models/collection-display.model';
 import { CollectionListService } from '../../service/collection-list.service';
-import { PublishConfirmDialogComponent } from '../publish-confirm-dialog/publish-confirm-dialog.component';
 
 @Component({
   selector: 'app-collection-card',
   templateUrl: './collection-card.component.html',
   styleUrls: ['./collection-card.component.scss'],
-  imports: [DatePipe, NgClickOutsideDirective, PublishConfirmDialogComponent, Toast],
+  imports: [DatePipe, NgClickOutsideDirective, Toast],
   standalone: true,
-  providers: [MessageService],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CollectionCardComponent {
-  private readonly messageService: MessageService = inject(MessageService);
-  private readonly collectionApiService: CollectionApiService = inject(CollectionApiService);
   readonly collection = input.required<ISavedGallery>();
   readonly action = output<CollectionActionPayload>();
   readonly navigate = output<string>();
+  readonly unpublishing = input<boolean>(false);
   readonly isMenuOpen = signal(false);
-  readonly publishResponse = signal<IPublishResponse | null>(null);
 
   readonly itemCount = computed(() => this.collection().count_photos ?? 0);
 
   readonly actionType = CollectionActionType;
   private collectionService = inject(CollectionListService);
-  readonly isPublishPopupVisible = signal(false);
-  readonly publishing = signal(false);
-  readonly unpublishing = signal(false);
 
   toggleMenu(): void {
     this.isMenuOpen.update((open) => !open);
@@ -75,102 +64,12 @@ export class CollectionCardComponent {
     this.navigate.emit(this.collection().id);
   }
 
+  /**
+   * Выбрана опция в выпадающем списке
+   * @param actionKey опция
+   */
   onActionClick(actionKey: CollectionActionType): void {
     this.isMenuOpen.set(false);
-
-    if (actionKey === CollectionActionType.Delete) {
-      this.collectionService
-        .deleteCollection(this.collection().id)
-        .pipe(
-          tap(() => {
-            this.action.emit({ actionKey, item: this.collection() });
-          }),
-          catchError((err) => {
-            console.error('Ошибка при удалении коллекции', err);
-            return EMPTY;
-          }),
-        )
-        .subscribe();
-    } else {
-      this.isPublishPopupVisible.set(true);
-      // this.action.emit({ actionKey, item: this.collection() });
-    }
-  }
-
-  /**
-   * Опубликовать коллекцию
-   */
-  handlePublish(): void {
-    if (this.publishing()) return;
-
-    this.publishing.set(true);
-    this.collectionApiService
-      .publishCollection(this.collection().id)
-      .pipe(
-        tap((response) => {
-          this.publishResponse.set(response); // сохраняем короткую ссылку
-          this.action.emit({ actionKey: CollectionActionType.Publish, item: this.collection() });
-          this.messageService.add({
-            severity: 'success',
-            summary: 'Опубликовано',
-            detail: 'Галерея опубликована',
-            life: 2000,
-          });
-        }),
-        catchError((err) => {
-          console.error('Ошибка при публикации коллекции', err);
-          return EMPTY;
-        }),
-        finalize(() => {
-          this.publishing.set(false);
-          this.isPublishPopupVisible.set(true);
-        }),
-      )
-      .subscribe();
-  }
-
-  /**
-   * Закрыть попап "Опубликовать коллекцию"
-   */
-  closePublishPopup(): void {
-    this.isPublishPopupVisible.set(false);
-  }
-
-  onPopupHide(): void {
-    this.publishResponse.set(null);
-  }
-
-  onUnpublish(): void {
-    if (this.unpublishing()) return;
-
-    this.isMenuOpen.set(false);
-    this.unpublishing.set(true);
-
-    this.collectionApiService
-      .unpublishCollection(this.collection().id)
-      .pipe(
-        tap(() => {
-          this.action.emit({ actionKey: CollectionActionType.Unpublish, item: this.collection() });
-          // тостер успеха
-          this.messageService.add({
-            severity: 'success',
-            summary: 'Снято с публикации',
-            detail: 'Галерея больше не опубликована',
-            life: 2500,
-          });
-        }),
-        catchError((err) => {
-          console.error('Ошибка при снятии публикации коллекции', err);
-          this.messageService.add({
-            severity: 'error',
-            summary: 'Ошибка',
-            detail: 'Не удалось снять публикацию',
-            life: 3000,
-          });
-          return EMPTY;
-        }),
-        finalize(() => this.unpublishing.set(false)),
-      )
-      .subscribe();
+    this.action.emit({ actionKey, item: this.collection() });
   }
 }

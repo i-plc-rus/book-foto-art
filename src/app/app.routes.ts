@@ -1,7 +1,6 @@
 import type { Routes } from '@angular/router';
 
 import { AuthGuard } from './guards/auth.guard';
-import { PublicCollectionInfoComponent } from './pages/client-gallery-page/components/public-collection-info/public-collection-info.component';
 
 export const routes: Routes = [
   {
@@ -52,7 +51,6 @@ export const routes: Routes = [
         (c) => c.CollectionSiteComponent,
       ),
   },
-  { path: 'show/:token', component: PublicCollectionInfoComponent, pathMatch: 'full' },
   {
     path: 'verification',
     loadComponent: () =>

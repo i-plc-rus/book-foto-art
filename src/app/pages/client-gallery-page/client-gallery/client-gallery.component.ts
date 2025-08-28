@@ -2,15 +2,17 @@ import { formatDate, NgTemplateOutlet } from '@angular/common';
 import { Component, computed, DestroyRef, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import type { FormControl, FormGroup } from '@angular/forms';
-import { ReactiveFormsModule } from '@angular/forms';
-import { FormBuilder, FormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import dayjs from 'dayjs';
+import { MessageService } from 'primeng/api';
 import { DatePickerModule } from 'primeng/datepicker';
 import { InputText } from 'primeng/inputtext';
+import { catchError, EMPTY, finalize, tap } from 'rxjs';
 
 import { CollectionApiService } from '../../../api/collection-api.service';
 import type { ISavedGallery } from '../../../gallery-upload/interface/upload-file';
+import type { IPublishResponse } from '../../../interfaces/collection.interface';
 import { ModalService } from '../../../shared/service/modal/modal.service';
 import { CollectionCardComponent } from '../components/collection-card/collection-card.component';
 import { CollectionHeaderComponent } from '../components/collection-header/collection-header.component';
@@ -19,8 +21,8 @@ import { CollectionTableComponent } from '../components/collection-table/collect
 import { CollectionViewComponent } from '../components/collection-view/collection-view.component';
 import { FilterDateComponent } from '../components/filter-date/filter-date.component';
 import { FilterDropdownComponent } from '../components/filter-dropdown/filter-dropdown.component';
+import { PublishConfirmDialogComponent } from '../components/publish-confirm-dialog/publish-confirm-dialog.component';
 import { GalleryLayoutComponent } from '../gallery-layout/gallery-layout.component';
-import { ShareCollectionModalComponent } from '../modal/share-collection-modal/share-collection-modal.component';
 import type { CollectionActionPayload, DisplayView } from '../models/collection-display.model';
 import { CollectionActionType, SortOption } from '../models/collection-display.model';
 import { CATEGORY_TAG, EVENT_DATE, EXPIRY_DATE, STARRED, STATUS } from '../models/filter.model';
@@ -51,15 +53,22 @@ export type Step2Form = FormGroup<Step2Controls>;
     GalleryLayoutComponent,
     ReactiveFormsModule,
     InputText,
+    PublishConfirmDialogComponent,
   ],
-  providers: [CollectionApiService],
+  providers: [CollectionApiService, MessageService],
 })
 export class ClientGalleryComponent {
   private readonly formBuilder: FormBuilder = inject(FormBuilder);
   private readonly destroyRef = inject(DestroyRef);
-  private readonly collectionService: CollectionApiService = inject(CollectionApiService);
+  private readonly messageService: MessageService = inject(MessageService);
+  private readonly collectionApiService: CollectionApiService = inject(CollectionApiService);
   private readonly router = inject(Router);
   private readonly modalService = inject(ModalService);
+  readonly isPublishPopupVisible = signal(false);
+  readonly publishing = signal(false);
+  readonly unpublishing = signal(false);
+  readonly publishResponse = signal<IPublishResponse | null>(null);
+  readonly actionCollection = signal<ISavedGallery | null>(null);
 
   isLoading = false;
   isSubmitting = signal(false);
@@ -174,10 +183,18 @@ export class ClientGalleryComponent {
     this.dateRange.set(range);
   }
 
+  /**
+   * Выбрана опция в выпадающем списке
+   * @param actionKey опция
+   * @param item коллекция
+   */
   onActionClick({ actionKey, item }: CollectionActionPayload): void {
     switch (actionKey) {
       case CollectionActionType.Publish:
         this.onPublish(item);
+        break;
+      case CollectionActionType.Unpublish:
+        this.onUnpublish(item);
         break;
       case CollectionActionType.Delete:
         this.onDelete(item);
@@ -187,12 +204,19 @@ export class ClientGalleryComponent {
     }
   }
 
+  /**
+   * Удалить коллекцию
+   * @param item
+   */
   onDelete(item: ISavedGallery): void {
     if (!item.id) return;
 
-    this.collectionService
+    this.collectionApiService
       .getCollectionDelete(item.id)
-      .pipe(takeUntilDestroyed(this.destroyRef))
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        tap(() => this.handleActionFinished()),
+      )
       .subscribe({
         next: () => {
           this.collections.update((list) => list.filter((col) => col.id !== item.id));
@@ -204,16 +228,18 @@ export class ClientGalleryComponent {
       });
   }
 
+  /**
+   * Опубликовать коллекцию
+   * @param item коллекция
+   */
   onPublish(item: ISavedGallery): void {
-    const url = `${window.location.origin}/show/${item.id}`;
-    this.modalService.open(ShareCollectionModalComponent, {
-      data: { url },
-    });
+    this.actionCollection.set(item);
+    this.isPublishPopupVisible.set(true);
   }
 
   private loadCollectionsFromAPI(): void {
     this.isLoading = true;
-    this.collectionService
+    this.collectionApiService
       .getCollectionList()
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
@@ -246,7 +272,7 @@ export class ClientGalleryComponent {
     const name: string = this.formStep2.controls.name.value?.trim();
     const date: Date | null = this.formStep2.controls.date.value;
 
-    this.collectionService
+    this.collectionApiService
       .createCollection({
         name,
         date: date ? this.formatDateUS(date) : null,
@@ -301,5 +327,90 @@ export class ClientGalleryComponent {
 
   formatDateUS(date: Date): string {
     return formatDate(date, 'yyyy-MM-dd', 'en-US');
+  }
+
+  /**
+   * После действия над коллекцией обновить инфо на странице
+   */
+  handleActionFinished(): void {
+    this.loadCollectionsFromAPI();
+  }
+
+  /**
+   * Опубликовать коллекцию
+   */
+  handlePublish(): void {
+    if (this.publishing()) return;
+    this.publishing.set(true);
+    this.collectionApiService
+      .publishCollection(this.actionCollection()!.id)
+      .pipe(
+        tap((response) => {
+          this.publishResponse.set(response); // сохраняем короткую ссылку
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Опубликовано',
+            detail: 'Галерея опубликована',
+            life: 2000,
+          });
+        }),
+        tap(() => this.handleActionFinished()),
+        catchError((err) => {
+          console.error('Ошибка при публикации коллекции', err);
+          return EMPTY;
+        }),
+        finalize(() => {
+          this.publishing.set(false);
+          this.isPublishPopupVisible.set(true);
+          this.actionCollection.set(null);
+        }),
+      )
+      .subscribe();
+  }
+
+  /**
+   * Закрыть попап "Опубликовать коллекцию"
+   */
+  closePublishPopup(): void {
+    this.isPublishPopupVisible.set(false);
+  }
+
+  onPopupHide(): void {
+    this.publishResponse.set(null);
+  }
+
+  /**
+   * Снять с публикации
+   * @param collection коллекция
+   */
+  onUnpublish(collection: ISavedGallery): void {
+    if (this.unpublishing()) return;
+    this.unpublishing.set(true);
+    this.collectionApiService
+      .unpublishCollection(collection.id)
+      .pipe(
+        tap(() => {
+          // тостер успеха
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Снято с публикации',
+            detail: 'Галерея больше не опубликована',
+            life: 2500,
+          });
+        }),
+        tap(() => this.handleActionFinished()),
+        catchError((err) => {
+          console.error('Ошибка при снятии публикации коллекции', err);
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Ошибка',
+            detail: 'Не удалось снять публикацию',
+            life: 3000,
+          });
+          return EMPTY;
+        }),
+        finalize(() => this.unpublishing.set(false)),
+      )
+      .subscribe();
   }
 }

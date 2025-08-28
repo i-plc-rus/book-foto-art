@@ -49,12 +49,34 @@ export class ImagePreviewModalComponent {
     this.dialogRef.close();
   }
 
-  downloadImage(event: Event): void {
+  async downloadImage(event: Event): Promise<void> {
     event.stopPropagation();
-    const link = document.createElement('a');
-    link.href = this.currentImage().link;
-    link.download = this.fileName();
-    link.click();
+
+    const url = this.currentImage().link;
+    const name = this.fileName();
+
+    try {
+      // грузим картинку как blob
+      const resp = await fetch(url, { mode: 'cors' });
+      if (!resp.ok) throw new Error(`Ошибка загрузки ${resp.status}`);
+
+      const blob = await resp.blob();
+
+      // создаём временный объект-ссылку
+      const blobUrl = URL.createObjectURL(blob);
+
+      const a = document.createElement('a');
+      a.href = blobUrl;
+      a.download = name; // имя файла
+      document.body.appendChild(a);
+      a.click();
+
+      // очищаем
+      a.remove();
+      URL.revokeObjectURL(blobUrl);
+    } catch (e) {
+      console.error('Не удалось скачать файл', e);
+    }
   }
 
   onToggleFavorite(event: Event): void {

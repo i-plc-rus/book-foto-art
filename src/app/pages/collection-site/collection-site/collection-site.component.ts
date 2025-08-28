@@ -16,8 +16,8 @@ import { filter, map } from 'rxjs/operators';
 
 import { CollectionApiService } from '../../../api/collection-api.service';
 import type {
-  ICollectionInfo,
   ICollectionPhoto,
+  IShortLinkInfo,
   IUploadedPhoto,
   PreviewItem,
 } from '../../../interfaces/collection.interface';
@@ -40,7 +40,7 @@ export class CollectionSiteComponent implements OnInit {
 
   readonly loading: WritableSignal<boolean> = signal<boolean>(false);
   readonly error: WritableSignal<string | null> = signal<string | null>(null);
-  readonly collectionInfo: WritableSignal<ICollectionInfo | null> = signal<ICollectionInfo | null>(
+  readonly collectionInfo: WritableSignal<IShortLinkInfo | null> = signal<IShortLinkInfo | null>(
     null,
   );
   readonly images: WritableSignal<IUploadedPhoto[]> = signal<IUploadedPhoto[]>([]);
@@ -77,10 +77,10 @@ export class CollectionSiteComponent implements OnInit {
           this.loading.set(true);
           this.error.set(null);
 
-          return this.collectionApiService.getCollection(token).pipe(
+          return this.collectionApiService.getShortLinkInfo(token).pipe(
             switchMap((info) => {
               this.collectionInfo.set(info);
-              return this.collectionApiService.getCollectionPhotos(token);
+              return this.collectionApiService.getPublicCollectionPhotos(token);
             }),
             catchError(() => {
               this.error.set('Не удалось загрузить коллекцию');

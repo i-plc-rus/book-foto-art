@@ -43,4 +43,7 @@ export interface IShortLinkInfo {
   id: string;
   token: string;
   url: string;
+  name: string;
+  username: string;
+  cover_url: string;
 }

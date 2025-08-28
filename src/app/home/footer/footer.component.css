@@ -133,9 +133,21 @@
   margin-bottom: 1rem;
   min-width: 400px;
   text-align: left;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    min-width: 340px;
+  }
 }
 
 .left-right {
   display: flex;
   gap: 4rem;
+  flex-direction: row;
+
+  @media (max-width: 768px) {
+    text-align: left;
+    gap: 2rem;
+    flex-direction: column-reverse;
+  }
 }

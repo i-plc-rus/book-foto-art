@@ -125,3 +125,17 @@
     margin-top: 1rem;
   }
 }
+
+.footer__company {
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: #ccc;
+  margin-bottom: 1rem;
+  min-width: 400px;
+  text-align: left;
+}
+
+.left-right {
+  display: flex;
+  gap: 4rem;
+}

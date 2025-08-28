@@ -1,0 +1,103 @@
+.pricing-section {
+  /* безопасные поля для iPhone (чёлка/жесты) */
+  padding: calc(3rem + env(safe-area-inset-top)) 1rem calc(3rem + env(safe-area-inset-bottom));
+  text-align: center;
+  background: #fff;
+  color: #111;
+}
+
+.pricing__container {
+  max-width: 920px;
+  margin: 0 auto;
+  padding: 0 clamp(0rem, 2vw, 1rem);
+}
+
+/* общие стили + перенос слов для русских текстов */
+.pricing__discount,
+.pricing__title,
+.pricing__subtitle {
+  overflow-wrap: anywhere; /* современный перенос */
+  word-break: break-word; /* запасной вариант */
+  hyphens: auto;
+  -webkit-hyphens: auto;
+}
+
+.pricing__discount {
+  font-size: clamp(0.9rem, 1.2vw, 1rem);
+  color: #62666b;
+  margin-bottom: 0.5rem;
+}
+
+.pricing__title {
+  font-weight: 700;
+  line-height: 1.2;
+  font-size: clamp(1.6rem, 4.2vw, 2.5rem);
+  margin: 0 0 0.5rem;
+}
+
+.pricing__old {
+  position: relative;
+  margin: 0 0.35rem 0 0.5rem;
+  color: #9aa0a6;
+
+  /* аккуратное перечёркивание, хорошо видно и на ретине */
+  text-decoration: line-through;
+  text-decoration-thickness: 0.12em;
+  text-decoration-color: #b9bfc6;
+}
+
+.pricing__new {
+  color: #111;
+  font-weight: 800;
+}
+
+.pricing__subtitle {
+  margin: 0;
+  color: #3c4043;
+  font-size: clamp(0.95rem, 1.6vw, 1.1rem);
+}
+
+.btn-try {
+  margin-top: 1.5rem;
+  background-color: #1abc9c;
+  color: white;
+  border: none;
+  padding: 0.6rem 0.6rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 2px;
+  cursor: pointer;
+  width: 250px;
+  height: 50px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s ease;
+}
+
+.btn-try:hover {
+  background-color: #159c85;
+}
+
+@media (max-width: 768px) {
+  .pricing-section {
+    padding: calc(2.25rem + env(safe-area-inset-top)) 1rem
+      calc(2.25rem + env(safe-area-inset-bottom));
+  }
+
+  .btn-try {
+    margin-top: 0.75rem;
+  }
+}
+
+@media (max-width: 380px) {
+  .pricing__title {
+    letter-spacing: 0.2px;
+  }
+  .pricing__old {
+    margin-right: 0.25rem;
+  }
+  .pricing__subtitle {
+    margin-bottom: 0.75rem;
+  }
+}

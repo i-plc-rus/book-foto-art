@@ -2,9 +2,9 @@ import { ChangeDetectionStrategy, Component, inject, input, output } from '@angu
 import { MessageService, PrimeTemplate } from 'primeng/api';
 import { Button } from 'primeng/button';
 import { Dialog } from 'primeng/dialog';
+import { Toast } from 'primeng/toast';
 
 import type { IPublishResponse } from '../../../../interfaces/collection.interface';
-import { Toast } from 'primeng/toast';
 
 /**
  * Диалоговое окно перед публикацией
@@ -34,6 +34,9 @@ export class PublishConfirmDialogComponent {
     this.cancelAction.emit();
   }
 
+  /**
+   * Кнопка "Опубликовать"
+   */
   onPublish(): void {
     this.publishAction.emit();
   }

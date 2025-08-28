@@ -71,16 +71,16 @@ export class CollectionSiteComponent implements OnInit {
   getCollection(): void {
     this.activatedRoute.paramMap
       .pipe(
-        map((paramMap) => paramMap.get('id')),
-        filter((id): id is string => !!id),
-        switchMap((id: string) => {
+        map((paramMap) => paramMap.get('token')),
+        filter((token): token is string => !!token),
+        switchMap((token: string) => {
           this.loading.set(true);
           this.error.set(null);
 
-          return this.collectionApiService.getCollection(id).pipe(
+          return this.collectionApiService.getCollection(token).pipe(
             switchMap((info) => {
               this.collectionInfo.set(info);
-              return this.collectionApiService.getCollectionPhotos(id);
+              return this.collectionApiService.getCollectionPhotos(token);
             }),
             catchError(() => {
               this.error.set('Не удалось загрузить коллекцию');

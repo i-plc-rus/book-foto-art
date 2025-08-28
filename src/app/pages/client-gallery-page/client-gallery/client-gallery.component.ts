@@ -194,7 +194,7 @@ export class ClientGalleryComponent {
         this.onPublish(item);
         break;
       case CollectionActionType.Unpublish:
-        this.onUnpublish();
+        this.onUnpublish(item);
         break;
       case CollectionActionType.Delete:
         this.onDelete(item);
@@ -362,6 +362,7 @@ export class ClientGalleryComponent {
         finalize(() => {
           this.publishing.set(false);
           this.isPublishPopupVisible.set(true);
+          this.actionCollection.set(null);
         }),
       )
       .subscribe();
@@ -378,13 +379,15 @@ export class ClientGalleryComponent {
     this.publishResponse.set(null);
   }
 
-  onUnpublish(): void {
+  /**
+   * Снять с публикации
+   * @param collection коллекция
+   */
+  onUnpublish(collection: ISavedGallery): void {
     if (this.unpublishing()) return;
-
     this.unpublishing.set(true);
-
     this.collectionApiService
-      .unpublishCollection(this.actionCollection()!.id)
+      .unpublishCollection(collection.id)
       .pipe(
         tap(() => {
           // тостер успеха

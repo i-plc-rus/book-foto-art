@@ -32,7 +32,7 @@ export interface IPublishResponse {
   link: string; // короткая ссылка
 }
 
-export interface IUnpublishResponse {
+export interface SuccessResponse {
   success: boolean;
 }
 

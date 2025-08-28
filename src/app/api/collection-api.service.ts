@@ -10,7 +10,7 @@ import type {
   ICollectionPhoto,
   IPublishResponse,
   IShortLinkInfo,
-  IUnpublishResponse,
+  SuccessResponse,
 } from '../interfaces/collection.interface';
 
 export type PublicPhotosSort = 'uploaded_new' | 'uploaded_old' | 'name_az' | 'name_za' | 'random';
@@ -93,11 +93,8 @@ export class CollectionApiService {
    * Снятие публикации (отзыв доступа)
    * @param id идентификатор коллекции
    */
-  unpublishCollection(id: string): Observable<IUnpublishResponse> {
-    return this.httpClient.put<IUnpublishResponse>(
-      `${this.baseUrl}/collection/${id}/unpublish`,
-      {},
-    );
+  unpublishCollection(id: string): Observable<SuccessResponse> {
+    return this.httpClient.put<SuccessResponse>(`${this.baseUrl}/collection/${id}/unpublish`, {});
   }
 
   /**
@@ -124,5 +121,21 @@ export class CollectionApiService {
       `${this.baseUrl}/public/collection/${token}/photos`,
       { params },
     );
+  }
+
+  /**
+   * Удалить фотографию
+   * @param photoId id фотографии
+   */
+  deletePhoto(photoId: string): Observable<SuccessResponse> {
+    return this.httpClient.delete<SuccessResponse>(`${this.baseUrl}/collection/photo/${photoId}`);
+  }
+
+  /**
+   * Удалить коллекцию
+   * @param collectionId id коллекции
+   */
+  deleteCollection(collectionId: string): Observable<SuccessResponse> {
+    return this.httpClient.delete<SuccessResponse>(`${this.baseUrl}/collection/${collectionId}`);
   }
 }

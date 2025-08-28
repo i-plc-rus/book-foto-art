@@ -79,7 +79,6 @@
   background-color: #159c85;
 }
 
-/* ======= мобильная верстка ======= */
 @media (max-width: 768px) {
   .pricing-section {
     padding: calc(2.25rem + env(safe-area-inset-top)) 1rem
@@ -91,7 +90,6 @@
   }
 }
 
-/* iPhone SE/узкие экраны */
 @media (max-width: 380px) {
   .pricing__title {
     letter-spacing: 0.2px;

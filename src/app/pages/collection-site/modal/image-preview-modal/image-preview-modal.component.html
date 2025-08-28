@@ -43,6 +43,13 @@
           />
         </svg>
       </button>
+      <p-button
+        icon="pi pi-trash"
+        severity="secondary"
+        [disabled]="isDeleting()"
+        (onClick)="confirmDelete($event)"
+        class="image-action-btn"
+      />
       <button class="image-preview__icon-btn" (click)="downloadImage($event)">
         <svg
           width="24"
@@ -115,3 +122,12 @@
 
   <div class="image-preview__filename">{{ fileName() }}</div>
 </div>
+
+<p-confirmDialog
+  key="deleteImage"
+  [closable]="false"
+  [styleClass]="'confirm-danger'"
+  acceptLabel="Удалить"
+  rejectLabel="Отмена"
+  icon="pi pi-exclamation-triangle"
+></p-confirmDialog>

@@ -1,8 +1,9 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
-import { DialogRef, DIALOG_DATA } from '@angular/cdk/dialog';
 import { Clipboard } from '@angular/cdk/clipboard';
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { CommonModule } from '@angular/common';
-import { ShareCollectionData } from '../../models/collection-display.model';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+
+import type { ShareCollectionData } from '../../models/collection-display.model';
 
 @Component({
   selector: 'app-share-collection-modal',

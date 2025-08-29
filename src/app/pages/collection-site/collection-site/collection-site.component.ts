@@ -17,7 +17,7 @@ import { filter, map } from 'rxjs/operators';
 import { CollectionApiService } from '../../../api/collection-api.service';
 import type {
   ICollectionPhoto,
-  IShortLinkInfo,
+  IShortLink,
   IUploadedPhoto,
   PreviewItem,
 } from '../../../interfaces/collection.interface';
@@ -40,9 +40,7 @@ export class CollectionSiteComponent implements OnInit {
 
   readonly loading: WritableSignal<boolean> = signal<boolean>(false);
   readonly error: WritableSignal<string | null> = signal<string | null>(null);
-  readonly collectionInfo: WritableSignal<IShortLinkInfo | null> = signal<IShortLinkInfo | null>(
-    null,
-  );
+  readonly collectionInfo: WritableSignal<IShortLink | null> = signal<IShortLink | null>(null);
   readonly images: WritableSignal<IUploadedPhoto[]> = signal<IUploadedPhoto[]>([]);
   private readonly favorite: WritableSignal<Set<number>> = signal<Set<number>>(new Set());
   readonly previewImages = computed<PreviewItem[]>(() =>

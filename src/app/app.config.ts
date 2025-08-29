@@ -6,9 +6,10 @@ import { provideAnimations } from '@angular/platform-browser/animations';
 import { provideRouter } from '@angular/router';
 import Aura from '@primeng/themes/aura';
 import { NgxDaterangepickerMd } from 'ngx-daterangepicker-material';
+import { ConfirmationService, MessageService } from 'primeng/api';
 import { providePrimeNG } from 'primeng/config';
-import ruPrime from '../assets/locale/prime/ru.json';
 
+import ruPrime from '../assets/locale/prime/ru.json';
 import { environment } from '../environments/environment';
 import { routes } from './app.routes';
 import { AuthInterceptor } from './core/interceptor/auth.interceptor';
@@ -28,6 +29,8 @@ export const appConfig: ApplicationConfig = {
       },
       translation: ruPrime.ru,
     }),
+    ConfirmationService,
+    MessageService,
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
     provideHttpClient(withInterceptorsFromDi()),

@@ -7,7 +7,7 @@
         {{ collectionInfo()?.created_at | date: 'd MMM y' }}
       </div>
       <button class="collection-site__down-btn" (click)="scrollToGallery()">
-        Посмотреть галерею
+        Посмотреть галерею.
       </button>
       <a [routerLink]="[]" class="collection-site__user-name">
         {{ collectionInfo()?.username }}

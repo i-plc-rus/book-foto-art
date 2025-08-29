@@ -42,7 +42,7 @@ export const routes: Routes = [
   {
     path: '',
     loadChildren: (): any => import('./module/main-layout/main.routes').then((m) => m.MAIN),
-    canActivate: [AuthGuard],
+    canActivate: [],
   },
   {
     path: 's/:token',

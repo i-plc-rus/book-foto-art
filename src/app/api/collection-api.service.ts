@@ -9,6 +9,7 @@ import type {
   ICollectionInfo,
   ICollectionPhoto,
   IPublishResponse,
+  IShortLink,
   IShortLinkInfo,
   SuccessResponse,
 } from '../interfaces/collection.interface';
@@ -101,10 +102,10 @@ export class CollectionApiService {
    * Получить информацию о короткой ссылке
    * @param token токен короткой ссылки
    */
-  getShortLinkInfo(token: string): Observable<IShortLinkInfo> {
-    return this.httpClient.get<IShortLinkInfo>(
-      `${this.baseUrl}/collection/short_link_info/${token}`,
-    );
+  getShortLinkInfo(token: string): Observable<IShortLink> {
+    return this.httpClient
+      .get<IShortLinkInfo>(`${this.baseUrl}/collection/short_link_info/${token}`)
+      .pipe(map((r) => r.short_link_info));
   }
 
   /**

@@ -37,6 +37,10 @@ export interface SuccessResponse {
 }
 
 export interface IShortLinkInfo {
+  short_link_info: IShortLink;
+}
+
+export interface IShortLink {
   click_count: number;
   collection_id: string;
   created_at: string;
@@ -46,4 +50,5 @@ export interface IShortLinkInfo {
   name: string;
   username: string;
   cover_url: string;
+  cover_thumbnail_url: string;
 }

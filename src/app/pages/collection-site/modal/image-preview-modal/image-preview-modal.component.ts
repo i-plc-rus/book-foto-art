@@ -14,6 +14,7 @@ import { Button } from 'primeng/button';
 import { ConfirmDialog } from 'primeng/confirmdialog';
 import { Subject } from 'rxjs';
 
+import { CollectionApiService } from '../../../../api/collection-api.service';
 import { ModalService } from '../../../../shared/service/modal/modal.service';
 import type { ImagePreviewData } from '../../model/image-preview.model';
 
@@ -23,10 +24,10 @@ import type { ImagePreviewData } from '../../model/image-preview.model';
   imports: [CommonModule, Button, ConfirmDialog],
   templateUrl: './image-preview-modal.component.html',
   styleUrls: ['./image-preview-modal.component.scss'],
-  providers: [ConfirmationService, MessageService],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ImagePreviewModalComponent {
+  private readonly collectionApiService: CollectionApiService = inject(CollectionApiService);
   private readonly modalService = inject(ModalService);
   private readonly dialogRef = inject(DialogRef);
   private readonly data = inject<ImagePreviewData>(DIALOG_DATA);
@@ -67,10 +68,18 @@ export class ImagePreviewModalComponent {
       key: 'deleteImage',
       header: 'Удалить фото?',
       message: `Вы действительно хотите удалить «${this.fileName()}»? Действие необратимо.`,
-      acceptLabel: 'Удалить',
-      rejectLabel: 'Отмена',
+      rejectButtonProps: {
+        label: 'Cancel',
+        severity: 'secondary',
+        text: true,
+      },
+      acceptButtonProps: {
+        label: 'Save',
+        text: true,
+      },
       icon: 'pi pi-exclamation-triangle',
       accept: () => this.deleteCurrentImage(),
+      reject: () => this.deleteCurrentImage(),
     });
   }
 
@@ -105,10 +114,14 @@ export class ImagePreviewModalComponent {
   }
 
   private deleteCurrentImage(): void {
+    console.log('deleteCurrentImage');
     if (this.isDeleting()) return;
     this.isDeleting.set(true);
 
     const img = this.currentImage();
+    console.log('img', img);
+
+    // this.collectionApiService.deletePhoto(this.currentIndex())
 
     // пример API-вызова
     // this.imageApi.delete(img.id ?? img.link)
@@ -127,11 +140,11 @@ export class ImagePreviewModalComponent {
     //   });
 
     // временный мок, пока нет бэка:
-    setTimeout(() => {
+    /* setTimeout(() => {
       this.isDeleting.set(false);
       this.messageService.add({ severity: 'success', summary: 'Удалено', detail: this.fileName() });
       this.deleteIndex$.next(this.currentIndex());
-    }, 400);
+    }, 400);*/
   }
 
   onToggleFavorite(event: Event): void {

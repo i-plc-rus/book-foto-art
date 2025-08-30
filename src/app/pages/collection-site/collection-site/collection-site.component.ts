@@ -17,7 +17,6 @@ import { filter, map } from 'rxjs/operators';
 import { CollectionApiService } from '../../../api/collection-api.service';
 import type {
   ICollectionPhoto,
-  IShortLink,
   IUploadedPhoto,
   PreviewItem,
 } from '../../../interfaces/collection.interface';
@@ -40,7 +39,9 @@ export class CollectionSiteComponent implements OnInit {
 
   readonly loading: WritableSignal<boolean> = signal<boolean>(false);
   readonly error: WritableSignal<string | null> = signal<string | null>(null);
-  readonly collectionInfo: WritableSignal<IShortLink | null> = signal<IShortLink | null>(null);
+  readonly collectionInfo: WritableSignal<ICollectionPhoto | null> =
+    signal<ICollectionPhoto | null>(null);
+
   readonly images: WritableSignal<IUploadedPhoto[]> = signal<IUploadedPhoto[]>([]);
   private readonly favorite: WritableSignal<Set<number>> = signal<Set<number>>(new Set());
   readonly previewImages = computed<PreviewItem[]>(() =>
@@ -69,17 +70,12 @@ export class CollectionSiteComponent implements OnInit {
   getCollection(): void {
     this.activatedRoute.paramMap
       .pipe(
-        map((paramMap) => paramMap.get('token')),
+        map((pm) => pm.get('token')),
         filter((token): token is string => !!token),
-        switchMap((token: string) => {
+        switchMap((token) => {
           this.loading.set(true);
           this.error.set(null);
-
-          return this.collectionApiService.getShortLinkInfo(token).pipe(
-            switchMap((info) => {
-              this.collectionInfo.set(info);
-              return this.collectionApiService.getPublicCollectionPhotos(token);
-            }),
+          return this.collectionApiService.getPublicCollectionPhotos(token).pipe(
             catchError(() => {
               this.error.set('Не удалось загрузить коллекцию');
               this.loading.set(false);
@@ -89,11 +85,11 @@ export class CollectionSiteComponent implements OnInit {
         }),
         takeUntilDestroyed(this.destroyRef),
       )
-      .subscribe((photos: ICollectionPhoto | null) => {
+      .subscribe((resp: ICollectionPhoto | null) => {
         this.loading.set(false);
-        if (photos) {
-          this.images.set(photos.files); // кладём список фоток
-        }
+        if (!resp) return;
+        this.collectionInfo.set(resp);
+        this.images.set(resp.files ?? []); // ← files с бэка
       });
   }
 

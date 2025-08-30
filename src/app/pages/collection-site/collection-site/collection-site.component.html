@@ -2,9 +2,9 @@
   <div class="collection-site__cover">
     <img class="collection-site__img" [src]="collectionInfo()?.cover_url" alt="Обложка коллекции" />
     <div class="collection-site__overlay">
-      <h1 class="collection-site__name">{{ collectionInfo()?.name }}</h1>
+      <h1 class="collection-site__name">{{ collectionInfo()?.collection_name }}</h1>
       <div class="collection-site__date">
-        {{ collectionInfo()?.created_at | date: 'd MMM y' }}
+        {{ collectionInfo()?.date | date: 'd MMM y' }}
       </div>
       <button class="collection-site__down-btn" (click)="scrollToGallery()">
         Посмотреть галерею
@@ -18,7 +18,7 @@
   <div class="collection-site__control-bar" #galleryRef>
     <div class="collection-site__info">
       <a [routerLink]="[]" class="collection-site__info-name">
-        {{ collectionInfo()?.name }}
+        {{ collectionInfo()?.collection_name }}
       </a>
       <a [routerLink]="[]" class="collection-site__info-user">
         {{ collectionInfo()?.username }}

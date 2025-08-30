@@ -10,8 +10,14 @@ export interface ICollectionInfo {
 }
 
 export interface ICollectionPhoto {
-  files: IUploadedPhoto[];
+  collection_name: string;
+  count_photos: number;
+  cover_thumbnail_url: string;
+  cover_url: string;
+  date: string;
+  files: IUploadedPhoto[]; // ← files
   sort: string;
+  username: string;
 }
 
 export interface IUploadedPhoto {

@@ -5,6 +5,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
 import { finalize } from 'rxjs';
 
+import { CollectionApiService } from '../../../api/collection-api.service';
 import { CollectionService } from '../../../gallery-upload/service/collection.service';
 import { DevicePreviewComponent } from '../../../shared/components/device-preview/device-preview.component';
 import type { IActionBarItem } from '../../../shared/components/editor-action-bar/action-bar-item';
@@ -32,6 +33,8 @@ import { ACTION_BAR_ITEMS, COVER_TEMPLATES } from './design-cover.constants';
 })
 export class DesignCoverComponent implements OnInit {
   @ViewChild('fileInput') fileInput!: ElementRef;
+
+  private readonly collectionApiService: CollectionApiService = inject(CollectionApiService);
 
   templates = signal<CoverTemplate[]>(COVER_TEMPLATES);
   actionBarItems = ACTION_BAR_ITEMS;
@@ -110,18 +113,23 @@ export class DesignCoverComponent implements OnInit {
     }
   }
 
-  handlePhotoSelected(photo: any) {
+  handlePhotoSelected(photo: any): void {
     this.selectedPhoto = photo;
     this.previewImageUrl = photo.url;
   }
 
-  confirmCoverSelection() {
+  confirmCoverSelection(): void {
     if (this.previewImageUrl) {
       this.selectedTemplate.set({
         id: 'custom',
         name: 'Custom Cover',
         image: this.previewImageUrl,
       });
+
+      this.collectionApiService
+        .updateCollectionCover(this.collectionId(), this.selectedPhoto.id)
+        .pipe(takeUntilDestroyed(this.destroyRef))
+        .subscribe();
 
       this.closeChangeCoverModal();
       this.closeSelectCoverPhotoModal();

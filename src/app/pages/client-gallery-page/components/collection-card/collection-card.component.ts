@@ -1,20 +1,11 @@
 import { DatePipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  inject,
-  input,
-  output,
-  signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, output, signal } from '@angular/core';
 import { NgClickOutsideDirective } from 'ng-click-outside2';
 import { Toast } from 'primeng/toast';
 
 import type { ISavedGallery } from '../../../../gallery-upload/interface/upload-file';
 import type { CollectionActionPayload } from '../../models/collection-display.model';
 import { CollectionActionType } from '../../models/collection-display.model';
-import { CollectionListService } from '../../service/collection-list.service';
 
 @Component({
   selector: 'app-collection-card',
@@ -34,7 +25,6 @@ export class CollectionCardComponent {
   readonly itemCount = computed(() => this.collection().count_photos ?? 0);
 
   readonly actionType = CollectionActionType;
-  private collectionService = inject(CollectionListService);
 
   toggleMenu(): void {
     this.isMenuOpen.update((open) => !open);

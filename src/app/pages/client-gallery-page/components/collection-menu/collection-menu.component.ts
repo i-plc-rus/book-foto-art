@@ -1,10 +1,9 @@
 import { ChangeDetectionStrategy, Component, input, output, signal } from '@angular/core';
 import { NgClickOutsideDirective } from 'ng-click-outside2';
-import {
-  CollectionActionPayload,
-  CollectionActionType,
-} from '../../models/collection-display.model';
-import { ISavedGallery } from '../../../../gallery-upload/interface/upload-file';
+
+import type { ISavedGallery } from '../../../../gallery-upload/interface/upload-file';
+import type { CollectionActionPayload } from '../../models/collection-display.model';
+import { CollectionActionType } from '../../models/collection-display.model';
 
 @Component({
   selector: 'app-collection-menu',

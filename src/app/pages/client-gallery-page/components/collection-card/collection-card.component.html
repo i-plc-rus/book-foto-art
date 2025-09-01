@@ -42,22 +42,28 @@
       @if (collection().is_published) {
         <button
           class="collection-card__menu-item w-full"
+          (click)="onActionClick(actionType.CopyLink)"
+        >
+          {{ actionType.CopyLink }}
+        </button>
+        <button
+          class="collection-card__menu-item w-full"
           (click)="onActionClick(actionType.Unpublish)"
           [disabled]="unpublishing()"
         >
-          Снять с публикации
+          {{ actionType.Unpublish }}
         </button>
       } @else {
         <button
           class="collection-card__menu-item w-full"
           (click)="onActionClick(actionType.Publish)"
         >
-          Опубликовать
+          {{ actionType.Publish }}
         </button>
       }
 
       <button class="collection-card__menu-item w-full" (click)="onActionClick(actionType.Delete)">
-        Удалить
+        {{ actionType.Delete }}
       </button>
     </div>
   }

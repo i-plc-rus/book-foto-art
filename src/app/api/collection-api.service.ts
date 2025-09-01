@@ -42,14 +42,6 @@ export class CollectionApiService {
     );
   }
 
-  getCollectionDelete(
-    collectionId: string,
-    queryParams: { [key: string]: string } = {},
-  ): Observable<any[]> {
-    const params = new HttpParams({ fromObject: queryParams });
-    return this.httpClient.delete<any[]>(`${this.baseUrl}/collection/${collectionId}`, { params });
-  }
-
   getCollectionList(): Observable<any> {
     return this.httpClient.get(`${this.baseUrl}/collection/list`).pipe(
       map((response) => {

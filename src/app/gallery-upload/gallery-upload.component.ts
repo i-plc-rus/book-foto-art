@@ -1,6 +1,5 @@
 import { CommonModule } from '@angular/common';
 import {
-  ChangeDetectorRef,
   Component,
   computed,
   DestroyRef,
@@ -81,8 +80,13 @@ export class GalleryUploadComponent {
   private readonly collectionStateService = inject(CollectionStateService);
   private readonly messageService = inject(MessageService);
   private currentBatchIds = new Set<string>();
-
   private readonly MAX_PARALLEL_UPLOADS = 3;
+
+  readonly isPublished = signal(false);
+  readonly shortLinkUrl = signal<string | null>(null);
+
+  protected readonly Math = Math;
+
   readonly collectionId = signal<string | null>(null);
   readonly files = signal<UploadFile[]>([]);
   readonly showStatus = signal(true);
@@ -495,9 +499,49 @@ export class GalleryUploadComponent {
   }
 
   @HostListener('document:keydown.escape')
-  onEscCloseGallery() {
+  onEscCloseGallery(): void {
     if (this.viewerVisible) this.viewerVisible = false;
   }
 
-  protected readonly Math = Math;
+  async copyPublicLink(): Promise<void> {
+    const url = this.shortLinkUrl();
+    if (!url) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Нет ссылки',
+        detail: 'Коллекция не опубликована',
+        life: 2000,
+      });
+      return;
+    }
+
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(url);
+      } else {
+        const ta = document.createElement('textarea');
+        ta.value = url;
+        ta.style.position = 'fixed';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        ta.remove();
+      }
+      this.messageService.add({
+        severity: 'success',
+        summary: 'Ссылка скопирована',
+        detail: url,
+        life: 1500,
+      });
+    } catch (e) {
+      console.error(e);
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Ошибка',
+        detail: 'Не удалось скопировать ссылку',
+        life: 2500,
+      });
+    }
+  }
 }

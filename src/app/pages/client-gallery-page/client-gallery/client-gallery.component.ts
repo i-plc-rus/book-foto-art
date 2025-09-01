@@ -197,6 +197,9 @@ export class ClientGalleryComponent {
    */
   onActionClick({ actionKey, item }: CollectionActionPayload): void {
     switch (actionKey) {
+      case CollectionActionType.CopyLink:
+        this.copyLink(item);
+        break;
       case CollectionActionType.Publish:
         this.onPublish(item);
         break;
@@ -288,6 +291,8 @@ export class ClientGalleryComponent {
             imagesCount: 0,
             preview: c.cover_thumbnail_url,
             createDate: c.created_at,
+            is_published: c.is_published,
+            short_link_url: c.short_link_url ?? null,
           }));
 
           this.collections.set(transformedCollections);
@@ -453,5 +458,48 @@ export class ClientGalleryComponent {
         finalize(() => this.unpublishing.set(false)),
       )
       .subscribe();
+  }
+
+  private async copyLink(item: ISavedGallery): Promise<void> {
+    const url = item.short_link_url;
+    if (!url) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Нет ссылки',
+        detail: 'Коллекция не опубликована',
+        life: 2000,
+      });
+      return;
+    }
+
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(url);
+      } else {
+        // Фолбэк для несекьюрных контекстов
+        const textarea = document.createElement('textarea');
+        textarea.value = url;
+        textarea.style.position = 'fixed';
+        textarea.style.opacity = '0';
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand('copy');
+        textarea.remove();
+      }
+      this.messageService.add({
+        severity: 'success',
+        summary: 'Ссылка скопирована',
+        detail: url,
+        life: 1500,
+      });
+    } catch (e) {
+      console.error('Clipboard error', e);
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Не удалось скопировать',
+        detail: 'Скопируйте ссылку вручную',
+        life: 2500,
+      });
+    }
   }
 }

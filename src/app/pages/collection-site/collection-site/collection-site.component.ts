@@ -166,7 +166,7 @@ export class CollectionSiteComponent implements OnInit {
       key: 'deleteImage',
       header: 'Удалить фото?',
       message: `Вы действительно хотите удалить «${photo.file_name ?? 'фото'}»? Действие необратимо.`,
-      rejectButtonProps: { label: 'Отмена', severity: 'secondary', text: true },
+      rejectButtonProps: { label: 'Отмена', severity: 'success', text: true },
       acceptButtonProps: { label: 'Удалить', text: true },
       icon: 'pi pi-exclamation-triangle',
       accept: () => this.deleteImageByIndex(index),

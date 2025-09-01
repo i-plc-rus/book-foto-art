@@ -221,13 +221,20 @@ export class ClientGalleryComponent {
       key: 'deleteCollection',
       header: 'Удалить коллекцию?',
       message: `Вы действительно хотите удалить «${item.name}»? Действие необратимо.`,
-      rejectButtonProps: { label: 'Отмена', severity: 'secondary', text: true },
-      acceptButtonProps: { label: 'Удалить', text: true },
-      icon: 'pi pi-exclamation-triangle',
-      accept: () => {
-        this.isLoading = true; // ← мгновенно включаем скелетоны для ВСЕХ карточек
-        this.doDeleteCollection(item.id); // затем удаляем и перезапрашиваем список
+      rejectButtonProps: {
+        label: 'Отмена',
+        severity: 'secondary',
+        text: true, // остаётся прозрачной
       },
+      acceptButtonProps: {
+        label: 'Удалить',
+        text: false,
+        outlined: false,
+        link: false,
+        styleClass: 'force-solid',
+      },
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => this.doDeleteCollection(item.id),
     });
   }
 

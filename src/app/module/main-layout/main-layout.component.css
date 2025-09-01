@@ -192,3 +192,18 @@
   display: flex;
   gap: 4rem;
 }
+
+::ng-deep .p-toast {
+  max-width: 90vw; /* чтобы не выходило за экран */
+  left: 50% !important; /* центрируем */
+  transform: translateX(-50%);
+}
+
+@media (min-width: 768px) {
+  ::ng-deep .p-toast {
+    max-width: 400px;
+    right: 1rem !important;
+    left: auto !important;
+    transform: none;
+  }
+}

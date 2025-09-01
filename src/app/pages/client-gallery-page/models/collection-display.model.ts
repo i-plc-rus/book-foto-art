@@ -24,6 +24,7 @@ export const SORT_OPTIONS: SortOptionItem[] = [
 ];
 
 export enum CollectionActionType {
+  CopyLink = 'копировать ссылку',
   Publish = 'опубликовать',
   Delete = 'удалить',
   Unpublish = 'снять с публикации',

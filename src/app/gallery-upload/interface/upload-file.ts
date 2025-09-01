@@ -19,6 +19,7 @@ export interface ISavedGallery {
   preview?: string;
   createDate?: string;
   is_published: boolean;
+  short_link_url?: string;
 }
 
 export const GALLERY_STORAGE_KEY = 'savedGalleries';

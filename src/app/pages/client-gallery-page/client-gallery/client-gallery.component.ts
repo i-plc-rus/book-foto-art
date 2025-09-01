@@ -5,7 +5,8 @@ import type { FormControl, FormGroup } from '@angular/forms';
 import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import dayjs from 'dayjs';
-import { MessageService } from 'primeng/api';
+import { ConfirmationService, MessageService } from 'primeng/api';
+import { ConfirmDialog } from 'primeng/confirmdialog';
 import { DatePickerModule } from 'primeng/datepicker';
 import { InputText } from 'primeng/inputtext';
 import { catchError, EMPTY, finalize, tap } from 'rxjs';
@@ -54,6 +55,7 @@ export type Step2Form = FormGroup<Step2Controls>;
     ReactiveFormsModule,
     InputText,
     PublishConfirmDialogComponent,
+    ConfirmDialog,
   ],
   providers: [CollectionApiService, MessageService],
 })
@@ -62,6 +64,7 @@ export class ClientGalleryComponent {
   private readonly destroyRef = inject(DestroyRef);
   private readonly messageService: MessageService = inject(MessageService);
   private readonly collectionApiService: CollectionApiService = inject(CollectionApiService);
+  private readonly confirmation = inject(ConfirmationService);
   private readonly router = inject(Router);
   private readonly modalService = inject(ModalService);
   readonly isPublishPopupVisible = signal(false);
@@ -205,25 +208,46 @@ export class ClientGalleryComponent {
   }
 
   /**
-   * Удалить коллекцию
-   * @param item
+   * Удалить коллекцию (с подтверждением)
    */
   onDelete(item: ISavedGallery): void {
     if (!item.id) return;
 
+    this.confirmation.confirm({
+      key: 'deleteCollection',
+      header: 'Удалить коллекцию?',
+      message: `Вы действительно хотите удалить «${item.name}»? Действие необратимо.`,
+      rejectButtonProps: { label: 'Отмена', severity: 'secondary', text: true },
+      acceptButtonProps: { label: 'Удалить', text: true },
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => this.doDeleteCollection(item.id),
+    });
+  }
+
+  // фактическое удаление + обновление списка
+  private doDeleteCollection(collectionId: string): void {
     this.collectionApiService
-      .getCollectionDelete(item.id)
-      .pipe(
-        takeUntilDestroyed(this.destroyRef),
-        tap(() => this.handleActionFinished()),
-      )
+      .deleteCollection(collectionId) // ← используем ваш типизированный метод
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
-          this.collections.update((list) => list.filter((col) => col.id !== item.id));
+          this.collections.update((list) => list.filter((col) => col.id !== collectionId));
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Удалено',
+            detail: 'Коллекция удалена',
+            life: 2000,
+          });
+          this.handleActionFinished();
         },
         error: (error) => {
-          this.errorMessage = 'Ошибка при удалении коллекции';
-          console.error('Ошибка удаления:', error);
+          console.error('Ошибка удаления коллекции:', error);
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Ошибка',
+            detail: 'Не удалось удалить коллекцию',
+            life: 3000,
+          });
         },
       });
   }

@@ -9,6 +9,7 @@ import { ConfirmationService, MessageService } from 'primeng/api';
 import { ConfirmDialog } from 'primeng/confirmdialog';
 import { DatePickerModule } from 'primeng/datepicker';
 import { InputText } from 'primeng/inputtext';
+import { Skeleton } from 'primeng/skeleton';
 import { catchError, EMPTY, finalize, tap } from 'rxjs';
 
 import { CollectionApiService } from '../../../api/collection-api.service';
@@ -56,6 +57,7 @@ export type Step2Form = FormGroup<Step2Controls>;
     InputText,
     PublishConfirmDialogComponent,
     ConfirmDialog,
+    Skeleton,
   ],
   providers: [CollectionApiService, MessageService],
 })
@@ -72,10 +74,12 @@ export class ClientGalleryComponent {
   readonly unpublishing = signal(false);
   readonly publishResponse = signal<IPublishResponse | null>(null);
   readonly actionCollection = signal<ISavedGallery | null>(null);
+  private deleting = signal(false);
 
   isLoading = false;
   isSubmitting = signal(false);
   errorMessage = '';
+  skeletons = Array.from({ length: 8 });
 
   readonly formStep2: Step2Form = this.formBuilder.group<Step2Controls>({
     name: this.formBuilder.control('', {
@@ -220,18 +224,19 @@ export class ClientGalleryComponent {
       rejectButtonProps: { label: 'Отмена', severity: 'secondary', text: true },
       acceptButtonProps: { label: 'Удалить', text: true },
       icon: 'pi pi-exclamation-triangle',
-      accept: () => this.doDeleteCollection(item.id),
+      accept: () => {
+        this.isLoading = true; // ← мгновенно включаем скелетоны для ВСЕХ карточек
+        this.doDeleteCollection(item.id); // затем удаляем и перезапрашиваем список
+      },
     });
   }
 
-  // фактическое удаление + обновление списка
   private doDeleteCollection(collectionId: string): void {
     this.collectionApiService
-      .deleteCollection(collectionId) // ← используем ваш типизированный метод
+      .deleteCollection(collectionId)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
-          this.collections.update((list) => list.filter((col) => col.id !== collectionId));
           this.messageService.add({
             severity: 'success',
             summary: 'Удалено',
@@ -248,6 +253,7 @@ export class ClientGalleryComponent {
             detail: 'Не удалось удалить коллекцию',
             life: 3000,
           });
+          this.isLoading = false;
         },
       });
   }
@@ -366,6 +372,7 @@ export class ClientGalleryComponent {
   handlePublish(): void {
     if (this.publishing()) return;
     this.publishing.set(true);
+    this.isLoading = true;
     this.collectionApiService
       .publishCollection(this.actionCollection()!.id)
       .pipe(
@@ -381,6 +388,7 @@ export class ClientGalleryComponent {
         tap(() => this.handleActionFinished()),
         catchError((err) => {
           console.error('Ошибка при публикации коллекции', err);
+          this.isLoading = false;
           return EMPTY;
         }),
         finalize(() => {
@@ -410,6 +418,7 @@ export class ClientGalleryComponent {
   onUnpublish(collection: ISavedGallery): void {
     if (this.unpublishing()) return;
     this.unpublishing.set(true);
+    this.isLoading = true;
     this.collectionApiService
       .unpublishCollection(collection.id)
       .pipe(
@@ -431,6 +440,7 @@ export class ClientGalleryComponent {
             detail: 'Не удалось снять публикацию',
             life: 3000,
           });
+          this.isLoading = false;
           return EMPTY;
         }),
         finalize(() => this.unpublishing.set(false)),

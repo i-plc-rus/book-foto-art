@@ -2,35 +2,51 @@
   @if (errorMessage) {
     <div class="error">{{ errorMessage }}</div>
   } @else {
-    @if (!isGalleryEmpty() && !isCreatingNewCollection()) {
-      <div class="collection-top">
-        <app-collection-header
-          [searchTerm]="searchTerm()"
-          (searchTermChange)="searchTerm.set($event)"
-          [sort]="sortOption()"
-          (newCollection)="handleNewCollection()"
-        />
-
-        <div class="hidden md:flex justify-between items-center mb-[1rem] md:mt-0">
-          <div class="collection-top__filter">
-            <app-filter-dropdown [config]="STATUS" [disabled]="true" />
-            <app-filter-dropdown [config]="CATEGORY_TAG" [disabled]="true" />
-
-            <app-filter-date [config]="EVENT_DATE" (onSelect)="onSelectDate($event)" />
-            <app-filter-dropdown [config]="EXPIRY_DATE" [disabled]="true" />
-            <app-filter-dropdown [config]="STARRED" [disabled]="true" />
+    <app-collection-header
+      [searchTerm]="searchTerm()"
+      (searchTermChange)="searchTerm.set($event)"
+      [sort]="sortOption()"
+      (newCollection)="handleNewCollection()"
+    />
+    @if (isLoading) {
+      <div class="skeleton-area">
+        @for (_ of skeletons; track $index) {
+          <div class="skeleton-card">
+            <p-skeleton class="skeleton-thumb" height="180px" width="100%"></p-skeleton>
+            <div class="skeleton-meta">
+              <p-skeleton width="70%"></p-skeleton>
+              <p-skeleton width="40%"></p-skeleton>
+            </div>
           </div>
+        }
+      </div>
+    } @else {
+      @if (!isGalleryEmpty() && !isCreatingNewCollection()) {
+        <div class="collection-top">
+          <div class="hidden md:flex justify-between items-center mb-[1rem] md:mt-0">
+            <div class="collection-top__filter">
+              <app-filter-dropdown [config]="STATUS" [disabled]="true" />
+              <app-filter-dropdown [config]="CATEGORY_TAG" [disabled]="true" />
 
-          <div class="collection-top__filter">
-            <app-sort-dropdown [sort]="sortOption()" (sortChange)="onSortChange($event)" />
-            <app-collection-view [view]="displayView()" (chooseView)="changeDisplayView($event)" />
+              <app-filter-date [config]="EVENT_DATE" (onSelect)="onSelectDate($event)" />
+              <app-filter-dropdown [config]="EXPIRY_DATE" [disabled]="true" />
+              <app-filter-dropdown [config]="STARRED" [disabled]="true" />
+            </div>
+
+            <div class="collection-top__filter">
+              <app-sort-dropdown [sort]="sortOption()" (sortChange)="onSortChange($event)" />
+              <app-collection-view
+                [view]="displayView()"
+                (chooseView)="changeDisplayView($event)"
+              />
+            </div>
           </div>
         </div>
-      </div>
 
-      <ng-container [ngTemplateOutlet]="view"></ng-container>
-    } @else {
-      <ng-container [ngTemplateOutlet]="steps"></ng-container>
+        <ng-container [ngTemplateOutlet]="view"></ng-container>
+      } @else {
+        <ng-container [ngTemplateOutlet]="steps"></ng-container>
+      }
     }
   }
 </app-gallery-layout>

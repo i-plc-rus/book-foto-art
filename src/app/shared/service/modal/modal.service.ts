@@ -1,15 +1,21 @@
-import { Dialog, type DialogRef, type DialogConfig } from '@angular/cdk/dialog';
+import { Dialog, type DialogConfig, type DialogRef } from '@angular/cdk/dialog';
 import { Overlay } from '@angular/cdk/overlay';
 import type { ComponentType } from '@angular/cdk/portal';
-import { TemplateRef, DestroyRef, Injectable, inject } from '@angular/core';
-import { Observable, take, takeLast, takeUntil } from 'rxjs';
+import type { TemplateRef } from '@angular/core';
+import { DestroyRef, inject, Injectable } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import {
+import type { Observable } from 'rxjs';
+import { merge, take, takeLast, takeUntil } from 'rxjs';
+import { map } from 'rxjs/operators';
+
+import { ImagePreviewModalComponent } from '../../../pages/collection-site/modal/image-preview-modal/image-preview-modal.component';
+import { ImageSliderModalComponent } from '../../../pages/collection-site/modal/image-slider-modal/image-slider-modal.component';
+import type {
   ImagePreviewData,
+  ImagePreviewEvent,
   ImageSliderData,
 } from '../../../pages/collection-site/model/image-preview.model';
-import { ImageSliderModalComponent } from '../../../pages/collection-site/modal/image-slider-modal/image-slider-modal.component';
-import { ImagePreviewModalComponent } from '../../../pages/collection-site/modal/image-preview-modal/image-preview-modal.component';
+import { ImageEventType } from '../../../pages/collection-site/model/image-preview.model';
 @Injectable({ providedIn: 'root' })
 export class ModalService {
   private readonly dialog = inject(Dialog);
@@ -43,19 +49,20 @@ export class ModalService {
    * Пользователь может выделить понравившееся изображение, и этот выбор будет эмитирован через `favoriteIndex$`.
    *
    * @param data - Данные для предпросмотра, включая список изображений и текущий индекс
-   * @returns Observable<number> - Индекс изображения, которое пользователь отметил как избранное
+   * @returns Observable<ImagePreviewEvent> - тип события и его индекс
    */
 
-  previewImage(data: ImagePreviewData): Observable<number> {
+  previewImage(data: ImagePreviewData): Observable<ImagePreviewEvent> {
     const dialogRef = this.open<null, ImagePreviewData, ImagePreviewModalComponent>(
       ImagePreviewModalComponent,
-      {
-        data,
-        panelClass: 'image-modal',
-      },
+      { data, panelClass: 'image-modal' },
     );
 
-    return dialogRef.componentInstance!.favoriteIndex$.asObservable();
+    const cmp = dialogRef.componentInstance!;
+    return merge(
+      cmp.favoriteIndex$.pipe(map((i) => ({ type: ImageEventType.favorite, index: i }) as const)),
+      cmp.deleteIndex$.pipe(map((i) => ({ type: ImageEventType.delete, index: i }) as const)),
+    );
   }
 
   /**

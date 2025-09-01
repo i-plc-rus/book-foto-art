@@ -6,18 +6,21 @@
         <img src="assets/icons/back-svgrepo-com.svg" alt="Назад" />
       </button>
       <div class="collection-info">
-        <div class="collection-name">{{ collectionData()?.name }}</div>
-        @if (collectionData()?.is_published) {
-          <button
-            type="button"
-            class="copy-link-btn"
-            (click)="copyPublicLink()"
-            aria-label="Копировать публичную ссылку"
-            title="Копировать публичную ссылку"
-          >
-            <i class="pi pi-copy"></i>
-          </button>
-        }
+        <span class="name-copy">
+          <div class="collection-name">{{ collectionData()?.name }}</div>
+          @if (collectionData()?.is_published) {
+            <button
+              type="button"
+              class="copy-link-btn"
+              (click)="copyPublicLink()"
+              aria-label="Копировать публичную ссылку"
+              title="Копировать публичную ссылку"
+            >
+              <i class="pi pi-copy"></i>
+            </button>
+          }
+        </span>
+
         <div class="collection-date">
           {{ collectionData()?.date | date: 'd MMMM yyyy г.' }}
         </div>

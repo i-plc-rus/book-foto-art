@@ -187,3 +187,8 @@
   background: #f5f5f5;
   border-color: rgba(0, 0, 0, 0.2);
 }
+
+.name-copy {
+  display: flex;
+  gap: 4rem;
+}

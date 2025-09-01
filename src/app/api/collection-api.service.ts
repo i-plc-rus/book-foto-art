@@ -131,4 +131,16 @@ export class CollectionApiService {
   deleteCollection(collectionId: string): Observable<SuccessResponse> {
     return this.httpClient.delete<SuccessResponse>(`${this.baseUrl}/collection/${collectionId}`);
   }
+
+  /**
+   * Обновить обложку коллекции на фото из этой коллекции
+   * @param collectionId ID коллекции
+   * @param photoId ID фотографии (из этой коллекции)
+   */
+  updateCollectionCover(collectionId: string, photoId: string): Observable<SuccessResponse> {
+    return this.httpClient.put<SuccessResponse>(
+      `${this.baseUrl}/collection/${collectionId}/cover`,
+      { photo_id: photoId },
+    );
+  }
 }

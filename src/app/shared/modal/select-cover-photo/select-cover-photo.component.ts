@@ -1,5 +1,5 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 
 @Component({
   standalone: true,
@@ -20,7 +20,7 @@ export class SelectCoverPhotoComponent {
   selectedPhotoId: string | null = null;
   gridSize: 'small' | 'large' = 'small';
 
-  selectPhotoId(id: string) {
+  selectPhotoId(id: string): void {
     this.selectedPhotoId = id;
 
     const selectedPhoto = this.collectionPhotos.find((photo) => photo.id === id);

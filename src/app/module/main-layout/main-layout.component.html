@@ -1,3 +1,4 @@
+<p-toast position="top-right"></p-toast>
 <div class="layout">
   <aside class="sidebar hidden md:block">
     <div class="sidebar-header">
@@ -6,6 +7,17 @@
       </button>
       <div class="collection-info">
         <div class="collection-name">{{ collectionData()?.name }}</div>
+        @if (collectionData()?.is_published) {
+          <button
+            type="button"
+            class="copy-link-btn"
+            (click)="copyPublicLink()"
+            aria-label="Копировать публичную ссылку"
+            title="Копировать публичную ссылку"
+          >
+            <i class="pi pi-copy"></i>
+          </button>
+        }
         <div class="collection-date">
           {{ collectionData()?.date | date: 'd MMMM yyyy г.' }}
         </div>

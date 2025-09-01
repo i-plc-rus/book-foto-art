@@ -2,6 +2,8 @@ import { DatePipe, Location } from '@angular/common';
 import { Component, computed, DestroyRef, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, NavigationEnd, Router, RouterOutlet } from '@angular/router';
+import { MessageService } from 'primeng/api';
+import { Toast } from 'primeng/toast';
 import { filter } from 'rxjs';
 
 import { CollectionService } from '../../gallery-upload/service/collection.service';
@@ -18,6 +20,7 @@ interface CollectionData {
   focal_point?: { x: number; y: number };
   is_published: boolean;
   count_photos: number;
+  short_link_url?: string | null;
 }
 
 @Component({
@@ -25,7 +28,14 @@ interface CollectionData {
   selector: 'app-main-layout',
   templateUrl: './main-layout.component.html',
   styleUrl: './main-layout.component.css',
-  imports: [RouterOutlet, TabsComponent, DatePipe, MobileHeaderComponent, DesignSectionsComponent],
+  imports: [
+    RouterOutlet,
+    TabsComponent,
+    DatePipe,
+    MobileHeaderComponent,
+    DesignSectionsComponent,
+    Toast,
+  ],
   providers: [DesignService, CollectionService],
 })
 export class MainLayoutComponent {
@@ -35,6 +45,7 @@ export class MainLayoutComponent {
   private readonly destroyRef = inject(DestroyRef);
   private readonly photoService = inject(CollectionService);
   private readonly collectionStateService = inject(CollectionStateService);
+  private readonly messageService = inject(MessageService);
 
   collectionData = signal<CollectionData | null>(null);
   collectionId = signal<string | null>(null);
@@ -69,7 +80,7 @@ export class MainLayoutComponent {
         if (!res.focal_point) {
           res.focal_point = { x: 50, y: 50 };
         }
-        this.collectionData.set(res);
+        this.collectionData.set(res as CollectionData);
         this.collectionStateService.setCurrentCollectionId(collectionId);
       });
   }
@@ -108,6 +119,38 @@ export class MainLayoutComponent {
       this.collectionData.set({
         ...currentData,
         focal_point: position,
+      });
+    }
+  }
+
+  async copyPublicLink(): Promise<void> {
+    const url = this.collectionData()?.short_link_url;
+    if (!url) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Нет ссылки',
+        detail: 'Коллекция не опубликована',
+        life: 2000,
+      });
+      return;
+    }
+
+    try {
+      await navigator.clipboard.writeText(url);
+
+      this.messageService.add({
+        severity: 'success',
+        summary: 'Скопировано',
+        detail: url,
+        life: 1500,
+      });
+    } catch (e) {
+      console.error('Clipboard error', e);
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Ошибка',
+        detail: 'Не удалось скопировать ссылку',
+        life: 2500,
       });
     }
   }

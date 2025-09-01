@@ -1,28 +1,20 @@
-import {
-  Component,
-  computed,
-  OnInit,
-  signal,
-  inject,
-  ElementRef,
-  ViewChild,
-  DestroyRef,
-} from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActionBarComponent } from '../../../shared/components/editor-action-bar/editor-action-bar.component';
-import { IActionBarItem } from '../../../shared/components/editor-action-bar/action-bar-item';
-import { DevicePreviewComponent } from '../../../shared/components/device-preview/device-preview.component';
-import { ACTION_BAR_ITEMS, COVER_TEMPLATES } from './design-cover.constants';
-import { CoverTemplate } from './cover-template';
-import { MainLayoutComponent } from '../../main-layout/main-layout.component';
-import { FocalPointModalComponent } from '../../../shared/modal/focal-point-modal/focal-point-modal.component';
-import { ChangeCoverComponent } from '../../../shared/modal/change-cover/change-cover.component';
-import { SelectCoverPhotoComponent } from '../../../shared/modal/select-cover-photo/select-cover-photo.component';
-import { environment } from '../../../../environments/environment';
+import type { ElementRef, OnInit } from '@angular/core';
+import { Component, computed, DestroyRef, inject, signal, ViewChild } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { finalize } from 'rxjs';
-import { CollectionService } from '../../../gallery-upload/service/collection.service';
 import { ActivatedRoute } from '@angular/router';
+import { finalize } from 'rxjs';
+
+import { CollectionService } from '../../../gallery-upload/service/collection.service';
+import { DevicePreviewComponent } from '../../../shared/components/device-preview/device-preview.component';
+import type { IActionBarItem } from '../../../shared/components/editor-action-bar/action-bar-item';
+import { ActionBarComponent } from '../../../shared/components/editor-action-bar/editor-action-bar.component';
+import { ChangeCoverComponent } from '../../../shared/modal/change-cover/change-cover.component';
+import { FocalPointModalComponent } from '../../../shared/modal/focal-point-modal/focal-point-modal.component';
+import { SelectCoverPhotoComponent } from '../../../shared/modal/select-cover-photo/select-cover-photo.component';
+import { MainLayoutComponent } from '../../main-layout/main-layout.component';
+import type { CoverTemplate } from './cover-template';
+import { ACTION_BAR_ITEMS, COVER_TEMPLATES } from './design-cover.constants';
 
 @Component({
   standalone: true,
@@ -40,7 +32,6 @@ import { ActivatedRoute } from '@angular/router';
 })
 export class DesignCoverComponent implements OnInit {
   @ViewChild('fileInput') fileInput!: ElementRef;
-  readonly baseStaticUrl = environment.staticUrl;
 
   templates = signal<CoverTemplate[]>(COVER_TEMPLATES);
   actionBarItems = ACTION_BAR_ITEMS;
@@ -89,25 +80,25 @@ export class DesignCoverComponent implements OnInit {
     this.loadCollectionPhotos();
   }
 
-  closeAllModals() {
+  closeAllModals(): void {
     this.closeChangeCoverModal();
     this.closeSelectCoverPhotoModal();
   }
 
-  closeChangeCoverModal() {
+  closeChangeCoverModal(): void {
     this.showChangeCoverModal.set(false);
   }
 
-  closeSelectCoverPhotoModal() {
+  closeSelectCoverPhotoModal(): void {
     this.showSelectCoverPhotoModal.set(false);
     this.resetCoverSelection();
   }
 
-  triggerFileInput() {
+  triggerFileInput(): void {
     this.fileInput.nativeElement.click();
   }
 
-  onFileSelected(event: any) {
+  onFileSelected(event: any): void {
     const file: File = event.target.files[0];
     if (file) {
       this.previewImageUrl = URL.createObjectURL(file);
@@ -177,7 +168,7 @@ export class DesignCoverComponent implements OnInit {
     return {
       id: photo.id,
       name: photo.file_name,
-      url: this.baseStaticUrl + photo.original_url,
+      url: photo.original_url,
       file: {
         name: photo.file_name,
         lastModified: new Date(photo.uploaded_at).getTime(),

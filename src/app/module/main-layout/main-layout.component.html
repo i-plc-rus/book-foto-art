@@ -68,7 +68,12 @@
     </div>
   </aside>
   <main class="main-content">
-    <app-mobile-header [titleSignal]="collectionData" class="block md:hidden"></app-mobile-header>
+    <app-mobile-header
+      [titleSignal]="collectionData"
+      [isPublished]="collectionData()?.is_published ?? false"
+      [publicLink]="collectionData()?.short_link_url ?? null"
+      class="block md:hidden"
+    ></app-mobile-header>
     <router-outlet></router-outlet>
   </main>
 </div>

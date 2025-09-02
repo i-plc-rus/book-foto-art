@@ -69,6 +69,8 @@ export class MainLayoutComponent {
       }
     });
 
+    this.updateCoverImage();
+
     this.updateRouteState();
   }
 
@@ -153,5 +155,16 @@ export class MainLayoutComponent {
         life: 2500,
       });
     }
+  }
+
+  updateCoverImage(): void {
+    this.collectionStateService.coverUpdated$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(({ collectionId, cover_url }) => {
+        // обновляем только если это текущая коллекция
+        if (collectionId === this.collectionId()) {
+          this.collectionData.update((data) => (data ? { ...data, cover_url } : data));
+        }
+      });
   }
 }

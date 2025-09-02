@@ -3,9 +3,12 @@ import type { ElementRef, OnInit } from '@angular/core';
 import { Component, computed, DestroyRef, inject, signal, ViewChild } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
-import { finalize } from 'rxjs';
+import { MessageService } from 'primeng/api';
+import { catchError, finalize, of, switchMap, take, tap } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 import { CollectionApiService } from '../../../api/collection-api.service';
+import { UploadService } from '../../../core/service/upload.service';
 import { CollectionService } from '../../../gallery-upload/service/collection.service';
 import { CollectionStateService } from '../../../gallery-upload/service/collection-state.service';
 import { DevicePreviewComponent } from '../../../shared/components/device-preview/device-preview.component';
@@ -37,6 +40,11 @@ export class DesignCoverComponent implements OnInit {
 
   private readonly collectionApiService: CollectionApiService = inject(CollectionApiService);
   private readonly collectionStateService = inject(CollectionStateService);
+  private readonly uploadService = inject(UploadService);
+  private readonly messageService = inject(MessageService);
+
+  isUploadingCover = signal(false);
+  uploadProgress = signal(0);
 
   templates = signal<CoverTemplate[]>(COVER_TEMPLATES);
   actionBarItems = ACTION_BAR_ITEMS;
@@ -70,7 +78,7 @@ export class DesignCoverComponent implements OnInit {
 
   noneTemplate = computed(() => this.templates().find((t) => t.id === 'none')!);
 
-  ngOnInit() {
+  ngOnInit(): void {
     if (this.templates().length > 0) {
       this.selectedTemplate.set(this.templates()[0]);
     }
@@ -104,15 +112,103 @@ export class DesignCoverComponent implements OnInit {
   }
 
   onFileSelected(event: any): void {
-    const file: File = event.target.files[0];
-    if (file) {
-      this.previewImageUrl = URL.createObjectURL(file);
-      this.selectedPhoto = file;
+    const file: File = event.target.files?.[0];
+    if (!file) return;
 
-      if (!this.showSelectCoverPhotoModal()) {
-        this.showSelectCoverPhotoModal.set(true);
-      }
+    const tempUrl = URL.createObjectURL(file);
+    this.previewImageUrl = tempUrl;
+    this.selectedPhoto = file;
+
+    if (!this.showSelectCoverPhotoModal()) {
+      this.showSelectCoverPhotoModal.set(true);
     }
+
+    this.uploadAndSetCover(file); // ← запускаем цепочку
+  }
+
+  private uploadAndSetCover(file: File): void {
+    const collectionId = this.collectionId();
+    if (!collectionId) return;
+
+    this.isUploadingCover.set(true);
+    this.uploadProgress.set(0);
+
+    if (this.previewImageUrl) {
+      this.collectionStateService.notifyCoverUpdated(
+        collectionId,
+        this.addCacheBust(this.previewImageUrl),
+      );
+    }
+
+    this.uploadService
+      .uploadFile(file, collectionId)
+      .pipe(
+        // после аплоада — берём самый свежий файл
+        switchMap(() =>
+          this.collectionService.getPhotos(collectionId, { sort: 'uploaded_new' }).pipe(
+            map((resp: any) => resp?.files?.[0] ?? null),
+            catchError(() => of(null)),
+          ),
+        ),
+        take(1),
+        switchMap((latest: any) => {
+          if (!latest?.id) {
+            this.messageService.add({
+              severity: 'warn',
+              summary: 'Не найден файл',
+              detail: 'Не удалось определить загруженное фото',
+              life: 2500,
+            });
+            return of(null);
+          }
+
+          return this.collectionApiService.updateCollectionCover(collectionId, latest.id).pipe(
+            tap(() => {
+              const finalUrl =
+                latest.original_url ||
+                latest.public_url ||
+                latest.thumbnail_url ||
+                this.previewImageUrl!;
+              this.collectionStateService.notifyCoverUpdated(
+                collectionId,
+                this.addCacheBust(finalUrl),
+              );
+
+              this.closeChangeCoverModal();
+              this.closeSelectCoverPhotoModal();
+              this.resetCoverSelection();
+
+              this.messageService.add({
+                severity: 'success',
+                summary: 'Обложка обновлена',
+                detail: 'Выбранное изображение назначено обложкой',
+                life: 1800,
+              });
+            }),
+          );
+        }),
+        finalize(() => {
+          this.isUploadingCover.set(false);
+          this.uploadProgress.set(0);
+        }),
+      )
+      .subscribe({
+        error: (err) => {
+          console.error('Ошибка загрузки/назначения обложки', err);
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Ошибка',
+            detail: 'Не удалось установить обложку',
+            life: 2500,
+          });
+        },
+      });
+  }
+
+  private addCacheBust(u: string): string {
+    if (!u) return u;
+    const sep = u.includes('?') ? '&' : '?';
+    return `${u}${sep}v=${Date.now()}`;
   }
 
   handlePhotoSelected(photo: any): void {

@@ -66,6 +66,7 @@
     [showFilename]="showFilename()"
     [showEmptyState]="showEmptyState()"
     [menuOptions]="menuOptions()"
+    (menuItemClicked)="onMenuItemClicked($event)"
     (cardClick)="openViewer($event.index)"
     (filesDropped)="processFiles($event)"
     (fileSelected)="handleFileSelect($event)"

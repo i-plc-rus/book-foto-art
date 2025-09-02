@@ -15,6 +15,7 @@ import { GalleriaModule } from 'primeng/galleria';
 import { Toast } from 'primeng/toast';
 import { catchError, finalize, from, mergeMap, of, tap } from 'rxjs';
 
+import { CollectionApiService } from '../api/collection-api.service';
 import { SidebarService } from '../core/service/sidebar.service';
 import { UploadService } from '../core/service/upload.service';
 import type { SortType } from '../core/types/sort-type';
@@ -77,6 +78,7 @@ export class GalleryUploadComponent {
   private readonly photoService = inject(CollectionService);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
+  private readonly collectionApi = inject(CollectionApiService);
   private readonly collectionStateService = inject(CollectionStateService);
   private readonly messageService = inject(MessageService);
   private currentBatchIds = new Set<string>();
@@ -156,7 +158,7 @@ export class GalleryUploadComponent {
       ],
     },
     { id: 'copy', name: 'Copy filenames', iconUrl: '/assets/icons/copy.svg' },
-    { id: 'cover', name: 'Set as cover', iconUrl: '/assets/icons/set-image.svg' },
+    { id: 'cover', name: 'сделать обложкой', iconUrl: '/assets/icons/set-image.svg' },
     { id: 'rename', name: 'Rename', iconUrl: '/assets/icons/edit.svg' },
     { id: 'replace', name: 'Replace photo', iconUrl: '/assets/icons/replace.svg' },
     { id: 'watermark', name: 'Watermark', iconUrl: '/assets/icons/mark.svg' },
@@ -543,5 +545,67 @@ export class GalleryUploadComponent {
         life: 2500,
       });
     }
+  }
+
+  // кэш-бастер, чтобы <img> точно перерисовался
+  private addCacheBust(u: string) {
+    if (!u) return u;
+    const sep = u.includes('?') ? '&' : '?';
+    return `${u}${sep}v=${Date.now()}`;
+  }
+
+  onMenuItemClicked(evt: { optionId: string; file: UploadFile }): void {
+    const { optionId, file } = evt;
+    if (optionId === 'cover') {
+      this.makeCover(file);
+    }
+  }
+
+  private makeCover(file: UploadFile): void {
+    const collectionId = this.collectionId();
+    const photoId = file?.id;
+
+    if (!collectionId || !photoId) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Не выбрано фото',
+        detail: 'Сначала выберите фото из коллекции.',
+        life: 2000,
+      });
+      return;
+    }
+
+    // Оптимистично обновим сайдбар (MainLayout) через state-сервис
+    const optimisticUrl = (file as any).originalUrl || file.previewUrl || '';
+    if (optimisticUrl) {
+      this.collectionStateService.notifyCoverUpdated(
+        collectionId,
+        this.addCacheBust(optimisticUrl),
+      );
+    }
+
+    this.collectionApi
+      .updateCollectionCover(collectionId, photoId)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => {
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Обложка обновлена',
+            detail: 'Выбранное фото назначено обложкой',
+            life: 1800,
+          });
+          // при желании можно «тихо» перезагрузить метаданные коллекции где нужно
+        },
+        error: (err) => {
+          console.error('Ошибка установки обложки:', err);
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Ошибка',
+            detail: 'Не удалось установить обложку',
+            life: 2500,
+          });
+        },
+      });
   }
 }

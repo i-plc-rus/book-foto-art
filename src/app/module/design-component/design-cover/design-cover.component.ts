@@ -7,6 +7,7 @@ import { finalize } from 'rxjs';
 
 import { CollectionApiService } from '../../../api/collection-api.service';
 import { CollectionService } from '../../../gallery-upload/service/collection.service';
+import { CollectionStateService } from '../../../gallery-upload/service/collection-state.service';
 import { DevicePreviewComponent } from '../../../shared/components/device-preview/device-preview.component';
 import type { IActionBarItem } from '../../../shared/components/editor-action-bar/action-bar-item';
 import { ActionBarComponent } from '../../../shared/components/editor-action-bar/editor-action-bar.component';
@@ -35,6 +36,7 @@ export class DesignCoverComponent implements OnInit {
   @ViewChild('fileInput') fileInput!: ElementRef;
 
   private readonly collectionApiService: CollectionApiService = inject(CollectionApiService);
+  private readonly collectionStateService = inject(CollectionStateService);
 
   templates = signal<CoverTemplate[]>(COVER_TEMPLATES);
   actionBarItems = ACTION_BAR_ITEMS;
@@ -74,11 +76,11 @@ export class DesignCoverComponent implements OnInit {
     }
   }
 
-  openChangeCoverModal() {
+  openChangeCoverModal(): void {
     this.showChangeCoverModal.set(true);
   }
 
-  openSelectCoverPhotoModal() {
+  openSelectCoverPhotoModal(): void {
     this.showSelectCoverPhotoModal.set(true);
     this.loadCollectionPhotos();
   }
@@ -126,6 +128,8 @@ export class DesignCoverComponent implements OnInit {
         image: this.previewImageUrl,
       });
 
+      this.collectionStateService.notifyCoverUpdated(this.collectionId(), this.selectedPhoto.url);
+
       this.collectionApiService
         .updateCollectionCover(this.collectionId(), this.selectedPhoto.id)
         .pipe(takeUntilDestroyed(this.destroyRef))
@@ -136,7 +140,7 @@ export class DesignCoverComponent implements OnInit {
     }
   }
 
-  resetCoverSelection() {
+  resetCoverSelection(): void {
     this.selectedPhoto = null;
     this.previewImageUrl = null;
     if (this.fileInput?.nativeElement) {

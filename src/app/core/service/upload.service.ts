@@ -1,12 +1,15 @@
-import { Injectable } from '@angular/core';
-import { HttpClient, HttpEvent, HttpEventType } from '@angular/common/http';
-import { Observable, throwError, of } from 'rxjs';
+import type { HttpEvent } from '@angular/common/http';
+import { HttpClient, HttpEventType } from '@angular/common/http';
+import { inject, Injectable } from '@angular/core';
+import type { Observable } from 'rxjs';
+import { throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
+
 import { environment as env } from '../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class UploadService {
-  constructor(private http: HttpClient) {}
+  private readonly http: HttpClient = inject(HttpClient);
 
   uploadFile(file: File, collectionId: string): Observable<{ progress: number }> {
     if (!collectionId) {

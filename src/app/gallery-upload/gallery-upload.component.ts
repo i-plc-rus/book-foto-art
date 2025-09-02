@@ -145,7 +145,7 @@ export class GalleryUploadComponent {
     },
   };
   readonly menuOptions = signal<MenuOption[]>([
-    { id: 'open', name: 'Open', iconUrl: '/assets/icons/double-arrow.svg' },
+    /* { id: 'open', name: 'Open', iconUrl: '/assets/icons/double-arrow.svg' },
     { id: 'share', name: 'Quick share link', iconUrl: '/assets/icons/link.svg' },
     { id: 'download', name: 'Download', iconUrl: '/assets/icons/download.svg' },
     {
@@ -157,12 +157,12 @@ export class GalleryUploadComponent {
         { id: 'copy_to', name: 'Copy to', iconUrl: '/assets/icons/double-arrow.svg' },
       ],
     },
-    { id: 'copy', name: 'Copy filenames', iconUrl: '/assets/icons/copy.svg' },
+    { id: 'copy', name: 'Copy filenames', iconUrl: '/assets/icons/copy.svg' },*/
     { id: 'cover', name: 'сделать обложкой', iconUrl: '/assets/icons/set-image.svg' },
-    { id: 'rename', name: 'Rename', iconUrl: '/assets/icons/edit.svg' },
+    /* { id: 'rename', name: 'Rename', iconUrl: '/assets/icons/edit.svg' },
     { id: 'replace', name: 'Replace photo', iconUrl: '/assets/icons/replace.svg' },
     { id: 'watermark', name: 'Watermark', iconUrl: '/assets/icons/mark.svg' },
-    { id: 'delete', name: 'Delete', iconUrl: '/assets/icons/delete.svg' },
+    { id: 'delete', name: 'Delete', iconUrl: '/assets/icons/delete.svg' },*/
   ]);
 
   constructor() {

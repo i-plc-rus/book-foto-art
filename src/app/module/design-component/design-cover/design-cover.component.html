@@ -24,7 +24,7 @@
             />
             Выбрать фото
           </button>
-          <button
+          <!--<button
             type="button"
             class="cursor-pointer flex items-center justify-center py-1 h-8 bg-transparent text-[#1abc9c] text-[0.875rem] font-medium tracking-normal leading-none transition-colors rounded disabled:text-gray-300 hover:text-[#008e74]"
             [disabled]="!selectedTemplate() || selectedTemplate()?.id === 'none'"
@@ -36,7 +36,7 @@
               class="w-[14px] h-full filter-green transition-filter hover:filter-green-hover mr-1"
             />
             Focal
-          </button>
+          </button>-->
         </div>
       </div>
     </div>
@@ -65,7 +65,7 @@
 
     <input type="file" accept="image/*" hidden #fileInput (change)="onFileSelected($event)" />
 
-    <div class="scroll p-[1rem] md:p-[1.5rem] pt-0 md:pt-0 overflow-y-auto bg-[#fff] flex-1">
+    <!-- <div class="scroll p-[1rem] md:p-[1.5rem] pt-0 md:pt-0 overflow-y-auto bg-[#fff] flex-1">
       <div class="grid gap-4">
         @for (template of visibleTemplates(); track template.id) {
           <div class="flex justify-center flex-col items-center">
@@ -103,7 +103,7 @@
           </div>
         }
       </div>
-    </div>
+    </div>-->
   </div>
 
   <div class="device border-t border-t-[#cecccc] flex flex-col w-full">

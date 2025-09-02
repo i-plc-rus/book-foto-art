@@ -1,9 +1,7 @@
-import { Injectable, signal } from '@angular/core';
+import { inject, Injectable, signal } from '@angular/core';
 import { Router } from '@angular/router';
+
 import { DesignCoverComponent } from '../design-cover/design-cover.component';
-import { DesignTypographyComponent } from '../design-typography/design-typography.component';
-import { DesignColorComponent } from '../design-color/design-color.component';
-import { DesignGridComponent } from '../design-grid/design-grid.component';
 
 export interface DesignSection {
   id: string;
@@ -16,10 +14,11 @@ export interface DesignSection {
 export class DesignService {
   private _sectionTitle = signal<string>('ДИЗАЙН');
   private _sections = signal<DesignSection[]>([]);
+  private readonly router: Router = inject(Router);
   sections = this._sections.asReadonly();
   sectionTitle = this._sectionTitle.asReadonly();
 
-  constructor(private router: Router) {
+  constructor() {
     this.registerSections();
   }
 
@@ -31,7 +30,7 @@ export class DesignService {
         icon: 'assets/icons/images.svg',
         component: DesignCoverComponent,
       },
-      {
+      /* {
         id: 'fontset',
         name: 'Типографика',
         icon: 'assets/icons/t.svg',
@@ -48,7 +47,7 @@ export class DesignService {
         name: 'Сетка',
         icon: 'assets/icons/grid.svg',
         component: DesignGridComponent,
-      },
+      },*/
     ]);
   }
 

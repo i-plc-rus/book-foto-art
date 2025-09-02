@@ -244,7 +244,7 @@ export class DesignCoverComponent implements OnInit {
     }
   }
 
-  loadCollectionPhotos() {
+  loadCollectionPhotos(): void {
     this.route.queryParams.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((params: any) => {
       const collectionId = params['collectionId'];
       this.collectionId.set(collectionId);
@@ -252,7 +252,7 @@ export class DesignCoverComponent implements OnInit {
     });
   }
 
-  private fetchPhotos(collectionId: string) {
+  private fetchPhotos(collectionId: string): void {
     this.isLoading.set(true);
 
     this.collectionService
@@ -325,15 +325,15 @@ export class DesignCoverComponent implements OnInit {
     return this.selectedTemplate()?.id === template.id;
   }
 
-  selectTemplate(template: CoverTemplate) {
+  selectTemplate(template: CoverTemplate): void {
     this.selectedTemplate.set(template);
   }
 
-  setViewMode(mode: 'desktop' | 'icon-m') {
+  setViewMode(mode: 'desktop' | 'icon-m'): void {
     this.viewMode.set(mode);
   }
 
-  loadMore() {
+  loadMore(): void {
     this.itemsToShow.set(this.itemsToShow() + 6);
   }
 
@@ -341,11 +341,11 @@ export class DesignCoverComponent implements OnInit {
     return this.itemsToShow() < this.regularTemplates().length;
   }
 
-  openFocalPointModal() {
+  openFocalPointModal(): void {
     this.showFocalModal.set(true);
   }
 
-  handleFocalPointSave(position: { x: number; y: number }) {
+  handleFocalPointSave(position: { x: number; y: number }): void {
     this.mainLayout.updateFocalPoint(position);
     this.showFocalModal.set(false);
   }

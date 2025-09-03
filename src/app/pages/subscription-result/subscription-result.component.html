@@ -1,0 +1,44 @@
+<div class="result-wrap">
+  @if (showLoading()) {
+    <div class="box loading">
+      <div class="spinner"></div>
+      <div>Проверяем оплату…</div>
+    </div>
+  }
+
+  @if (showError()) {
+    <div class="box error">
+      <div class="icon">✖</div>
+      <h2>Ошибка</h2>
+      <p>{{ error() }}</p>
+      <button class="btn" (click)="goToGalleries()">Вернуться к коллекциям</button>
+    </div>
+  }
+
+  @if (showSuccess()) {
+    <div class="box success">
+      <div class="icon">✔</div>
+      <h2>Оплата успешна</h2>
+      <p>Платёж № {{ payment()!.payment_id }} прошёл успешно.</p>
+      <button class="btn" (click)="goToGalleries()">Перейти к коллекциям</button>
+    </div>
+  }
+
+  @if (showWarn()) {
+    <div class="box warn">
+      <div class="icon">!</div>
+      <h2>Оплата не завершена</h2>
+      <p>Статус: {{ isCanceled() ? 'Отменена' : 'Ошибка' }}. Попробуйте ещё раз.</p>
+      <button class="btn" (click)="goToGalleries()">Вернуться к коллекциям</button>
+    </div>
+  }
+
+  @if (showPending()) {
+    <div class="box info">
+      <div class="icon">…</div>
+      <h2>Платёж обрабатывается</h2>
+      <p>Мы ещё не получили финальный статус. Обновите страницу чуть позже.</p>
+      <button class="btn" (click)="goToGalleries()">Вернуться к коллекциям</button>
+    </div>
+  }
+</div>

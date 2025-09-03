@@ -58,4 +58,12 @@ export const routes: Routes = [
         (m) => m.YandexCallbackComponent,
       ),
   },
+  {
+    path: 'subscription/result/:paymentId',
+    loadComponent: () =>
+      import('./pages/subscription-result/subscription-result.component').then(
+        (m) => m.SubscriptionResultComponent,
+      ),
+    canActivate: [AuthGuard],
+  },
 ];

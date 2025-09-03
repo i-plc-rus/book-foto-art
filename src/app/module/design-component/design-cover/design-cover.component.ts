@@ -258,7 +258,7 @@ export class DesignCoverComponent implements OnInit {
     return {
       id: photo.id,
       name: photo.file_name,
-      url: photo.original_url,
+      url: photo.thumbnail_url,
       file: {
         name: photo.file_name,
         lastModified: new Date(photo.uploaded_at).getTime(),

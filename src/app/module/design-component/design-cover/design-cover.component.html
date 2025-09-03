@@ -43,7 +43,7 @@
 
     @if (showChangeCoverModal()) {
       <app-change-cover
-        (close)="closeChangeCoverModal()"
+        (closeCover)="closeChangeCoverModal()"
         (selectFromCollection)="openSelectCoverPhotoModal()"
         (browseFiles)="triggerFileInput()"
       >

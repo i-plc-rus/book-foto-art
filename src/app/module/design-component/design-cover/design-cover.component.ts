@@ -176,28 +176,21 @@ export class DesignCoverComponent implements OnInit {
   confirmCoverSelection(): void {
     if (!this.selectedPhoto?.id) return;
 
+    const id = this.collectionId();
     this.collectionApiService
-      .updateCollectionCover(this.collectionId(), this.selectedPhoto.id)
+      .updateCollectionCover(id, this.selectedPhoto.id)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
-          // опционально обновить превью локально
-          this.selectedTemplate.set({
-            id: 'custom',
-            name: 'Custom Cover',
-            image: this.selectedPhoto.url ?? this.previewImageUrl ?? null,
-          });
+          // уведомляем MainLayout
+          this.collectionStateService.notifyCoverUpdated(id, this.selectedPhoto.url);
 
-          // закрыть модалки, если открыты
+          // закрываем модалки и уходим на upload
           this.closeSelectCoverPhotoModal();
           this.closeChangeCoverModal();
-
-          // навигация на список файлов коллекции
-          this.goBackToUpload();
+          this.router.navigate(['/upload'], { queryParams: { collectionId: id } });
         },
-        error: () => {
-          // тут можешь показать тост, если используешь MessageService
-        },
+        error: () => {},
       });
   }
 

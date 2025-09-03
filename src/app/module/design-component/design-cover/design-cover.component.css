@@ -15,3 +15,15 @@
 .z-50 {
   z-index: 50;
 }
+
+.view-area {
+  width: 100%;
+}
+
+.content-area {
+  width: 100%;
+}
+
+.header-area {
+  width: 100%;
+}

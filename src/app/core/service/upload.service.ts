@@ -1,14 +1,23 @@
-import { Injectable } from '@angular/core';
-import { HttpClient, HttpEvent, HttpEventType } from '@angular/common/http';
-import { Observable, throwError, of } from 'rxjs';
+import type { HttpEvent } from '@angular/common/http';
+import { HttpClient, HttpEventType } from '@angular/common/http';
+import { inject, Injectable } from '@angular/core';
+import type { Observable } from 'rxjs';
+import { throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
+
 import { environment as env } from '../../../environments/environment';
+
+export interface UploadProgress {
+  progress: number;
+  /** тело финального ответа сервера; есть только на последнем событии */
+  body?: any;
+}
 
 @Injectable({ providedIn: 'root' })
 export class UploadService {
-  constructor(private http: HttpClient) {}
+  private readonly http: HttpClient = inject(HttpClient);
 
-  uploadFile(file: File, collectionId: string): Observable<{ progress: number }> {
+  uploadFile(file: File, collectionId: string): Observable<UploadProgress> {
     if (!collectionId) {
       return throwError(() => new Error('collection_id is missing'));
     }
@@ -18,12 +27,12 @@ export class UploadService {
     formData.append('collection_id', collectionId);
 
     return this.http
-      .post<any>(`${env.apiUrl}/upload/files`, formData, {
+      .post(`${env.apiUrl}/upload/files`, formData, {
         reportProgress: true,
         observe: 'events',
       })
       .pipe(
-        map((event: HttpEvent<any>) => this.getUploadProgress(event)),
+        map((event: HttpEvent<any>): UploadProgress => this.getUploadProgress(event)),
         catchError((error) => {
           console.error('Upload failed', error);
           return throwError(() => new Error('Upload failed'));
@@ -31,14 +40,16 @@ export class UploadService {
       );
   }
 
-  private getUploadProgress(event: HttpEvent<any>): { progress: number } {
+  private getUploadProgress(event: HttpEvent<any>): UploadProgress {
     switch (event.type) {
-      case HttpEventType.UploadProgress:
+      case HttpEventType.UploadProgress: {
         const total = event.total || 1;
         const progress = Math.round(100 * (event.loaded / total));
         return { progress };
+      }
       case HttpEventType.Response:
-        return { progress: 100 };
+        // ВАЖНО: возвращаем body финального ответа
+        return { progress: 100, body: event.body };
       default:
         return { progress: 0 };
     }

@@ -3,9 +3,11 @@ import type { ElementRef, OnInit } from '@angular/core';
 import { Component, computed, DestroyRef, inject, signal, ViewChild } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
-import { finalize } from 'rxjs';
+import { MessageService } from 'primeng/api';
+import { finalize, last, lastValueFrom } from 'rxjs';
 
 import { CollectionApiService } from '../../../api/collection-api.service';
+import { UploadService } from '../../../core/service/upload.service';
 import { CollectionService } from '../../../gallery-upload/service/collection.service';
 import { CollectionStateService } from '../../../gallery-upload/service/collection-state.service';
 import { DevicePreviewComponent } from '../../../shared/components/device-preview/device-preview.component';
@@ -37,6 +39,11 @@ export class DesignCoverComponent implements OnInit {
 
   private readonly collectionApiService: CollectionApiService = inject(CollectionApiService);
   private readonly collectionStateService = inject(CollectionStateService);
+  private readonly uploadService = inject(UploadService);
+  private readonly messageService = inject(MessageService);
+
+  isUploadingCover = signal(false);
+  uploadProgress = signal(0);
 
   templates = signal<CoverTemplate[]>(COVER_TEMPLATES);
   actionBarItems = ACTION_BAR_ITEMS;
@@ -70,17 +77,24 @@ export class DesignCoverComponent implements OnInit {
 
   noneTemplate = computed(() => this.templates().find((t) => t.id === 'none')!);
 
-  ngOnInit() {
-    if (this.templates().length > 0) {
-      this.selectedTemplate.set(this.templates()[0]);
-    }
+  ngOnInit(): void {
+    this.route.queryParams.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((params) => {
+      const id = params['collectionId'];
+      if (id) {
+        this.collectionId.set(id);
+        // если хочешь — сохраним в state-сервис
+        this.collectionStateService.setCurrentCollectionId(id);
+      }
+    });
   }
 
   openChangeCoverModal(): void {
+    this.showSelectCoverPhotoModal.set(false);
     this.showChangeCoverModal.set(true);
   }
 
   openSelectCoverPhotoModal(): void {
+    this.showChangeCoverModal.set(false);
     this.showSelectCoverPhotoModal.set(true);
     this.loadCollectionPhotos();
   }
@@ -103,16 +117,80 @@ export class DesignCoverComponent implements OnInit {
     this.fileInput.nativeElement.click();
   }
 
-  onFileSelected(event: any): void {
-    const file: File = event.target.files[0];
-    if (file) {
-      this.previewImageUrl = URL.createObjectURL(file);
-      this.selectedPhoto = file;
+  async onFileSelected(event: Event): Promise<void> {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (!file) return;
 
-      if (!this.showSelectCoverPhotoModal()) {
-        this.showSelectCoverPhotoModal.set(true);
-      }
+    // мгновенный локальный превью
+    this.previewImageUrl = URL.createObjectURL(file);
+    this.selectedTemplate.set({ id: 'custom', name: 'Custom Cover', image: this.previewImageUrl });
+
+    await this.uploadAndSetCover(file);
+
+    input.value = ''; // чтобы можно было выбрать тот же файл повторно
+  }
+
+  private async uploadAndSetCover(file: File): Promise<void> {
+    const collectionId = this.collectionId();
+    if (!collectionId) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Ошибка',
+        detail: 'Не найден id коллекции',
+        life: 2500,
+      });
+      return;
     }
+
+    this.isUploadingCover.set(true);
+    try {
+      // 1) Загружаем файл и ждём последнее событие (с телом)
+      const uploaded = await lastValueFrom(
+        this.uploadService.uploadFile(file, collectionId).pipe(last()),
+      );
+
+      // 2) Надёжно извлекаем id загруженного фото из тела ответа
+      const body = uploaded?.body;
+      const photoId: string | null =
+        body?.files?.[0]?.id ?? body?.file?.id ?? body?.data?.id ?? body?.id ?? null;
+
+      if (!photoId) {
+        throw new Error('Не удалось получить id загруженного фото из ответа аплоада');
+      }
+
+      // 3) Ставим обложку
+      await lastValueFrom(this.collectionApiService.updateCollectionCover(collectionId, photoId));
+
+      // 4) Обновляем предпросмотр сразу локальным objectURL
+      const localPreview = this.previewImageUrl; // вы уже создаёте его при выборе файла
+      if (localPreview) {
+        this.selectedTemplate.set({ id: 'custom', name: 'Custom Cover', image: localPreview });
+        this.collectionStateService.notifyCoverUpdated(collectionId, localPreview);
+      }
+
+      this.messageService.add({
+        severity: 'success',
+        summary: 'Обложка обновлена',
+        life: 1500,
+      });
+    } catch (err) {
+      console.error(err);
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Ошибка',
+        detail: 'Не удалось загрузить и установить обложку',
+        life: 2500,
+      });
+    } finally {
+      this.isUploadingCover.set(false);
+    }
+  }
+
+  private addCacheBust(u: string): string {
+    if (!u) return u;
+    const sep = u.includes('?') ? '&' : '?';
+    return `${u}${sep}v=${Date.now()}`;
   }
 
   handlePhotoSelected(photo: any): void {
@@ -148,7 +226,7 @@ export class DesignCoverComponent implements OnInit {
     }
   }
 
-  loadCollectionPhotos() {
+  loadCollectionPhotos(): void {
     this.route.queryParams.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((params: any) => {
       const collectionId = params['collectionId'];
       this.collectionId.set(collectionId);
@@ -156,7 +234,7 @@ export class DesignCoverComponent implements OnInit {
     });
   }
 
-  private fetchPhotos(collectionId: string) {
+  private fetchPhotos(collectionId: string): void {
     this.isLoading.set(true);
 
     this.collectionService
@@ -229,15 +307,15 @@ export class DesignCoverComponent implements OnInit {
     return this.selectedTemplate()?.id === template.id;
   }
 
-  selectTemplate(template: CoverTemplate) {
+  selectTemplate(template: CoverTemplate): void {
     this.selectedTemplate.set(template);
   }
 
-  setViewMode(mode: 'desktop' | 'icon-m') {
+  setViewMode(mode: 'desktop' | 'icon-m'): void {
     this.viewMode.set(mode);
   }
 
-  loadMore() {
+  loadMore(): void {
     this.itemsToShow.set(this.itemsToShow() + 6);
   }
 
@@ -245,11 +323,11 @@ export class DesignCoverComponent implements OnInit {
     return this.itemsToShow() < this.regularTemplates().length;
   }
 
-  openFocalPointModal() {
+  openFocalPointModal(): void {
     this.showFocalModal.set(true);
   }
 
-  handleFocalPointSave(position: { x: number; y: number }) {
+  handleFocalPointSave(position: { x: number; y: number }): void {
     this.mainLayout.updateFocalPoint(position);
     this.showFocalModal.set(false);
   }

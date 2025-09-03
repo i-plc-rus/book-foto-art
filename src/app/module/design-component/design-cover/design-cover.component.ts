@@ -4,8 +4,7 @@ import { Component, computed, DestroyRef, inject, signal, ViewChild } from '@ang
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
 import { MessageService } from 'primeng/api';
-import { catchError, finalize, of, switchMap, take, tap } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { finalize, last, lastValueFrom } from 'rxjs';
 
 import { CollectionApiService } from '../../../api/collection-api.service';
 import { UploadService } from '../../../core/service/upload.service';
@@ -79,16 +78,23 @@ export class DesignCoverComponent implements OnInit {
   noneTemplate = computed(() => this.templates().find((t) => t.id === 'none')!);
 
   ngOnInit(): void {
-    if (this.templates().length > 0) {
-      this.selectedTemplate.set(this.templates()[0]);
-    }
+    this.route.queryParams.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((params) => {
+      const id = params['collectionId'];
+      if (id) {
+        this.collectionId.set(id);
+        // если хочешь — сохраним в state-сервис
+        this.collectionStateService.setCurrentCollectionId(id);
+      }
+    });
   }
 
   openChangeCoverModal(): void {
+    this.showSelectCoverPhotoModal.set(false);
     this.showChangeCoverModal.set(true);
   }
 
   openSelectCoverPhotoModal(): void {
+    this.showChangeCoverModal.set(false);
     this.showSelectCoverPhotoModal.set(true);
     this.loadCollectionPhotos();
   }
@@ -111,98 +117,74 @@ export class DesignCoverComponent implements OnInit {
     this.fileInput.nativeElement.click();
   }
 
-  onFileSelected(event: any): void {
-    const file: File = event.target.files?.[0];
+  async onFileSelected(event: Event): Promise<void> {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
     if (!file) return;
 
-    const tempUrl = URL.createObjectURL(file);
-    this.previewImageUrl = tempUrl;
-    this.selectedPhoto = file;
+    // мгновенный локальный превью
+    this.previewImageUrl = URL.createObjectURL(file);
+    this.selectedTemplate.set({ id: 'custom', name: 'Custom Cover', image: this.previewImageUrl });
 
-    if (!this.showSelectCoverPhotoModal()) {
-      this.showSelectCoverPhotoModal.set(true);
-    }
+    await this.uploadAndSetCover(file);
 
-    this.uploadAndSetCover(file); // ← запускаем цепочку
+    input.value = ''; // чтобы можно было выбрать тот же файл повторно
   }
 
-  private uploadAndSetCover(file: File): void {
+  private async uploadAndSetCover(file: File): Promise<void> {
     const collectionId = this.collectionId();
-    if (!collectionId) return;
-
-    this.isUploadingCover.set(true);
-    this.uploadProgress.set(0);
-
-    if (this.previewImageUrl) {
-      this.collectionStateService.notifyCoverUpdated(
-        collectionId,
-        this.addCacheBust(this.previewImageUrl),
-      );
+    if (!collectionId) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Ошибка',
+        detail: 'Не найден id коллекции',
+        life: 2500,
+      });
+      return;
     }
 
-    this.uploadService
-      .uploadFile(file, collectionId)
-      .pipe(
-        // после аплоада — берём самый свежий файл
-        switchMap(() =>
-          this.collectionService.getPhotos(collectionId, { sort: 'uploaded_new' }).pipe(
-            map((resp: any) => resp?.files?.[0] ?? null),
-            catchError(() => of(null)),
-          ),
-        ),
-        take(1),
-        switchMap((latest: any) => {
-          if (!latest?.id) {
-            this.messageService.add({
-              severity: 'warn',
-              summary: 'Не найден файл',
-              detail: 'Не удалось определить загруженное фото',
-              life: 2500,
-            });
-            return of(null);
-          }
+    this.isUploadingCover.set(true);
+    try {
+      // 1) Загружаем файл и ждём последнее событие (с телом)
+      const uploaded = await lastValueFrom(
+        this.uploadService.uploadFile(file, collectionId).pipe(last()),
+      );
 
-          return this.collectionApiService.updateCollectionCover(collectionId, latest.id).pipe(
-            tap(() => {
-              const finalUrl =
-                latest.original_url ||
-                latest.public_url ||
-                latest.thumbnail_url ||
-                this.previewImageUrl!;
-              this.collectionStateService.notifyCoverUpdated(
-                collectionId,
-                this.addCacheBust(finalUrl),
-              );
+      // 2) Надёжно извлекаем id загруженного фото из тела ответа
+      const body = uploaded?.body;
+      const photoId: string | null =
+        body?.files?.[0]?.id ?? body?.file?.id ?? body?.data?.id ?? body?.id ?? null;
 
-              this.closeChangeCoverModal();
-              this.closeSelectCoverPhotoModal();
-              this.resetCoverSelection();
+      if (!photoId) {
+        throw new Error('Не удалось получить id загруженного фото из ответа аплоада');
+      }
 
-              this.messageService.add({
-                severity: 'success',
-                summary: 'Обложка обновлена',
-                detail: 'Выбранное изображение назначено обложкой',
-                life: 1800,
-              });
-            }),
-          );
-        }),
-        finalize(() => {
-          this.isUploadingCover.set(false);
-          this.uploadProgress.set(0);
-        }),
-      )
-      .subscribe({
-        error: (err) => {
-          console.error('Ошибка загрузки/назначения обложки', err);
-          this.messageService.add({
-            severity: 'error',
-            summary: 'Ошибка',
-            detail: 'Не удалось установить обложку',
-            life: 2500,
-          });
-        },
+      // 3) Ставим обложку
+      await lastValueFrom(this.collectionApiService.updateCollectionCover(collectionId, photoId));
+
+      // 4) Обновляем предпросмотр сразу локальным objectURL
+      const localPreview = this.previewImageUrl; // вы уже создаёте его при выборе файла
+      if (localPreview) {
+        this.selectedTemplate.set({ id: 'custom', name: 'Custom Cover', image: localPreview });
+        this.collectionStateService.notifyCoverUpdated(collectionId, localPreview);
+      }
+
+      this.messageService.add({
+        severity: 'success',
+        summary: 'Обложка обновлена',
+        life: 1500,
       });
+    } catch (err) {
+      console.error(err);
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Ошибка',
+        detail: 'Не удалось загрузить и установить обложку',
+        life: 2500,
+      });
+    } finally {
+      this.isUploadingCover.set(false);
+    }
   }
 
   private addCacheBust(u: string): string {

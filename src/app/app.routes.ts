@@ -69,12 +69,11 @@ export const routes: Routes = [
       ),
   },
   {
-    path: 'subscription/result/:paymentId',
+    path: 'subscription/result',
     loadComponent: () =>
       import('./pages/subscription-result/subscription-result.component').then(
         (m) => m.SubscriptionResultComponent,
       ),
-    canActivate: [AuthGuard],
   },
   {
     path: '404',

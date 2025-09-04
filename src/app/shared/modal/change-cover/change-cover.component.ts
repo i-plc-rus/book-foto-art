@@ -8,7 +8,7 @@ import { Component, EventEmitter, Output } from '@angular/core';
   imports: [],
 })
 export class ChangeCoverComponent {
-  @Output() close = new EventEmitter<void>();
+  @Output() closeCover = new EventEmitter<void>();
   @Output() selectFromCollection = new EventEmitter<void>();
   @Output() browseFiles = new EventEmitter<void>();
 }

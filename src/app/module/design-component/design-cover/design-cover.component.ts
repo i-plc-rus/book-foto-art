@@ -2,9 +2,9 @@ import { CommonModule } from '@angular/common';
 import type { ElementRef, OnInit } from '@angular/core';
 import { Component, computed, DestroyRef, inject, signal, ViewChild } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { MessageService } from 'primeng/api';
-import { finalize, last, lastValueFrom } from 'rxjs';
+import { finalize, last, switchMap } from 'rxjs';
 
 import { CollectionApiService } from '../../../api/collection-api.service';
 import { UploadService } from '../../../core/service/upload.service';
@@ -39,6 +39,7 @@ export class DesignCoverComponent implements OnInit {
 
   private readonly collectionApiService: CollectionApiService = inject(CollectionApiService);
   private readonly collectionStateService = inject(CollectionStateService);
+  private readonly router = inject(Router);
   private readonly uploadService = inject(UploadService);
   private readonly messageService = inject(MessageService);
 
@@ -133,58 +134,32 @@ export class DesignCoverComponent implements OnInit {
 
   private async uploadAndSetCover(file: File): Promise<void> {
     const collectionId = this.collectionId();
-    if (!collectionId) {
-      this.messageService.add({
-        severity: 'error',
-        summary: 'Ошибка',
-        detail: 'Не найден id коллекции',
-        life: 2500,
+    if (!collectionId) return;
+
+    this.uploadService
+      .uploadFile(file, collectionId) // прогресс
+      .pipe(last()) // ждём финальный HTTP Response
+      .pipe(
+        switchMap((event) => {
+          const photoId = (event as any)?.body?.ids?.[0] ?? (event as any)?.body?.id;
+          if (!photoId) throw new Error('Не удалось получить id загруженного фото');
+          return this.collectionApiService.updateCollectionCover(collectionId, photoId);
+        }),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe({
+        next: () => {
+          // закрыть модалки
+          this.closeSelectCoverPhotoModal();
+          this.closeChangeCoverModal();
+
+          // перейти на список файлов
+          this.goBackToUpload();
+        },
+        error: () => {
+          // тост об ошибке — по желанию
+        },
       });
-      return;
-    }
-
-    this.isUploadingCover.set(true);
-    try {
-      // 1) Загружаем файл и ждём последнее событие (с телом)
-      const uploaded = await lastValueFrom(
-        this.uploadService.uploadFile(file, collectionId).pipe(last()),
-      );
-
-      // 2) Надёжно извлекаем id загруженного фото из тела ответа
-      const body = uploaded?.body;
-      const photoId: string | null =
-        body?.files?.[0]?.id ?? body?.file?.id ?? body?.data?.id ?? body?.id ?? null;
-
-      if (!photoId) {
-        throw new Error('Не удалось получить id загруженного фото из ответа аплоада');
-      }
-
-      // 3) Ставим обложку
-      await lastValueFrom(this.collectionApiService.updateCollectionCover(collectionId, photoId));
-
-      // 4) Обновляем предпросмотр сразу локальным objectURL
-      const localPreview = this.previewImageUrl; // вы уже создаёте его при выборе файла
-      if (localPreview) {
-        this.selectedTemplate.set({ id: 'custom', name: 'Custom Cover', image: localPreview });
-        this.collectionStateService.notifyCoverUpdated(collectionId, localPreview);
-      }
-
-      this.messageService.add({
-        severity: 'success',
-        summary: 'Обложка обновлена',
-        life: 1500,
-      });
-    } catch (err) {
-      console.error(err);
-      this.messageService.add({
-        severity: 'error',
-        summary: 'Ошибка',
-        detail: 'Не удалось загрузить и установить обложку',
-        life: 2500,
-      });
-    } finally {
-      this.isUploadingCover.set(false);
-    }
   }
 
   private addCacheBust(u: string): string {
@@ -199,23 +174,24 @@ export class DesignCoverComponent implements OnInit {
   }
 
   confirmCoverSelection(): void {
-    if (this.previewImageUrl) {
-      this.selectedTemplate.set({
-        id: 'custom',
-        name: 'Custom Cover',
-        image: this.previewImageUrl,
+    if (!this.selectedPhoto?.id) return;
+
+    const id = this.collectionId();
+    this.collectionApiService
+      .updateCollectionCover(id, this.selectedPhoto.id)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => {
+          // уведомляем MainLayout
+          this.collectionStateService.notifyCoverUpdated(id, this.selectedPhoto.url);
+
+          // закрываем модалки и уходим на upload
+          this.closeSelectCoverPhotoModal();
+          this.closeChangeCoverModal();
+          this.router.navigate(['/upload'], { queryParams: { collectionId: id } });
+        },
+        error: () => {},
       });
-
-      this.collectionStateService.notifyCoverUpdated(this.collectionId(), this.selectedPhoto.url);
-
-      this.collectionApiService
-        .updateCollectionCover(this.collectionId(), this.selectedPhoto.id)
-        .pipe(takeUntilDestroyed(this.destroyRef))
-        .subscribe();
-
-      this.closeChangeCoverModal();
-      this.closeSelectCoverPhotoModal();
-    }
   }
 
   resetCoverSelection(): void {
@@ -258,7 +234,7 @@ export class DesignCoverComponent implements OnInit {
     return {
       id: photo.id,
       name: photo.file_name,
-      url: photo.original_url,
+      url: photo.thumbnail_url,
       file: {
         name: photo.file_name,
         lastModified: new Date(photo.uploaded_at).getTime(),
@@ -330,5 +306,11 @@ export class DesignCoverComponent implements OnInit {
   handleFocalPointSave(position: { x: number; y: number }): void {
     this.mainLayout.updateFocalPoint(position);
     this.showFocalModal.set(false);
+  }
+
+  private goBackToUpload(): void {
+    const id = this.collectionId();
+    if (!id) return;
+    this.router.navigate(['/upload'], { queryParams: { collectionId: id } });
   }
 }

@@ -1,7 +1,8 @@
-import { inject, Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
+import { inject, Injectable } from '@angular/core';
+import type { Observable } from 'rxjs';
+
 import { environment as env } from '../../../environments/environment';
-import { Observable } from 'rxjs';
 
 @Injectable()
 export class CollectionService {

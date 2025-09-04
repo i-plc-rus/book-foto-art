@@ -5,9 +5,9 @@
   (menuItemClick)="handleMenuItem($event)"
   (buttonClick)="handleButtonClick($event)"
 ></app-editor-action-bar>
-<div class="flex bg-[#f8f9fa] max-h">
-  <div class="template flex flex-col w-1/2">
-    <div class="bg-white z-10 p-[1rem] md:p-[1.5rem]">
+<div class="flex bg-[#f8f9fa] max-h view-area">
+  <div class="template flex flex-col content-area">
+    <div class="bg-white z-10 p-[1rem] md:p-[1.5rem] header-area">
       <div class="flex items-center justify-between">
         <h2 class="font-medium text-[1.375rem] leading-[1.18]">Обложка</h2>
 
@@ -43,7 +43,7 @@
 
     @if (showChangeCoverModal()) {
       <app-change-cover
-        (close)="closeChangeCoverModal()"
+        (closeCover)="closeChangeCoverModal()"
         (selectFromCollection)="openSelectCoverPhotoModal()"
         (browseFiles)="triggerFileInput()"
       >
@@ -106,13 +106,13 @@
     </div>-->
   </div>
 
-  <div class="device border-t border-t-[#cecccc] flex flex-col w-full">
+  <!--<div class="device border-t border-t-[#cecccc] flex flex-col w-full">
     <app-device-preview
       [previewImage]="selectedTemplate() ? selectedTemplate()!.image : null"
       [viewMode]="viewMode()"
       (viewModeChange)="setViewMode($event)"
     ></app-device-preview>
-  </div>
+  </div>-->
 </div>
 @if (showFocalModal()) {
   <app-focal-point-modal (save)="handleFocalPointSave($event)" (close)="showFocalModal.set(false)">

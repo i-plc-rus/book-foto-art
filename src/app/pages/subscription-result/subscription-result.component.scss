@@ -1,0 +1,62 @@
+/* src/app/pages/subscription-result/subscription-result.component.css */
+.result-wrap {
+  min-height: calc(100dvh - 120px);
+  display: grid;
+  place-items: center;
+  padding: 24px;
+}
+.box {
+  width: min(560px, 92vw);
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.08);
+  padding: 24px;
+  text-align: center;
+}
+.icon {
+  font-size: 28px;
+  margin-bottom: 8px;
+}
+.success .icon {
+  color: #16a34a;
+}
+.warn .icon {
+  color: #f59e0b;
+}
+.error .icon {
+  color: #ef4444;
+}
+.info .icon {
+  color: #0284c7;
+}
+.btn {
+  margin-top: 16px;
+  padding: 10px 14px;
+  border: 1px solid #16a34a;
+  color: #16a34a;
+  background: #fff;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.btn:hover {
+  border-color: #15803d;
+  color: #15803d;
+}
+.loading {
+  display: grid;
+  gap: 12px;
+  place-items: center;
+}
+.spinner {
+  width: 28px;
+  height: 28px;
+  border: 3px solid #e5e7eb;
+  border-top-color: #16a34a;
+  border-radius: 50%;
+  animation: spin 0.9s linear infinite;
+}
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

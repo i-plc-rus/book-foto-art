@@ -1,5 +1,6 @@
 import { NgClass } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
+import { Router } from '@angular/router';
 import type { MenuItem } from 'primeng/api';
 import { Menu } from 'primeng/menu';
 
@@ -14,6 +15,7 @@ import { AuthService } from '../../core/service/auth.service';
 })
 export class SidebarComponent {
   private readonly authService: AuthService = inject(AuthService);
+  private readonly router: Router = inject(Router);
   activeMenuId = signal<string>('collections');
 
   menuItems = [
@@ -24,6 +26,11 @@ export class SidebarComponent {
   ];
 
   readonly profileMenuItems: MenuItem[] = [
+    {
+      label: 'Оплата',
+      icon: 'pi pi-credit-card',
+      command: () => this.router.navigate(['/tariffs']),
+    },
     { label: 'Выход', icon: 'pi pi-sign-out', command: () => this.logout() },
   ];
 

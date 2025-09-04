@@ -1,0 +1,98 @@
+<p-toast position="top-right" />
+
+<section class="tariffs">
+  <h1 class="tariffs__title">Оплата подписки</h1>
+
+  <!-- выбор плана -->
+  <div class="tariffs__plans">
+    <button
+      type="button"
+      class="tariffs__plan"
+      [class.tariffs__plan_active]="plan() === 'month'"
+      (click)="plan.set('month')"
+    >
+      <div class="tariffs__plan-title">Оплатить на месяц</div>
+      <div class="tariffs__plan-price">
+        <span class="tariffs__plan-price-value">{{ baseMonth | number: '1.0-0' }}</span>
+        <span class="tariffs__plan-price-currency">₽</span>
+      </div>
+      <div class="tariffs__plan-desc">Ежемесячный план</div>
+    </button>
+
+    <button
+      type="button"
+      class="tariffs__plan"
+      [class.tariffs__plan_active]="plan() === 'year'"
+      (click)="plan.set('year')"
+    >
+      <div class="tariffs__plan-title">Оплатить год</div>
+      <div class="tariffs__plan-price">
+        <span class="tariffs__plan-price-value">{{ baseYear | number: '1.0-0' }}</span>
+        <span class="tariffs__plan-price-currency">₽</span>
+      </div>
+      <div class="tariffs__plan-desc">Самая выгодная цена</div>
+    </button>
+  </div>
+
+  <!-- промокод -->
+  <div class="tariffs__promo">
+    <label class="tariffs__promo-label">Промокод</label>
+    <div class="tariffs__promo-row">
+      <input
+        type="text"
+        class="tariffs__promo-input"
+        placeholder="Введите промокод"
+        [ngModel]="promoCode()"
+        (ngModelChange)="promoCode.set($event)"
+      />
+      <button
+        type="button"
+        class="tariffs__promo-btn"
+        (click)="checkPromo()"
+        [disabled]="promoStatus() === 'checking'"
+      >
+        @if (promoStatus() === 'checking') {
+          Проверяем…
+        } @else {
+          ОК
+        }
+      </button>
+    </div>
+
+    @if (promoStatus() === 'valid') {
+      <div class="tariffs__promo-msg tariffs__promo-msg_success">
+        {{ promoMessage() }}
+        @if (discount() > 0) {
+          &nbsp;(-{{ discount() }}%)
+        }
+      </div>
+    }
+    @if (promoStatus() === 'invalid') {
+      <div class="tariffs__promo-msg tariffs__promo-msg_error">
+        {{ promoMessage() }}
+      </div>
+    }
+  </div>
+
+  <!-- итоговая цена -->
+  <div class="tariffs__total">
+    <span>К оплате</span>
+    <span class="tariffs__total-price">{{ price() | number: '1.0-0' }} ₽</span>
+  </div>
+
+  <!-- кнопка оплаты -->
+  <div class="tariffs__pay">
+    <button
+      type="button"
+      class="tariffs__pay-btn"
+      (click)="proceedToPayment()"
+      [disabled]="creatingPayment()"
+    >
+      @if (creatingPayment()) {
+        Создаём платёж…
+      } @else {
+        Перейти к оплате
+      }
+    </button>
+  </div>
+</section>

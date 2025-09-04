@@ -1,12 +1,12 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { NgClass } from '@angular/common';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 
 @Component({
   standalone: true,
   selector: 'app-device-preview',
   templateUrl: './device-preview.component.html',
   imports: [NgClass],
-  styleUrls: ['./device-preview.component.css'],
+  styleUrl: './device-preview.component.css',
 })
 export class DevicePreviewComponent {
   @Input() previewImage: string | null = null;

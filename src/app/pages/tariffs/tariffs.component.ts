@@ -29,8 +29,8 @@ export class TariffsComponent {
 
   creatingPayment = signal(false);
 
-  baseMonth = 2780;
-  baseYear = 17760;
+  baseMonth = 299;
+  baseYear = 1943;
 
   price = computed(() => {
     const base = this.plan() === 'month' ? this.baseMonth : this.baseYear;

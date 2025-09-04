@@ -10,11 +10,11 @@ import {
   viewChild,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ConfirmDialog } from 'primeng/confirmdialog';
 import { catchError, of, switchMap } from 'rxjs';
-import { filter, map } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 
 import { CollectionApiService } from '../../../api/collection-api.service';
 import type {
@@ -38,6 +38,7 @@ export class CollectionSiteComponent implements OnInit {
   private readonly modalService: ModalService = inject(ModalService);
   private readonly destroyRef: DestroyRef = inject(DestroyRef);
   private readonly activatedRoute: ActivatedRoute = inject(ActivatedRoute);
+  private readonly router: Router = inject(Router);
   private readonly collectionApiService: CollectionApiService = inject(CollectionApiService);
   private readonly confirmation = inject(ConfirmationService);
   private readonly messageService = inject(MessageService);
@@ -76,14 +77,19 @@ export class CollectionSiteComponent implements OnInit {
     this.activatedRoute.paramMap
       .pipe(
         map((pm) => pm.get('token')),
-        filter((token): token is string => !!token),
         switchMap((token) => {
+          if (!token) {
+            this.router.navigate(['/404']).catch(() => {});
+            return of(null);
+          }
+
           this.loading.set(true);
           this.error.set(null);
+
           return this.collectionApiService.getPublicCollectionPhotos(token).pipe(
             catchError(() => {
-              this.error.set('Не удалось загрузить коллекцию');
               this.loading.set(false);
+              this.router.navigate(['/404']).catch(() => {});
               return of(null);
             }),
           );
@@ -92,7 +98,11 @@ export class CollectionSiteComponent implements OnInit {
       )
       .subscribe((resp: ICollectionPhoto | null) => {
         this.loading.set(false);
-        if (!resp) return;
+        if (!resp) {
+          // на случай, если выше не сработала навигация
+          this.router.navigate(['/404']).catch(() => {});
+          return;
+        }
         this.collectionInfo.set(resp);
         this.images.set(resp.files ?? []);
       });

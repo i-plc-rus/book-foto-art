@@ -1,16 +1,19 @@
 import type { Routes } from '@angular/router';
 
 import { AuthGuard } from './guards/auth.guard';
+import { redirectIfAuthenticatedGuard } from './guards/redirect-if-authenticated.guard';
 
 export const routes: Routes = [
   {
     path: '',
     loadComponent: (): any => import('./home/home.component').then((m) => m.HomeComponent),
+    canActivate: [redirectIfAuthenticatedGuard],
   },
   {
     path: 'login',
     loadComponent: (): any =>
       import('./module/auth/login-page/login-page.component').then((m) => m.LoginPageComponent),
+    canActivate: [redirectIfAuthenticatedGuard],
   },
   {
     path: 'register',
@@ -18,6 +21,7 @@ export const routes: Routes = [
       import('./module/auth/register-page/register-page.component').then(
         (m) => m.RegisterPageComponent,
       ),
+    canActivate: [redirectIfAuthenticatedGuard],
   },
   {
     path: 'reset-password',

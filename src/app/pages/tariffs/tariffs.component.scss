@@ -1,0 +1,149 @@
+.tariffs {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+.tariffs__title {
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 24px;
+}
+
+/* блок с планами */
+.tariffs__plans {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 24px;
+}
+
+.tariffs__plan {
+  flex: 1 1 45%;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background: #fff;
+  padding: 16px;
+  cursor: pointer;
+  transition:
+    box-shadow 0.2s,
+    border-color 0.2s;
+  text-align: left;
+}
+
+.tariffs__plan:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.tariffs__plan_active {
+  border-color: #1abc9c;
+  box-shadow: 0 0 0 2px rgba(26, 188, 156, 0.3);
+}
+
+.tariffs__plan-title {
+  font-size: 16px;
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+
+.tariffs__plan-price {
+  font-size: 22px;
+  font-weight: 600;
+}
+
+.tariffs__plan-price-currency {
+  font-size: 14px;
+  color: #777;
+  margin-left: 4px;
+}
+
+.tariffs__plan-desc {
+  margin-top: 6px;
+  font-size: 14px;
+  color: #555;
+}
+
+/* промокод */
+.tariffs__promo {
+  margin-bottom: 24px;
+}
+
+.tariffs__promo-label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 14px;
+  color: #444;
+}
+
+.tariffs__promo-row {
+  display: flex;
+  gap: 8px;
+}
+
+.tariffs__promo-input {
+  flex: 1;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.tariffs__promo-btn {
+  padding: 8px 16px;
+  background: #333;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.tariffs__promo-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.tariffs__promo-msg {
+  margin-top: 8px;
+  font-size: 13px;
+}
+
+.tariffs__promo-msg_success {
+  color: #16a34a;
+}
+
+.tariffs__promo-msg_error {
+  color: #dc2626;
+}
+
+/* итог */
+.tariffs__total {
+  display: flex;
+  justify-content: space-between;
+  font-size: 18px;
+  margin-bottom: 24px;
+}
+
+.tariffs__total-price {
+  font-weight: 600;
+}
+
+/* кнопка оплаты */
+.tariffs__pay-btn {
+  display: inline-block;
+  padding: 10px 20px;
+  background: #1abc9c;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 15px;
+  transition: background 0.2s;
+}
+
+.tariffs__pay-btn:hover:not(:disabled) {
+  background: #17a589;
+}
+
+.tariffs__pay-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

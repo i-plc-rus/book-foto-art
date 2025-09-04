@@ -1,9 +1,10 @@
 import { NgClass } from '@angular/common';
 import { Component, EventEmitter, inject, Output, signal } from '@angular/core';
+import { Router } from '@angular/router';
 import type { MenuItem } from 'primeng/api';
+import { Menu } from 'primeng/menu';
 
 import { AuthService } from '../../../core/service/auth.service';
-import { Menu } from 'primeng/menu';
 
 export type SidebarMenu = 'collections' | 'favorites' | 'home' | 'settings';
 
@@ -16,6 +17,7 @@ export type SidebarMenu = 'collections' | 'favorites' | 'home' | 'settings';
 })
 export class MobileHeaderComponent {
   private readonly authService: AuthService = inject(AuthService);
+  private readonly router: Router = inject(Router);
 
   activeTab = signal<any>('collections');
 
@@ -27,6 +29,11 @@ export class MobileHeaderComponent {
   ];
 
   readonly profileMenuItems: MenuItem[] = [
+    {
+      label: 'Оплата',
+      icon: 'pi pi-credit-card',
+      command: () => this.router.navigate(['/tariffs']),
+    },
     { label: 'Выход', icon: 'pi pi-sign-out', command: () => this.logout() },
   ];
 

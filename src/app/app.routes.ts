@@ -44,6 +44,12 @@ export const routes: Routes = [
     canActivate: [AuthGuard],
   },
   {
+    path: 'tariffs',
+    loadComponent: () =>
+      import('./pages/tariffs/tariffs.component').then((m) => m.TariffsComponent),
+    canActivate: [AuthGuard],
+  },
+  {
     path: '',
     loadChildren: (): any => import('./module/main-layout/main.routes').then((m) => m.MAIN),
     canActivate: [],
